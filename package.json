@@ -1,0 +1,8 @@
+{
+  "name": "mos2career-netlify",
+  "private": true,
+  "version": "2.3.0",
+  "dependencies": {
+    "stripe": "^18.0.0"
+  }
+}

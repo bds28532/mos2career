@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>MOS2Career Career Translator | Career Blueprint</title>
+<meta name="description" content="Translate military experience into civilian career matches, skill gaps, and next steps."/>
+<style>
+:root{
+  --bg:#08111f;--panel:#0f1b2d;--panel2:#13233a;--line:#223754;
+  --text:#f7f9fc;--muted:#a9b7c9;--accent:#61dafb;--accent2:#8cf0c8;--warn:#ffd37a;
+  --max:1180px
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--text);background:
+  radial-gradient(circle at 15% 8%,rgba(97,218,251,.12),transparent 28%),
+  radial-gradient(circle at 85% 18%,rgba(140,240,200,.08),transparent 24%),
+  var(--bg);line-height:1.5
+}
+.wrap{max-width:var(--max);margin:auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:10;background:rgba(8,17,31,.88);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06)}
+.navin{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{font-weight:900;font-size:1.1rem}.brand span{color:var(--accent)}
+.btn{
+  border:0;border-radius:12px;padding:12px 16px;font-weight:800;cursor:pointer;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));color:#041019
+}
+.btn.secondary{background:#0b1626;color:var(--text);border:1px solid var(--line)}
+header{padding:62px 0 34px}
+h1{font-size:clamp(2.2rem,5vw,4.4rem);line-height:1;margin:10px 0 16px;max-width:900px}
+.eyebrow{color:var(--accent2);text-transform:uppercase;letter-spacing:.13em;font-size:.76rem;font-weight:900}
+.lead{color:var(--muted);font-size:1.1rem;max-width:800px}
+.grid{display:grid;grid-template-columns:.88fr 1.12fr;gap:22px;align-items:start;padding-bottom:70px}
+.card{background:rgba(15,27,45,.94);border:1px solid var(--line);border-radius:20px;padding:22px}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:grid;gap:6px}.full{grid-column:1/-1}
+label{font-size:.88rem;font-weight:800;color:#d9e4ef}
+input,select,textarea{
+ width:100%;padding:11px 12px;border-radius:10px;border:1px solid #2b4568;
+ background:#091522;color:#fff;font:inherit;outline:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+textarea{min-height:100px;resize:vertical}
+.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:4px}
+.check{display:flex;align-items:center;gap:8px;background:#0b1626;border:1px solid var(--line);padding:9px 10px;border-radius:10px}
+.check input{width:auto}
+.helper{font-size:.82rem;color:var(--muted)}
+.results{display:grid;gap:14px}
+.empty{padding:44px 24px;text-align:center;color:var(--muted)}
+.result{
+ background:#0d1929;border:1px solid var(--line);border-radius:17px;padding:18px
+}
+.rhead{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.rtitle{font-size:1.05rem;font-weight:900}
+.score{min-width:82px;text-align:center;padding:7px 10px;border-radius:999px;background:#102f31;color:var(--accent2);font-weight:900}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.tag{font-size:.78rem;padding:5px 8px;border-radius:999px;background:#13233a;color:#cdd7e4;border:1px solid #263c5a}
+.bar{height:8px;border-radius:999px;background:#08111f;overflow:hidden;margin:12px 0}.fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.box{background:#0a1524;border:1px solid #1e334f;border-radius:12px;padding:12px}
+.box h4{margin:0 0 7px;font-size:.9rem}
+ul{margin:0;padding-left:18px}.small{font-size:.84rem;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:#0b1626;border:1px solid var(--line);border-radius:14px;padding:12px}
+.kpi .n{font-size:1.35rem;font-weight:900}.kpi .l{font-size:.75rem;color:var(--muted)}
+.notice{margin-top:14px;padding:12px;border-radius:12px;background:#1a1a11;border:1px solid #50451d;color:#f0dfa8;font-size:.84rem}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+
+.blueprint-cta{
+  display:none;margin-top:18px;padding:22px;border-radius:18px;
+  background:linear-gradient(135deg,rgba(97,218,251,.12),rgba(140,240,200,.08));
+  border:1px solid #315578
+}
+.blueprint-cta h3{margin:6px 0 8px;font-size:1.35rem}
+.blueprint-cta p{margin:0 0 12px;color:var(--muted)}
+.blueprint-features{display:grid;grid-template-columns:1fr 1fr;gap:7px 18px;margin:14px 0 18px;padding:0;list-style:none}
+.blueprint-features li{font-size:.88rem;color:#d9e4ef}
+.blueprint-features li::before{content:"✓";color:var(--accent2);font-weight:900;margin-right:8px}
+.purchase-btn{
+  display:inline-flex;align-items:center;justify-content:center;text-decoration:none;
+  border-radius:12px;padding:13px 18px;font-weight:900;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));color:#041019
+}
+.purchase-note{margin-top:10px;font-size:.78rem;color:var(--muted)}
+@media(max-width:650px){.blueprint-features{grid-template-columns:1fr}.purchase-btn{width:100%}}
+
+@media(max-width:900px){.grid{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.full{grid-column:auto}.cols{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}.checks{grid-template-columns:1fr}}
+
+.bot-field{position:absolute!important;overflow:hidden!important;clip:rect(0 0 0 0)!important;height:1px!important;width:1px!important;margin:-1px!important;padding:0!important;border:0!important}
+.data-warning{margin:10px 0 14px;padding:10px 12px;border-radius:10px;border:1px solid #5b5360;background:rgba(255,196,80,.07);font-size:.78rem;color:#e9d8aa;line-height:1.4}
+.save-status{margin-top:10px;font-size:.8rem;color:var(--muted)}
+.save-status.ok{color:var(--accent2)}
+.save-status.err{color:#ffb4b4}
+
+
+#blueprintCheckoutBtn.is-disabled{
+  opacity:.5;
+  pointer-events:none;
+  cursor:not-allowed;
+  filter:grayscale(.2);
+}
+#blueprintCheckoutBtn.is-ready{
+  opacity:1;
+  pointer-events:auto;
+}
+
+</style>
+</head>
+<body>
+<nav><div class="wrap navin">
+  <div class="brand">MOS<span>2</span>Career</div>
+  <button class="btn secondary" onclick="downloadReport()">Download Results</button>
+</div></nav>
+
+<header><div class="wrap">
+  <div class="eyebrow">Career Translator MVP</div>
+  <h1>Translate military experience into civilian career matches.</h1>
+  <p class="lead">This MVP scores roles based on your military specialty, technical skills, leadership, education, clearance, years of service, and career goals. It also highlights likely strengths, gaps, and next steps.</p>
+</div></header>
+
+<main class="wrap grid">
+  <section class="card">
+    <div class="eyebrow">Your profile</div>
+    <h2 style="margin:8px 0 16px">Military Career Profile</h2>
+    <form id="profileForm" class="formgrid" name="career-translator" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="career-translator">
+          <input type="hidden" id="submissionId" name="submission_id" value="">
+          <input type="hidden" id="topMatchesHidden" name="top_matches" value="">
+          <p class="bot-field" aria-hidden="true"><label>Don’t fill this out: <input name="bot-field"></label></p>
+
+      <div class="field">
+        <label>First name</label>
+        <input id="firstName" name="first_name" type="text" autocomplete="given-name" required placeholder="First name">
+      </div>
+      <div class="field">
+        <label>Last name</label>
+        <input id="lastName" name="last_name" type="text" autocomplete="family-name" required placeholder="Last name">
+      </div>
+      <div class="field full">
+        <label>Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+      </div>
+
+      <div class="field">
+        <label>Branch</label>
+        <select id="branch" name="branch">
+          <option>Navy</option><option>Army</option><option>Air Force</option><option>Marine Corps</option><option>Coast Guard</option><option>Space Force</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Military specialty</label>
+        <input id="specialty" placeholder="Example: Fire Controlman, 25B, 1D7X1" name="military_specialty">
+      </div>
+      <div class="field">
+        <label>Rank / grade</label>
+        <input id="rank" placeholder="Example: E-6" name="rank_grade">
+      </div>
+      <div class="field">
+        <label>Years of service</label>
+        <input id="years" type="number" min="0" max="50" value="8" name="years_service">
+      </div>
+      <div class="field">
+        <label>Education</label>
+        <select id="education" name="education">
+          <option value="0">High school / GED</option>
+          <option value="1">Some college</option>
+          <option value="2">Associate degree</option>
+          <option value="3">Bachelor's degree</option>
+          <option value="4">Master's or higher</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Clearance</label>
+        <select id="clearance" name="clearance_category">
+          <option value="0">None / Unknown</option>
+          <option value="1">Confidential</option>
+          <option value="2">Secret</option>
+          <option value="3">Top Secret</option>
+          <option value="4">TS/SCI</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label>Career goal</label>
+        <select id="goal" name="career_goal">
+          <option value="defense">Defense / government contracting</option>
+          <option value="engineering">Engineering / technical</option>
+          <option value="cyber">Cybersecurity / IT</option>
+          <option value="management">Management / leadership</option>
+          <option value="operations">Operations / logistics</option>
+          <option value="remote">Remote-friendly work</option>
+          <option value="income">Highest earning potential</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label>Strongest skills</label>
+        <div class="checks">
+          <label class="check"><input type="checkbox" value="testing" name="skills"> Testing / validation</label>
+          <label class="check"><input type="checkbox" value="troubleshooting" name="skills"> Troubleshooting</label>
+          <label class="check"><input type="checkbox" value="electronics" name="skills"> Electronics</label>
+          <label class="check"><input type="checkbox" value="networking" name="skills"> Networking</label>
+          <label class="check"><input type="checkbox" value="cyber" name="skills"> Cyber / security</label>
+          <label class="check"><input type="checkbox" value="leadership" name="skills"> Leadership</label>
+          <label class="check"><input type="checkbox" value="training" name="skills"> Training</label>
+          <label class="check"><input type="checkbox" value="project" name="skills"> Project coordination</label>
+          <label class="check"><input type="checkbox" value="maintenance" name="skills"> Maintenance</label>
+          <label class="check"><input type="checkbox" value="logistics" name="skills"> Logistics</label>
+          <label class="check"><input type="checkbox" value="documentation" name="skills"> Technical documentation</label>
+          <label class="check"><input type="checkbox" value="data" name="skills"> Data / analytics</label>
+        </div>
+      </div>
+
+      <div class="field full">
+        <label>Primary duties</label>
+        <textarea id="duties" placeholder="Describe what you actually did: led teams, maintained systems, performed testing, troubleshooting, trained personnel, managed schedules, wrote technical procedures..." name="primary_duties"></textarea>
+        <div class="data-warning">
+          <strong>Security reminder:</strong> Do not enter classified, CUI, export-controlled, proprietary, or sensitive operational information. Describe duties only at an unclassified, résumé-safe level.
+        </div>
+
+        <div class="helper">The translator also reads keywords from this description.</div>
+      </div>
+
+      <div class="field full">
+        <label>Preferred work setup</label>
+        <select id="worksetup" name="work_setup">
+          <option value="any">No preference</option>
+          <option value="onsite">On-site</option>
+          <option value="hybrid">Hybrid</option>
+          <option value="remote">Remote</option>
+        </select>
+      </div>
+
+      <div class="field full"><button class="btn" type="submit">Generate Career Matches</button>
+<div id="saveStatus" class="save-status">Your profile will be saved when you generate results.</div></div>
+    </form>
+  </section>
+
+  <section class="card">
+    <div class="eyebrow">Your results</div>
+    <h2 style="margin:8px 0 16px">Top Civilian Matches</h2>
+    <div id="summary" class="kpis" style="display:none"></div>
+    <div id="results" class="results"><div class="empty">Complete your profile and generate matches.</div></div>
+    <div class="notice">Prototype guidance only. Match scores are heuristic, not hiring guarantees. Real launch should validate salaries, licensing, education requirements, and role requirements against current employer postings and authoritative career data.</div>
+
+    <div id="blueprintCta" class="blueprint-cta">
+      <div class="eyebrow">Go deeper</div>
+      <h3>Get Your Personalized Career Blueprint — $79</h3>
+      <p>Turn your free matches into a detailed military-to-civilian transition plan built around your background and goals.</p>
+      <ul class="blueprint-features">
+        <li>Top 10 civilian career matches</li>
+        <li>Transferable skill analysis</li>
+        <li>Qualification gap analysis</li>
+        <li>Certification recommendations</li>
+        <li>Compensation guidance</li>
+        <li>Target employer strategy</li>
+        <li>Resume and LinkedIn strategy</li>
+        <li>Interview preparation</li>
+        <li>90-day transition action plan</li>
+        <li>Personalized recommendations</li>
+      </ul>
+      <a class="purchase-btn" href="#" target="_blank" rel="noopener noreferrer" id="blueprintCheckoutBtn">Get My Career Blueprint — $79</a>
+      <div class="purchase-note">Checkout unlocks after your profile saves successfully. • <a href="/privacy.html" style="color:inherit">Privacy notice</a> • Secure checkout powered by Stripe. Never enter classified, CUI, export-controlled, or sensitive operational information into MOS2Career.</div>
+    </div>
+
+  </section>
+</main>
+
+<script>
+const ROLES = [
+ {title:"Systems Test Engineer", base:56, skills:["testing","troubleshooting","electronics","documentation","data"], goals:["engineering","defense","income"], minEdu:2, clearance:1, remote:1, salary:"$90K–$145K", certs:["ISTQB or relevant test credential","INCOSE knowledge helpful"], gap:"Some employers prefer a bachelor's degree in engineering or a related technical field."},
+ {title:"Systems Integration Engineer", base:54, skills:["testing","troubleshooting","electronics","networking","documentation","project"], goals:["engineering","defense","income"], minEdu:3, clearance:1, remote:1, salary:"$95K–$155K", certs:["INCOSE ASEP/CSEP","Vendor-specific systems training"], gap:"A bachelor's degree is commonly preferred; formal systems-engineering experience strengthens fit."},
+ {title:"Field Service Engineer", base:50, skills:["troubleshooting","electronics","maintenance","training","documentation"], goals:["engineering","defense"], minEdu:1, clearance:0, remote:0, salary:"$75K–$125K", certs:["OEM/vendor certifications","CompTIA A+ for some tech paths"], gap:"Travel and customer-facing experience may be required depending on employer."},
+ {title:"Technical Program Manager", base:46, skills:["leadership","project","training","documentation","data"], goals:["management","defense","income"], minEdu:3, clearance:1, remote:2, salary:"$105K–$170K", certs:["PMP","Scrum / Agile certification"], gap:"Formal budget, schedule, and program ownership experience can be important."},
+ {title:"Project Manager", base:45, skills:["leadership","project","training","documentation","logistics"], goals:["management","operations","remote"], minEdu:2, clearance:0, remote:2, salary:"$80K–$135K", certs:["PMP","CAPM if early-career"], gap:"Translate mission planning and team coordination into measurable project outcomes."},
+ {title:"Cybersecurity Analyst", base:45, skills:["cyber","networking","troubleshooting","documentation","data"], goals:["cyber","defense","remote","income"], minEdu:1, clearance:2, remote:3, salary:"$85K–$140K", certs:["Security+","CySA+","CISSP later-career"], gap:"Hands-on cyber or networking evidence is important; Security+ can materially improve competitiveness."},
+ {title:"SOC Analyst", base:42, skills:["cyber","networking","data","troubleshooting","documentation"], goals:["cyber","remote"], minEdu:1, clearance:0, remote:3, salary:"$70K–$115K", certs:["Security+","CySA+","Splunk fundamentals"], gap:"Build practical SIEM, incident-response, and log-analysis experience."},
+ {title:"Network Administrator", base:43, skills:["networking","troubleshooting","documentation","cyber"], goals:["cyber","remote","defense"], minEdu:1, clearance:1, remote:2, salary:"$70K–$115K", certs:["Network+","CCNA"], gap:"Demonstrable routing, switching, TCP/IP, and enterprise network experience strengthens fit."},
+ {title:"IT Systems Administrator", base:43, skills:["networking","troubleshooting","cyber","documentation","training"], goals:["cyber","remote","defense"], minEdu:1, clearance:1, remote:2, salary:"$70K–$120K", certs:["Security+","Microsoft/Azure certifications"], gap:"Employers may expect Windows/Linux server administration or cloud platform experience."},
+ {title:"Quality Assurance Engineer", base:46, skills:["testing","documentation","data","troubleshooting"], goals:["engineering","remote"], minEdu:2, clearance:0, remote:2, salary:"$80K–$130K", certs:["ISTQB","Lean Six Sigma"], gap:"Software QA roles may require coding or automation knowledge; hardware QA may align more directly."},
+ {title:"Technical Operations Manager", base:47, skills:["leadership","maintenance","project","training","logistics"], goals:["management","operations","defense"], minEdu:2, clearance:0, remote:1, salary:"$90K–$145K", certs:["PMP","Lean Six Sigma"], gap:"Quantify team size, readiness metrics, downtime reduction, and operational performance."},
+ {title:"Logistics Manager", base:43, skills:["logistics","leadership","project","data","documentation"], goals:["operations","management"], minEdu:2, clearance:0, remote:1, salary:"$75K–$125K", certs:["APICS/ASCM","Lean Six Sigma"], gap:"Supply-chain tools and civilian ERP experience can improve marketability."},
+ {title:"Training & Development Manager", base:41, skills:["training","leadership","documentation","project"], goals:["management","remote"], minEdu:2, clearance:0, remote:2, salary:"$75K–$125K", certs:["ATD certifications","Instructional design training"], gap:"Translate military qualification programs into civilian learning and performance outcomes."},
+ {title:"Technical Writer", base:41, skills:["documentation","training","testing","electronics"], goals:["remote","engineering"], minEdu:1, clearance:0, remote:3, salary:"$70K–$115K", certs:["Technical writing portfolio","MadCap Flare / documentation tools"], gap:"A strong civilian writing portfolio is often more important than additional credentials."},
+ {title:"Data Analyst", base:39, skills:["data","documentation","project","troubleshooting"], goals:["remote","income"], minEdu:2, clearance:0, remote:3, salary:"$70K–$120K", certs:["SQL","Power BI/Tableau","Google Data Analytics"], gap:"You will usually need demonstrable SQL, spreadsheet, BI, or Python analytics skills."},
+ {title:"Defense Systems Technician", base:52, skills:["electronics","maintenance","troubleshooting","testing","documentation"], goals:["defense","engineering"], minEdu:0, clearance:1, remote:0, salary:"$70K–$115K", certs:["OEM/vendor certifications","IPC certification depending on role"], gap:"Often one of the most direct military-to-civilian translations for hands-on technical specialties."},
+ {title:"Engineering Technician", base:48, skills:["electronics","testing","maintenance","troubleshooting","documentation"], goals:["engineering","defense"], minEdu:1, clearance:0, remote:0, salary:"$65K–$105K", certs:["ET-related credentials","Vendor certifications"], gap:"An associate degree can be enough for many roles; exact requirements vary by industry."},
+ {title:"Configuration Management Specialist", base:42, skills:["documentation","project","data","testing"], goals:["defense","operations","remote"], minEdu:1, clearance:1, remote:2, salary:"$75K–$120K", certs:["CMII or configuration-management training","ITIL helpful"], gap:"Highlight baseline control, technical records, change tracking, and verification experience."},
+ {title:"Test Director / Test Manager", base:48, skills:["testing","leadership","project","documentation","data"], goals:["defense","engineering","management","income"], minEdu:2, clearance:2, remote:1, salary:"$95K–$155K", certs:["PMP","Test & evaluation coursework"], gap:"Civilian employers may look for formal test planning, risk management, and customer-facing reporting."},
+ {title:"Operations Analyst", base:39, skills:["data","project","documentation","logistics","leadership"], goals:["operations","remote"], minEdu:2, clearance:0, remote:3, salary:"$70K–$115K", certs:["Excel/Power BI","Lean Six Sigma"], gap:"Quantitative analysis skills and business-process metrics strengthen fit."}
+];
+
+const keywordMap = {
+ testing:["test","testing","validation","verify","verification","qa","quality"],
+ troubleshooting:["troubleshoot","fault","repair","diagnostic","isolation"],
+ electronics:["electronics","radar","sensor","weapons","circuit","electrical","rf"],
+ networking:["network","tcp","ip","switch","router","lan","wan"],
+ cyber:["cyber","security","information assurance","iam","vulnerability"],
+ leadership:["lead","leader","supervis","chief","manager","managed","team"],
+ training:["train","instructor","qualification","mentor","teach"],
+ project:["project","schedule","milestone","coordination","planning","plan"],
+ maintenance:["maintenance","maintain","preventive","corrective","repair"],
+ logistics:["logistics","supply","inventory","warehouse","material"],
+ documentation:["documentation","procedure","technical manual","report","baseline","record"],
+ data:["data","analysis","metrics","excel","database","analytics"]
+};
+
+const specialtyBoosts = [
+ {terms:["fire control","fc","aegis","mk 160","radar","sonar","electronics technician","et"], skills:["testing","troubleshooting","electronics","maintenance","documentation"], boost:7},
+ {terms:["25b","it specialist","information systems","network","1d7","cyber"], skills:["networking","cyber","troubleshooting","documentation"], boost:8},
+ {terms:["logistics","ls","92a","supply"], skills:["logistics","project","data"], boost:8},
+ {terms:["aviation","avionics","ae","at"], skills:["electronics","maintenance","testing","troubleshooting"], boost:7},
+ {terms:["intel","intelligence","is","35"], skills:["data","documentation","cyber"], boost:6}
+];
+
+function getCheckedSkills(){
+  return [...document.querySelectorAll('.check input:checked')].map(x=>x.value);
+}
+function inferSkills(text){
+  const t=text.toLowerCase(); const found=[];
+  for(const [skill,words] of Object.entries(keywordMap)){
+    if(words.some(w=>t.includes(w))) found.push(skill);
+  }
+  return found;
+}
+function uniq(a){return [...new Set(a)]}
+function titleize(s){return s.replace(/(^|\s)\S/g,c=>c.toUpperCase()).replace("Cyber","Cybersecurity")}
+function roleScore(role, profile){
+  let score=role.base;
+  const matched=[];
+  role.skills.forEach(s=>{
+    if(profile.skills.includes(s)){score+=7;matched.push(s)}
+  });
+  if(role.goals.includes(profile.goal)) score+=8;
+  if(profile.years>=12 && (role.skills.includes("leadership")||role.skills.includes("project"))) score+=4;
+  if(profile.years>=20) score+=2;
+  if(profile.education>=role.minEdu) score+=4;
+  else score-=Math.min(12,(role.minEdu-profile.education)*5);
+  if(profile.clearance>=role.clearance && role.clearance>0) score+=5;
+  if(profile.worksetup==="remote"){
+    if(role.remote>=3) score+=6; else if(role.remote===2) score+=3; else score-=5;
+  }
+  const sp=profile.specialty.toLowerCase();
+  specialtyBoosts.forEach(m=>{
+    if(m.terms.some(t=>sp.includes(t))){
+      const overlap=m.skills.filter(s=>role.skills.includes(s)).length;
+      score+=Math.min(m.boost,overlap*2);
+    }
+  });
+  score=Math.max(45,Math.min(98,score));
+  return {score,matched};
+}
+function gapList(role, profile){
+  const gaps=[];
+  if(profile.education<role.minEdu) gaps.push("Education level may be below what some employers prefer.");
+  const missing=role.skills.filter(s=>!profile.skills.includes(s)).slice(0,2);
+  missing.forEach(s=>gaps.push("Build or better demonstrate " + titleize(s) + " experience."));
+  if(role.clearance>0 && profile.clearance<role.clearance) gaps.push("Some defense roles may require a higher active clearance.");
+  if(gaps.length===0) gaps.push(role.gap);
+  return gaps.slice(0,3);
+}
+function render(){
+  const first=document.getElementById("firstName");
+  const last=document.getElementById("lastName");
+  const email=document.getElementById("email");
+  if(!first.value.trim()){ first.focus(); alert("Please enter your first name."); return; }
+  if(!last.value.trim()){ last.focus(); alert("Please enter your last name."); return; }
+  if(!email.checkValidity()){ email.reportValidity(); return; }
+
+  const p={
+    branch:document.getElementById("branch").value,
+    specialty:document.getElementById("specialty").value.trim(),
+    rank:document.getElementById("rank").value.trim(),
+    years:+document.getElementById("years").value||0,
+    education:+document.getElementById("education").value,
+    clearance:+document.getElementById("clearance").value,
+    goal:document.getElementById("goal").value,
+    worksetup:document.getElementById("worksetup").value,
+    duties:document.getElementById("duties").value
+  };
+  p.skills=uniq([...getCheckedSkills(),...inferSkills(p.duties),...inferSkills(p.specialty)]);
+  const ranked=ROLES.map(r=>({...r,...roleScore(r,p)})).sort((a,b)=>b.score-a.score).slice(0,7);
+  window.currentReport={profile:p,results:ranked};
+
+  const topMatchesText = ranked.map((r,i)=>`${i+1}. ${r.title} — ${r.score}%`).join("\n");
+  m2cSaveProfile(topMatchesText).catch(err=>{
+    const status=document.getElementById("saveStatus");
+    if(status){status.textContent=err.message;status.className="save-status err";}
+    m2cSetCheckoutReady(false);
+    console.error(err);
+  });
+
+  const avg=Math.round(ranked.slice(0,3).reduce((a,b)=>a+b.score,0)/3);
+  const top=ranked[0]?.title||"—";
+  const skillCount=p.skills.length;
+  document.getElementById("summary").style.display="grid";
+  document.getElementById("summary").innerHTML=`
+    <div class="kpi"><div class="n">${avg}%</div><div class="l">Average top-3 match</div></div>
+    <div class="kpi"><div class="n">${skillCount}</div><div class="l">Matched skill signals</div></div>
+    <div class="kpi"><div class="n">${top}</div><div class="l">Strongest match</div></div>
+  `;
+  const out=document.getElementById("results"); out.innerHTML="";
+
+  const cta=document.getElementById("blueprintCta");
+  if(cta){cta.style.display="block";}
+
+  ranked.forEach((r,i)=>{
+    const strengths=r.matched.length?r.matched.slice(0,5):r.skills.slice(0,3);
+    const gaps=gapList(r,p);
+    const div=document.createElement("div"); div.className="result";
+    div.innerHTML=`
+      <div class="rhead">
+        <div><div class="rtitle">${i+1}. ${r.title}</div><div class="small">Estimated market range: ${r.salary}</div></div>
+        <div class="score">${r.score}% match</div>
+      </div>
+      <div class="bar"><div class="fill" style="width:${r.score}%"></div></div>
+      <div class="meta">${strengths.map(s=>`<span class="tag">${titleize(s)}</span>`).join("")}</div>
+      <div class="cols">
+        <div class="box"><h4>Why you may fit</h4><ul>${strengths.map(s=>`<li class="small">Your profile shows ${titleize(s)} experience.</li>`).join("")}</ul></div>
+        <div class="box"><h4>Likely gaps / next steps</h4><ul>${gaps.map(g=>`<li class="small">${g}</li>`).join("")}</ul></div>
+      </div>
+      <div class="box" style="margin-top:12px"><h4>Helpful credentials</h4><div class="small">${r.certs.join(" • ")}</div></div>
+    `;
+    out.appendChild(div);
+  });
+}
+document.getElementById("profileForm").addEventListener("submit",e=>{e.preventDefault();render();});
+function downloadReport(){
+  if(!window.currentReport){alert("Generate your career matches first.");return;}
+  const r=window.currentReport;
+  const lines=[];
+  lines.push("MOS2CAREER CAREER TRANSLATOR REPORT");
+  lines.push("================================");
+  lines.push(`Branch: ${r.profile.branch}`);
+  lines.push(`Specialty: ${r.profile.specialty}`);
+  lines.push(`Rank: ${r.profile.rank}`);
+  lines.push(`Years: ${r.profile.years}`);
+  lines.push(`Detected skills: ${r.profile.skills.join(", ") || "None selected"}`);
+  lines.push("");
+  r.results.forEach((x,i)=>{
+    lines.push(`${i+1}. ${x.title} — ${x.score}% match`);
+    lines.push(`Estimated market range: ${x.salary}`);
+    lines.push(`Helpful credentials: ${x.certs.join(", ")}`);
+    lines.push(`General gap note: ${x.gap}`);
+    lines.push("");
+  });
+  lines.push("Prototype guidance only. Verify current employer requirements, salary ranges, licensing, education, and clearance requirements before making career decisions.");
+  const blob=new Blob([lines.join("\n")],{type:"text/plain"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="MOS2Career_Career_Translator_Report.txt";a.click();URL.revokeObjectURL(a.href);
+}
+
+
+function m2cSubmissionId(){
+  const rand=Math.random().toString(36).slice(2,8).toUpperCase();
+  return "M2C-"+Date.now().toString(36).toUpperCase()+"-"+rand;
+}
+function m2cEncode(data){ return new URLSearchParams(data).toString(); }
+async function m2cSaveProfile(topMatchesText){
+  const form=document.querySelector('form[name="career-translator"]');
+  if(!form) return true;
+  const first=document.getElementById("firstName");
+  const last=document.getElementById("lastName");
+  const email=document.getElementById("email");
+  if(first && !first.value.trim()){ first.focus(); throw new Error("Please enter your first name."); }
+  if(last && !last.value.trim()){ last.focus(); throw new Error("Please enter your last name."); }
+  if(email && !email.checkValidity()){ email.reportValidity(); throw new Error("Please enter a valid email address."); }
+
+  let sid=document.getElementById("submissionId");
+  if(sid && !sid.value) sid.value=m2cSubmissionId();
+  const tm=document.getElementById("topMatchesHidden");
+  if(tm) tm.value=topMatchesText || "";
+
+  const data=new FormData(form);
+  if(!data.get("form-name")) data.set("form-name","career-translator");
+  const status=document.getElementById("saveStatus");
+  if(status){status.textContent="Saving your profile…";status.className="save-status";}
+  const resp=await fetch("/",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:new URLSearchParams(data).toString()
+  });
+  if(!resp.ok) throw new Error("We couldn't save your profile. Please try again.");
+  if(status){
+    const sidVal=document.getElementById("submissionId")?.value || "";
+    status.textContent="Profile saved. Submission ID: " + sidVal;
+    m2cSetCheckoutReady(true);
+    status.className="save-status ok";
+  }
+  return true;
+}
+
+
+
+const careerForm=document.querySelector('form[name="career-translator"]');
+if(careerForm){
+  careerForm.addEventListener("submit",e=>e.preventDefault());
+}
+
+
+
+const M2C_STRIPE_PAYMENT_LINK = "https://buy.stripe.com/5kQdR82SHd1h4a5gE85J600";
+
+function m2cBuildStripeUrl(){
+  const sid=document.getElementById("submissionId")?.value?.trim() || "";
+  const email=document.getElementById("email")?.value?.trim() || "";
+  if(!sid || !email) return null;
+
+  const url=new URL(M2C_STRIPE_PAYMENT_LINK);
+  url.searchParams.set("client_reference_id", sid);
+  // Stripe Payment Links supports prefilling email. Keep it editable at checkout for compatibility.
+  url.searchParams.set("prefilled_email", email);
+  return url.toString();
+}
+
+function m2cSetCheckoutReady(ready){
+  const btn=document.getElementById("blueprintCheckoutBtn");
+  if(!btn) return;
+  if(ready){
+    const checkoutUrl=m2cBuildStripeUrl();
+    if(checkoutUrl){
+      btn.href=checkoutUrl;
+      btn.classList.remove("is-disabled");
+      btn.classList.add("is-ready");
+      btn.setAttribute("aria-disabled","false");
+      return;
+    }
+  }
+  btn.href="#";
+  btn.classList.add("is-disabled");
+  btn.classList.remove("is-ready");
+  btn.setAttribute("aria-disabled","true");
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  m2cSetCheckoutReady(false);
+  const btn=document.getElementById("blueprintCheckoutBtn");
+  if(btn){
+    btn.addEventListener("click",(e)=>{
+      if(btn.classList.contains("is-disabled")){
+        e.preventDefault();
+        const status=document.getElementById("saveStatus");
+        if(status){
+          status.textContent="Save your profile successfully before opening checkout.";
+          status.className="save-status err";
+        }
+      }
+    });
+  }
+});
+
+</script>
+</body>
+</html>
