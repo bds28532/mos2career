@@ -1,4 +1,5 @@
 import { getStore } from "@netlify/blobs";
+import { buildBlueprintPDF } from "./create-blueprint-pdf.mjs";
 import {
   generateCompleteCareerBlueprint,
 } from "./generate-blueprint.mjs";
