@@ -7,17 +7,13 @@ const openai = new OpenAI({
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
-    headers: {
-      "Content-Type": "application/json"
-    }
+    headers: { "Content-Type": "application/json" }
   });
 }
 
 function cleanProfile(profile = {}) {
   return {
     submissionId: profile.submissionId || "",
-    name: profile.name || "",
-    email: profile.email || "",
     branch: profile.branch || "",
     militarySpecialty:
       profile.militarySpecialty ||
@@ -27,32 +23,20 @@ function cleanProfile(profile = {}) {
       profile.afsc ||
       "",
     rank: profile.rank || "",
-    yearsOfService:
-      profile.yearsOfService ||
-      profile.years ||
-      "",
+    yearsOfService: profile.yearsOfService || profile.years || "",
     education: profile.education || "",
     clearance: profile.clearance || "",
-    careerGoal:
-      profile.careerGoal ||
-      profile.goal ||
-      "",
-    workSetup:
-      profile.workSetup ||
-      profile.workPreference ||
-      "",
+    careerGoal: profile.careerGoal || profile.goal || "",
+    workSetup: profile.workSetup || profile.workPreference || "",
     skills: profile.skills || "",
-    duties: profile.duties || "",
-    translatorMatches:
-      profile.translatorMatches ||
-      profile.topMatches ||
-      []
+    duties: profile.duties || ""
   };
 }
 
-const blueprintSchema = {
+const phaseOneSchema = {
   type: "object",
   additionalProperties: false,
+
   properties: {
     submissionId: {
       type: "string"
@@ -66,71 +50,57 @@ const blueprintSchema = {
       type: "string"
     },
 
-    skillTranslations: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          militarySkill: {
-            type: "string"
-          },
-          civilianTranslation: {
-            type: "string"
-          },
-          businessValue: {
-            type: "string"
-          }
-        },
-        required: [
-          "militarySkill",
-          "civilianTranslation",
-          "businessValue"
-        ]
-      }
-    },
-
     careerMatches: {
       type: "array",
       minItems: 10,
       maxItems: 10,
+
       items: {
         type: "object",
         additionalProperties: false,
+
         properties: {
           rank: {
             type: "integer"
           },
+
           title: {
             type: "string"
           },
+
           fitScore: {
             type: "integer",
             minimum: 0,
             maximum: 100
           },
+
           compensation: {
             type: "string"
           },
+
           whyItFits: {
             type: "string"
           },
+
           transferableSkills: {
             type: "array",
             items: {
               type: "string"
             }
           },
+
           gaps: {
             type: "array",
             items: {
               type: "string"
             }
           },
+
           nextAction: {
             type: "string"
           }
         },
+
         required: [
           "rank",
           "title",
@@ -142,141 +112,6 @@ const blueprintSchema = {
           "nextAction"
         ]
       }
-    },
-
-    qualificationGaps: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          gap: {
-            type: "string"
-          },
-          importance: {
-            type: "string"
-          },
-          recommendedAction: {
-            type: "string"
-          }
-        },
-        required: [
-          "gap",
-          "importance",
-          "recommendedAction"
-        ]
-      }
-    },
-
-    certificationStrategy: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          certification: {
-            type: "string"
-          },
-          priority: {
-            type: "string"
-          },
-          rationale: {
-            type: "string"
-          }
-        },
-        required: [
-          "certification",
-          "priority",
-          "rationale"
-        ]
-      }
-    },
-
-    compensationStrategy: {
-      type: "string"
-    },
-
-    targetEmployers: {
-      type: "array",
-      items: {
-        type: "object",
-        additionalProperties: false,
-        properties: {
-          employer: {
-            type: "string"
-          },
-          reason: {
-            type: "string"
-          },
-          targetRoles: {
-            type: "array",
-            items: {
-              type: "string"
-            }
-          }
-        },
-        required: [
-          "employer",
-          "reason",
-          "targetRoles"
-        ]
-      }
-    },
-
-    resumeStrategy: {
-      type: "string"
-    },
-
-    linkedinStrategy: {
-      type: "string"
-    },
-
-    interviewPrep: {
-      type: "array",
-      items: {
-        type: "string"
-      }
-    },
-
-    ninetyDayPlan: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        days1to30: {
-          type: "array",
-          items: {
-            type: "string"
-          }
-        },
-        days31to60: {
-          type: "array",
-          items: {
-            type: "string"
-          }
-        },
-        days61to90: {
-          type: "array",
-          items: {
-            type: "string"
-          }
-        }
-      },
-      required: [
-        "days1to30",
-        "days31to60",
-        "days61to90"
-      ]
-    },
-
-    finalRecommendations: {
-      type: "array",
-      items: {
-        type: "string"
-      }
-    },
-
-    disclaimer: {
-      type: "string"
     }
   },
 
@@ -284,22 +119,11 @@ const blueprintSchema = {
     "submissionId",
     "executiveAssessment",
     "careerPositioningStatement",
-    "skillTranslations",
-    "careerMatches",
-    "qualificationGaps",
-    "certificationStrategy",
-    "compensationStrategy",
-    "targetEmployers",
-    "resumeStrategy",
-    "linkedinStrategy",
-    "interviewPrep",
-    "ninetyDayPlan",
-    "finalRecommendations",
-    "disclaimer"
+    "careerMatches"
   ]
 };
 
-export async function generateCareerBlueprint(profile) {
+export async function generateCareerBlueprintPhaseOne(profile) {
   if (!process.env.OPENAI_API_KEY) {
     throw new Error("OPENAI_API_KEY is not configured");
   }
@@ -307,86 +131,72 @@ export async function generateCareerBlueprint(profile) {
   const cleanedProfile = cleanProfile(profile);
 
   const response = await openai.responses.create({
-    model: "gpt-5.5",
+    model: "gpt-5.6-terra",
+
+    reasoning: {
+      effort: "low"
+    },
 
     instructions: `
-You are the MOS2Career Career Blueprint engine.
+You are the MOS2Career military-to-civilian career analysis engine.
 
-Create a professional military-to-civilian career transition assessment using
-ONLY the information supplied in the customer's profile.
+Create Phase 1 of a Personalized Career Blueprint.
 
-Important rules:
+Use only information supplied in the customer's profile.
 
-1. Do not invent military duties, certifications, degrees, qualifications,
-   achievements, leadership responsibilities, equipment experience, clearance
-   details, metrics, or accomplishments.
+RULES:
 
-2. When information is not supplied, clearly frame recommendations as
-   possibilities or areas the customer should verify.
+- Do not invent military duties, qualifications, certifications,
+  degrees, achievements, leadership responsibilities, metrics,
+  equipment experience, or clearance details.
 
-3. Translate military experience into terminology that civilian recruiters and
-   hiring managers understand.
+- Translate military experience into terminology civilian recruiters
+  and hiring managers understand.
 
-4. Career fit scores are estimates of alignment only. They are not guarantees
-   of interviews, employment, hiring, salary, promotion, or career success.
+- Produce exactly 10 civilian career matches.
 
-5. Compensation ranges are planning estimates and can vary significantly by
-   geography, industry, employer, experience, clearance requirements, and
-   economic conditions.
+- Rank the career matches from strongest to weakest.
 
-6. Do not request, infer, reproduce, or encourage disclosure of classified,
-   Controlled Unclassified Information (CUI), export-controlled information,
-   sensitive operational information, weapons-system details, vulnerabilities,
-   mission details, or other protected military information.
+- Fit scores represent estimated career alignment only and do not
+  guarantee hiring.
 
-7. Treat security clearance information only as a broad career qualification.
-   Do not request or discuss classified access, programs, compartments,
-   missions, systems, or operational details.
+- Compensation is a planning estimate only and may vary by location,
+  employer, industry, experience and other factors.
 
-8. Produce exactly 10 civilian career matches ranked from strongest to weakest.
+- Keep each career-match explanation concise.
 
-9. Make the Blueprint practical. Each recommended career path should explain
-   why it fits, transferable skills, likely gaps, compensation considerations,
-   and the customer's next action.
+- Do not request or disclose classified information, CUI,
+  export-controlled information, operational information,
+  vulnerabilities, weapons-system details, mission details,
+  or other protected military information.
 
-10. Recommendations should be realistic for a U.S. military veteran
-    transitioning into civilian employment.
+- Treat security clearance only as a broad career qualification.
 
-11. Employer suggestions are examples of organizations the customer may
-    research. Do not imply the employer is currently hiring unless that
-    information has been independently verified.
+- Employer hiring status is outside the scope of this phase.
 
-12. Certification recommendations must be relevant to the target career and
-    should not be represented as mandatory unless they are legally or
-    professionally required.
-
-13. Return only information that complies with the supplied JSON schema.
+Return only the JSON required by the supplied schema.
 `,
 
-    input: `
-Generate a MOS2Career Personalized Career Blueprint for this customer profile:
-
-${JSON.stringify(cleanedProfile, null, 2)}
-`,
+    input: JSON.stringify(cleanedProfile),
 
     text: {
       format: {
         type: "json_schema",
-        name: "mos2career_blueprint",
+        name: "mos2career_phase_one",
         strict: true,
-        schema: blueprintSchema
+        schema: phaseOneSchema
       }
     }
   });
 
   if (!response.output_text) {
-    throw new Error("OpenAI returned an empty Blueprint response");
+    throw new Error("OpenAI returned an empty response");
   }
 
   const blueprint = JSON.parse(response.output_text);
 
   console.log(
-    "MOS2Career BLUEPRINT GENERATED:",
+    "MOS2Career PHASE 1 GENERATED:",
     cleanedProfile.submissionId || "test-profile"
   );
 
@@ -395,62 +205,53 @@ ${JSON.stringify(cleanedProfile, null, 2)}
 
 export default async function handler(req) {
   try {
-    // ----------------------------------------------------
-    // 1. Only allow POST requests
-    // ----------------------------------------------------
-
+    // Only POST requests are allowed.
     if (req.method !== "POST") {
       return jsonResponse(
-        {
-          error: "Method not allowed"
-        },
+        { error: "Method not allowed" },
         405
       );
     }
 
-    // ----------------------------------------------------
-    // 2. Protect temporary public test endpoint
-    // ----------------------------------------------------
-
-    const expectedSecret = process.env.BLUEPRINT_TEST_SECRET;
+    // Temporary test-endpoint protection.
+    const expectedSecret =
+      process.env.BLUEPRINT_TEST_SECRET;
 
     if (!expectedSecret) {
       return jsonResponse(
         {
-          error: "BLUEPRINT_TEST_SECRET is not configured"
+          error:
+            "BLUEPRINT_TEST_SECRET is not configured"
         },
         500
       );
     }
 
-    const authHeader = req.headers.get("authorization");
+    const authHeader =
+      req.headers.get("authorization");
 
-    if (authHeader !== `Bearer ${expectedSecret}`) {
+    if (
+      authHeader !==
+      `Bearer ${expectedSecret}`
+    ) {
       return jsonResponse(
-        {
-          error: "Unauthorized"
-        },
+        { error: "Unauthorized" },
         401
       );
     }
 
-    // ----------------------------------------------------
-    // 3. Verify OpenAI configuration
-    // ----------------------------------------------------
-
+    // Confirm OpenAI is configured.
     if (!process.env.OPENAI_API_KEY) {
       return jsonResponse(
         {
-          error: "OPENAI_API_KEY is not configured"
+          error:
+            "OPENAI_API_KEY is not configured"
         },
         500
       );
     }
 
-    // ----------------------------------------------------
-    // 4. Read profile sent in POST body
-    // ----------------------------------------------------
-
+    // Read request.
     let body;
 
     try {
@@ -466,7 +267,10 @@ export default async function handler(req) {
 
     const profile = body?.profile;
 
-    if (!profile || typeof profile !== "object") {
+    if (
+      !profile ||
+      typeof profile !== "object"
+    ) {
       return jsonResponse(
         {
           error: "A profile object is required"
@@ -475,35 +279,29 @@ export default async function handler(req) {
       );
     }
 
-    // ----------------------------------------------------
-    // 5. Generate Blueprint
-    // ----------------------------------------------------
-
-    const blueprint = await generateCareerBlueprint(profile);
-
-    // ----------------------------------------------------
-    // 6. Return generated Blueprint
-    // ----------------------------------------------------
+    // Generate Phase 1.
+    const blueprint =
+      await generateCareerBlueprintPhaseOne(
+        profile
+      );
 
     return jsonResponse({
       success: true,
+      phase: 1,
       blueprint
     });
 
   } catch (error) {
     console.error(
-      "MOS2Career Blueprint generation error:",
+      "MOS2Career Phase 1 error:",
       error?.message || "Unknown error"
     );
 
     return jsonResponse(
       {
         success: false,
-        error: "Blueprint generation failed",
-        detail:
-          process.env.NODE_ENV === "development"
-            ? error?.message
-            : undefined
+        error:
+          "Phase 1 Blueprint generation failed"
       },
       500
     );
