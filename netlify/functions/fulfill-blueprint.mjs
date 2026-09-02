@@ -53,7 +53,10 @@ export default async function handler(request) {
         "MOS2Career fulfillment authorization failed"
       );
 
-      return;
+      return jsonResponse(
+        { error: "Unauthorized" },
+        401
+      );
     }
 
     /*
@@ -95,9 +98,33 @@ export default async function handler(request) {
       );
     }
 
+    const customerEmail =
+      profile?.email?.trim();
+
+    if (!customerEmail) {
+      throw new Error(
+        `MOS2Career fulfillment missing customer email: ${submissionId}`
+      );
+    }
+
     /*
      * ------------------------------------------------------
-     * 4. STORES
+     * 4. ENVIRONMENT
+     * ------------------------------------------------------
+     */
+
+    const resendApiKey =
+      process.env.RESEND_API_KEY;
+
+    if (!resendApiKey) {
+      throw new Error(
+        "RESEND_API_KEY is not configured"
+      );
+    }
+
+    /*
+     * ------------------------------------------------------
+     * 5. STORES
      * ------------------------------------------------------
      */
 
@@ -111,6 +138,11 @@ export default async function handler(request) {
         "mos2career-blueprints"
       );
 
+    const pdfStore =
+      getStore(
+        "mos2career-blueprint-pdfs"
+      );
+
     const fulfillmentKey =
       `blueprint-${String(
         submissionId
@@ -120,7 +152,7 @@ export default async function handler(request) {
 
     /*
      * ------------------------------------------------------
-     * 5. CHECK EXISTING FULFILLMENT
+     * 6. CHECK EXISTING FULFILLMENT
      * ------------------------------------------------------
      */
 
@@ -135,10 +167,10 @@ export default async function handler(request) {
 
     if (
       existing?.status ===
-      "generated"
+      "delivered"
     ) {
       console.log(
-        `MOS2Career FULFILLMENT ALREADY COMPLETE: ${submissionId}`
+        `MOS2Career FULFILLMENT ALREADY DELIVERED: ${submissionId}`
       );
 
       return;
@@ -157,13 +189,8 @@ export default async function handler(request) {
 
     /*
      * ------------------------------------------------------
-     * 6. CLAIM JOB
+     * 7. CLAIM JOB
      * ------------------------------------------------------
-     *
-     * If no record exists, create one atomically.
-     *
-     * If a previous attempt failed, we intentionally
-     * overwrite that failed status and retry.
      */
 
     if (!existing) {
@@ -172,13 +199,18 @@ export default async function handler(request) {
           fulfillmentKey,
           {
             status: "processing",
+
             submissionId,
+
             checkoutSessionId:
               checkoutSessionId || null,
+
             eventId:
               eventId || null,
+
             mode:
               mode || null,
+
             startedAt:
               new Date().toISOString(),
           },
@@ -198,15 +230,23 @@ export default async function handler(request) {
       await fulfillmentStore.setJSON(
         fulfillmentKey,
         {
+          ...existing,
+
           status: "processing",
+
           submissionId,
+
           checkoutSessionId:
             checkoutSessionId || null,
+
           eventId:
             eventId || null,
+
           mode:
             mode || null,
-          retryingPreviousFailure: true,
+
+          retryingPreviousAttempt: true,
+
           startedAt:
             new Date().toISOString(),
         }
@@ -220,25 +260,60 @@ export default async function handler(request) {
     try {
       /*
        * ----------------------------------------------------
-       * 7. GENERATE COMPLETE BLUEPRINT
+       * 8. LOAD EXISTING BLUEPRINT IF AVAILABLE
        * ----------------------------------------------------
        */
 
-      const completeBlueprint =
-        await generateCompleteCareerBlueprint({
-          ...profile,
-          submissionId,
-        });
+      let storedBlueprint =
+        await blueprintStore.get(
+          fulfillmentKey,
+          {
+            type: "json",
+            consistency: "strong",
+          }
+        );
+
+      let completeBlueprint;
 
       /*
-       * ----------------------------------------------------
-       * 8. STORE COMPLETE BLUEPRINT
-       * ----------------------------------------------------
+       * If a Blueprint was already generated during a
+       * previous attempt, reuse it instead of charging for
+       * another OpenAI generation.
        */
 
-      await blueprintStore.setJSON(
-        fulfillmentKey,
-        {
+      if (
+        storedBlueprint?.blueprint
+      ) {
+        completeBlueprint =
+          storedBlueprint.blueprint;
+
+        console.log(
+          `MOS2Career EXISTING BLUEPRINT REUSED: ${submissionId}`
+        );
+      } else {
+        /*
+         * --------------------------------------------------
+         * 9. GENERATE COMPLETE BLUEPRINT
+         * --------------------------------------------------
+         */
+
+        completeBlueprint =
+          await generateCompleteCareerBlueprint({
+            ...profile,
+            submissionId,
+          });
+
+        console.log(
+          `MOS2Career COMPLETE BLUEPRINT GENERATED: ${submissionId}`
+        );
+
+        /*
+         * --------------------------------------------------
+         * 10. STORE COMPLETE BLUEPRINT
+         * --------------------------------------------------
+         */
+
+        storedBlueprint = {
           submissionId,
 
           checkoutSessionId:
@@ -255,12 +330,21 @@ export default async function handler(request) {
 
           blueprint:
             completeBlueprint,
-        }
-      );
+        };
+
+        await blueprintStore.setJSON(
+          fulfillmentKey,
+          storedBlueprint
+        );
+
+        console.log(
+          `MOS2Career COMPLETE BLUEPRINT STORED: ${submissionId}`
+        );
+      }
 
       /*
        * ----------------------------------------------------
-       * 9. MARK GENERATED
+       * 11. MARK GENERATED
        * ----------------------------------------------------
        */
 
@@ -268,6 +352,7 @@ export default async function handler(request) {
         fulfillmentKey,
         {
           status: "generated",
+
           submissionId,
 
           checkoutSessionId:
@@ -279,33 +364,383 @@ export default async function handler(request) {
           mode:
             mode || null,
 
-          completedAt:
+          generatedAt:
+            storedBlueprint?.generatedAt ||
             new Date().toISOString(),
         }
       );
 
+      /*
+       * ----------------------------------------------------
+       * 12. CREATE PDF
+       * ----------------------------------------------------
+       *
+       * IMPORTANT:
+       *
+       * buildBlueprintPDF previously worked using the
+       * stored Blueprint record, not only the raw
+       * completeBlueprint object.
+       */
+
       console.log(
-        `MOS2Career COMPLETE BLUEPRINT STORED: ${submissionId}`
+        `MOS2Career PDF CREATION STARTED: ${submissionId}`
+      );
+
+      const pdfBytes =
+        await buildBlueprintPDF(
+          storedBlueprint
+        );
+
+      if (
+        !pdfBytes ||
+        !pdfBytes.length
+      ) {
+        throw new Error(
+          `MOS2Career PDF generation returned no data: ${submissionId}`
+        );
+      }
+
+      const pdfFilename =
+        `MOS2Career-${submissionId}.pdf`;
+
+      /*
+       * ----------------------------------------------------
+       * 13. STORE PDF
+       * ----------------------------------------------------
+       */
+
+      await pdfStore.set(
+        fulfillmentKey,
+        pdfBytes,
+        {
+          metadata: {
+            submissionId,
+
+            filename:
+              pdfFilename,
+
+            contentType:
+              "application/pdf",
+
+            generatedAt:
+              new Date().toISOString(),
+          },
+        }
+      );
+
+      console.log(
+        `MOS2Career PDF STORED: ${submissionId}`
       );
 
       /*
-       * NEXT STAGE:
-       *
-       * createBlueprintPDF(...)
-       * emailBlueprint(...)
+       * ----------------------------------------------------
+       * 14. PREPARE EMAIL ATTACHMENT
+       * ----------------------------------------------------
        */
+
+      const pdfBase64 =
+        Buffer.from(
+          pdfBytes
+        ).toString("base64");
+
+      const emailIdempotencyKey =
+        `career-blueprint/${String(
+          submissionId
+        )
+          .trim()
+          .toUpperCase()}`;
+
+      /*
+       * ----------------------------------------------------
+       * 15. SEND EMAIL WITH RESEND
+       * ----------------------------------------------------
+       */
+
+      console.log(
+        `MOS2Career EMAIL DELIVERY STARTED: ${submissionId}`
+      );
+
+      const resendResponse =
+        await fetch(
+          "https://api.resend.com/emails",
+          {
+            method: "POST",
+
+            headers: {
+              Authorization:
+                `Bearer ${resendApiKey}`,
+
+              "Content-Type":
+                "application/json",
+
+              "Idempotency-Key":
+                emailIdempotencyKey,
+            },
+
+            body: JSON.stringify({
+              from:
+                "MOS2Career <blueprints@mos2career.com>",
+
+              to: [
+                customerEmail,
+              ],
+
+              subject:
+                "Your MOS2Career Personalized Career Blueprint",
+
+              text:
+`Your MOS2Career Personalized Career Blueprint is ready.
+
+Thank you for using MOS2Career.
+
+Your personalized military-to-civilian Career Blueprint is attached to this email.
+
+Reference ID: ${submissionId}
+
+Your Blueprint includes career matches, transferable-skill translations, qualification gaps, certification recommendations, compensation guidance, resume strategy, interview preparation, and a 90-day transition plan.
+
+Keep this email for your records so you can reference your MOS2Career ID if you ever need support.
+
+MOS2Career
+Military Experience. Civilian Opportunity.
+
+Career matches and compensation figures are planning estimates. MOS2Career does not guarantee employment, compensation, certification eligibility, licensing, clearance eligibility, or hiring outcomes.`,
+
+              html: `
+                <div
+                  style="
+                    font-family:
+                      Arial,
+                      Helvetica,
+                      sans-serif;
+                    max-width:640px;
+                    margin:0 auto;
+                    padding:24px;
+                    line-height:1.6;
+                    color:#1f2937;
+                  "
+                >
+                  <h2
+                    style="
+                      margin-bottom:8px;
+                    "
+                  >
+                    Your MOS2Career Career Blueprint is ready
+                  </h2>
+
+                  <p>
+                    Thank you for using
+                    <strong>MOS2Career</strong>.
+                  </p>
+
+                  <p>
+                    Your personalized
+                    military-to-civilian
+                    Career Blueprint is attached
+                    to this email.
+                  </p>
+
+                  <div
+                    style="
+                      margin:20px 0;
+                      padding:16px;
+                      background:#f3f4f6;
+                      border-radius:8px;
+                    "
+                  >
+                    <strong>
+                      Reference ID:
+                    </strong>
+
+                    ${submissionId}
+                  </div>
+
+                  <p>
+                    Your Blueprint includes:
+                  </p>
+
+                  <ul>
+                    <li>
+                      Top civilian career matches
+                    </li>
+
+                    <li>
+                      Military-to-civilian
+                      skill translations
+                    </li>
+
+                    <li>
+                      Qualification gap analysis
+                    </li>
+
+                    <li>
+                      Certification and
+                      education strategy
+                    </li>
+
+                    <li>
+                      Compensation guidance
+                    </li>
+
+                    <li>
+                      Resume and LinkedIn strategy
+                    </li>
+
+                    <li>
+                      Interview preparation
+                    </li>
+
+                    <li>
+                      A personalized
+                      90-day transition plan
+                    </li>
+                  </ul>
+
+                  <p>
+                    Keep this email for your
+                    records so you can reference
+                    your MOS2Career ID if you
+                    ever need support.
+                  </p>
+
+                  <p>
+                    — MOS2Career
+                    <br>
+                    Military Experience.
+                    Civilian Opportunity.
+                  </p>
+
+                  <hr
+                    style="
+                      margin:28px 0 16px;
+                      border:0;
+                      border-top:
+                        1px solid #d1d5db;
+                    "
+                  >
+
+                  <p
+                    style="
+                      font-size:12px;
+                      color:#6b7280;
+                    "
+                  >
+                    Career matches,
+                    compensation figures,
+                    credential recommendations,
+                    and other guidance are
+                    planning estimates.
+                    MOS2Career does not guarantee
+                    employment, compensation,
+                    certification eligibility,
+                    licensing,
+                    clearance eligibility,
+                    or hiring outcomes.
+                  </p>
+                </div>
+              `,
+
+              attachments: [
+                {
+                  filename:
+                    pdfFilename,
+
+                  content:
+                    pdfBase64,
+                },
+              ],
+            }),
+          }
+        );
+
+      let resendResult;
+
+      try {
+        resendResult =
+          await resendResponse.json();
+      } catch {
+        resendResult = {};
+      }
+
+      if (
+        !resendResponse.ok
+      ) {
+        throw new Error(
+          `Resend delivery failed: ${
+            resendResult?.message ||
+            resendResult?.error ||
+            `HTTP ${resendResponse.status}`
+          }`
+        );
+      }
+
+      console.log(
+        `MOS2Career EMAIL SENT: ${submissionId}`
+      );
+
+      /*
+       * ----------------------------------------------------
+       * 16. MARK DELIVERED
+       * ----------------------------------------------------
+       */
+
+      await fulfillmentStore.setJSON(
+        fulfillmentKey,
+        {
+          status: "delivered",
+
+          submissionId,
+
+          checkoutSessionId:
+            checkoutSessionId || null,
+
+          eventId:
+            eventId || null,
+
+          mode:
+            mode || null,
+
+          generatedAt:
+            storedBlueprint?.generatedAt ||
+            null,
+
+          pdfGeneratedAt:
+            new Date().toISOString(),
+
+          deliveredAt:
+            new Date().toISOString(),
+
+          customerEmail,
+
+          pdfFilename,
+
+          resendEmailId:
+            resendResult?.id ||
+            null,
+
+          emailIdempotencyKey,
+        }
+      );
+
+      console.log(
+        `MOS2Career FULFILLMENT DELIVERED: ${submissionId}`
+      );
     } catch (error) {
       console.error(
-        `MOS2Career COMPLETE BLUEPRINT FAILED: ${submissionId}`,
+        `MOS2Career COMPLETE FULFILLMENT FAILED: ${submissionId}`,
         error?.message ||
           "Unknown error"
       );
 
       /*
-       * Keep a failure record.
+       * ----------------------------------------------------
+       * 17. SAVE FAILURE
+       * ----------------------------------------------------
        *
-       * Unlike the old version, a future Stripe
-       * retry can retry a failed record.
+       * A future retry can resume.
+       *
+       * The stored Blueprint remains available, so if AI
+       * generation already succeeded we can reuse it.
        */
 
       await fulfillmentStore.setJSON(
@@ -329,7 +764,7 @@ export default async function handler(request) {
 
           error:
             error?.message ||
-            "Unknown generation error",
+            "Unknown fulfillment error",
         }
       );
 
