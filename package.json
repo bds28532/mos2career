@@ -1,8 +1,11 @@
 {
-  "name": "mos2career-netlify",
+  "name": "mos2career",
+  "version": "1.0.0",
+  "description": "MOS2Career military-to-civilian career transition platform",
   "private": true,
-  "version": "2.3.0",
+  "type": "module",
   "dependencies": {
+    "openai": "^5.0.0",
     "stripe": "^18.0.0"
   }
 }
