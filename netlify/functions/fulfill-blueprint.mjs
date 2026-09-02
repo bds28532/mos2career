@@ -128,8 +128,10 @@ export default async function handler(request) {
 
       const phaseOne =
         await generateCareerBlueprintPhaseOne(
-          profile
-        );
+          {
+          ...profile,
+          submissionId,
+        } );
 
       /*
        * Store generated Blueprint data.
