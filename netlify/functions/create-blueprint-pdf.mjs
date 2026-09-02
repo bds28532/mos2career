@@ -386,7 +386,7 @@ function createWriter(
   };
 }
 
-async function buildBlueprintPDF(
+export async function buildBlueprintPDF(
   storedRecord
 ) {
   const blueprint =
