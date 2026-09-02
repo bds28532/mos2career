@@ -1,14 +1,24 @@
 import { getStore } from "@netlify/blobs";
-import { generateCareerBlueprintPhaseOne } from "./generate-blueprint.mjs";
+import {
+  generateCompleteCareerBlueprint,
+} from "./generate-blueprint.mjs";
 
 const jsonResponse = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 
 export default async function handler(request) {
   try {
+    /*
+     * ------------------------------------------------------
+     * 1. ONLY POST
+     * ------------------------------------------------------
+     */
+
     if (request.method !== "POST") {
       return jsonResponse(
         { error: "Method not allowed" },
@@ -16,37 +26,49 @@ export default async function handler(request) {
       );
     }
 
+    /*
+     * ------------------------------------------------------
+     * 2. INTERNAL AUTHORIZATION
+     * ------------------------------------------------------
+     */
+
     const internalSecret =
       process.env.BLUEPRINT_INTERNAL_SECRET;
 
     if (!internalSecret) {
-      console.error(
+      throw new Error(
         "BLUEPRINT_INTERNAL_SECRET is not configured"
       );
-      return;
     }
 
     const authHeader =
       request.headers.get("authorization");
 
     if (
-      authHeader !== `Bearer ${internalSecret}`
+      authHeader !==
+      `Bearer ${internalSecret}`
     ) {
       console.error(
         "MOS2Career fulfillment authorization failed"
       );
+
       return;
     }
+
+    /*
+     * ------------------------------------------------------
+     * 3. READ JOB
+     * ------------------------------------------------------
+     */
 
     let body;
 
     try {
       body = await request.json();
     } catch {
-      console.error(
+      throw new Error(
         "MOS2Career fulfillment received invalid JSON"
       );
-      return;
     }
 
     const {
@@ -58,104 +80,187 @@ export default async function handler(request) {
     } = body || {};
 
     if (!submissionId) {
-      console.error(
+      throw new Error(
         "MOS2Career fulfillment missing submissionId"
       );
+    }
+
+    if (
+      !profile ||
+      typeof profile !== "object"
+    ) {
+      throw new Error(
+        `MOS2Career fulfillment missing profile: ${submissionId}`
+      );
+    }
+
+    /*
+     * ------------------------------------------------------
+     * 4. STORES
+     * ------------------------------------------------------
+     */
+
+    const fulfillmentStore =
+      getStore(
+        "mos2career-fulfillments"
+      );
+
+    const blueprintStore =
+      getStore(
+        "mos2career-blueprints"
+      );
+
+    const fulfillmentKey =
+      `blueprint-${String(
+        submissionId
+      )
+        .trim()
+        .toUpperCase()}`;
+
+    /*
+     * ------------------------------------------------------
+     * 5. CHECK EXISTING FULFILLMENT
+     * ------------------------------------------------------
+     */
+
+    const existing =
+      await fulfillmentStore.get(
+        fulfillmentKey,
+        {
+          type: "json",
+          consistency: "strong",
+        }
+      );
+
+    if (
+      existing?.data?.status ===
+      "generated"
+    ) {
+      console.log(
+        `MOS2Career FULFILLMENT ALREADY COMPLETE: ${submissionId}`
+      );
+
       return;
     }
 
-    if (!profile || typeof profile !== "object") {
-      console.error(
-        `MOS2Career fulfillment missing profile: ${submissionId}`
+    if (
+      existing?.data?.status ===
+      "processing"
+    ) {
+      console.log(
+        `MOS2Career FULFILLMENT ALREADY PROCESSING: ${submissionId}`
       );
+
       return;
     }
 
     /*
-     * --------------------------------------------
-     * IDEMPOTENCY / DUPLICATE PROTECTION
-     * --------------------------------------------
+     * ------------------------------------------------------
+     * 6. CLAIM JOB
+     * ------------------------------------------------------
      *
-     * We create a persistent claim using the
-     * submission ID.
+     * If no record exists, create one atomically.
      *
-     * onlyIfNew prevents two Stripe webhook
-     * deliveries from starting fulfillment twice.
+     * If a previous attempt failed, we intentionally
+     * overwrite that failed status and retry.
      */
 
-    const fulfillmentStore =
-      getStore("mos2career-fulfillments");
+    if (!existing) {
+      const claim =
+        await fulfillmentStore.setJSON(
+          fulfillmentKey,
+          {
+            status: "processing",
+            submissionId,
+            checkoutSessionId:
+              checkoutSessionId || null,
+            eventId:
+              eventId || null,
+            mode:
+              mode || null,
+            startedAt:
+              new Date().toISOString(),
+          },
+          {
+            onlyIfNew: true,
+          }
+        );
 
-    const fulfillmentKey =
-      `blueprint-${String(submissionId)
-        .trim()
-        .toUpperCase()}`;
+      if (!claim.modified) {
+        console.log(
+          `MOS2Career FULFILLMENT CLAIMED BY ANOTHER RUN: ${submissionId}`
+        );
 
-    const claim = await fulfillmentStore.setJSON(
-      fulfillmentKey,
-      {
-        status: "processing",
-        submissionId,
-        checkoutSessionId:
-          checkoutSessionId || null,
-        eventId: eventId || null,
-        mode: mode || null,
-        startedAt:
-          new Date().toISOString(),
-      },
-      {
-        onlyIfNew: true,
+        return;
       }
-    );
-
-    if (!claim.modified) {
-      console.log(
-        `MOS2Career FULFILLMENT ALREADY CLAIMED: ${submissionId}`
+    } else {
+      await fulfillmentStore.setJSON(
+        fulfillmentKey,
+        {
+          status: "processing",
+          submissionId,
+          checkoutSessionId:
+            checkoutSessionId || null,
+          eventId:
+            eventId || null,
+          mode:
+            mode || null,
+          retryingPreviousFailure: true,
+          startedAt:
+            new Date().toISOString(),
+        }
       );
-      return;
     }
 
     console.log(
-      `MOS2Career FULFILLMENT STARTED: ${submissionId}`
+      `MOS2Career COMPLETE FULFILLMENT STARTED: ${submissionId}`
     );
 
     try {
       /*
-       * --------------------------------------------
-       * GENERATE PHASE 1
-       * --------------------------------------------
+       * ----------------------------------------------------
+       * 7. GENERATE COMPLETE BLUEPRINT
+       * ----------------------------------------------------
        */
 
-      const phaseOne =
-        await generateCareerBlueprintPhaseOne(
-          {
+      const completeBlueprint =
+        await generateCompleteCareerBlueprint({
           ...profile,
           submissionId,
-        } );
+        });
 
       /*
-       * Store generated Blueprint data.
+       * ----------------------------------------------------
+       * 8. STORE COMPLETE BLUEPRINT
+       * ----------------------------------------------------
        */
-
-      const blueprintStore =
-        getStore("mos2career-blueprints");
 
       await blueprintStore.setJSON(
         fulfillmentKey,
         {
           submissionId,
+
           checkoutSessionId:
             checkoutSessionId || null,
+
+          eventId:
+            eventId || null,
+
+          mode:
+            mode || null,
 
           generatedAt:
             new Date().toISOString(),
 
-          phaseOne,
+          blueprint:
+            completeBlueprint,
         }
       );
 
       /*
-       * Update fulfillment status.
+       * ----------------------------------------------------
+       * 9. MARK GENERATED
+       * ----------------------------------------------------
        */
 
       await fulfillmentStore.setJSON(
@@ -163,50 +268,64 @@ export default async function handler(request) {
         {
           status: "generated",
           submissionId,
+
           checkoutSessionId:
             checkoutSessionId || null,
-          eventId: eventId || null,
-          mode: mode || null,
+
+          eventId:
+            eventId || null,
+
+          mode:
+            mode || null,
+
           completedAt:
             new Date().toISOString(),
         }
       );
 
       console.log(
-        `MOS2Career BLUEPRINT STORED: ${submissionId}`
+        `MOS2Career COMPLETE BLUEPRINT STORED: ${submissionId}`
       );
 
       /*
-       * NEXT STAGES:
+       * NEXT STAGE:
        *
-       * Generate remaining Blueprint sections
-       * Create PDF
-       * Email customer
-       *
-       * Those come after we prove this
-       * background workflow works.
+       * createBlueprintPDF(...)
+       * emailBlueprint(...)
        */
     } catch (error) {
       console.error(
-        `MOS2Career BLUEPRINT GENERATION FAILED: ${submissionId}`,
-        error?.message || "Unknown error"
+        `MOS2Career COMPLETE BLUEPRINT FAILED: ${submissionId}`,
+        error?.message ||
+          "Unknown error"
       );
 
       /*
-       * Record failure so we know what happened.
+       * Keep a failure record.
+       *
+       * Unlike the old version, a future Stripe
+       * retry can retry a failed record.
        */
 
       await fulfillmentStore.setJSON(
         fulfillmentKey,
         {
           status: "failed",
+
           submissionId,
+
           checkoutSessionId:
             checkoutSessionId || null,
-          eventId: eventId || null,
-          mode: mode || null,
+
+          eventId:
+            eventId || null,
+
+          mode:
+            mode || null,
+
           failedAt:
             new Date().toISOString(),
+
           error:
             error?.message ||
             "Unknown generation error",
@@ -218,14 +337,10 @@ export default async function handler(request) {
   } catch (error) {
     console.error(
       "MOS2Career fulfillment error:",
-      error?.message || "Unknown error"
+      error?.message ||
+        "Unknown error"
     );
 
-    /*
-     * Re-throwing allows Netlify Background
-     * Functions to treat this as a failed run
-     * and apply its retry behavior.
-     */
     throw error;
   }
 }
