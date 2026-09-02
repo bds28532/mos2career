@@ -1372,7 +1372,7 @@ export default async function handler(
         }
       );
 
-    if (!storedBlueprint?.data) {
+    if (!storedBlueprint) {
       return jsonResponse(
         {
           error:
@@ -1393,7 +1393,7 @@ export default async function handler(
 
     const pdfBytes =
       await buildBlueprintPDF(
-        storedBlueprint.data
+        storedBlueprint
       );
 
     /*
