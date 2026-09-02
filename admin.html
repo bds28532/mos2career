@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>MOS2Career Admin Dashboard</title>
+
+  <style>
+    :root {
+      --bg: #08111f;
+      --panel: #101c2d;
+      --panel-2: #162438;
+      --text: #f8fafc;
+      --muted: #9fb0c3;
+      --line: #2a3a50;
+      --accent: #4da3ff;
+      --success: #2ecc71;
+      --warning: #f4b942;
+      --danger: #ff6b6b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+      background:
+        linear-gradient(
+          180deg,
+          #07101d 0%,
+          #0b1626 100%
+        );
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(1000px, 92%);
+      margin: 0 auto;
+      padding: 40px 0 60px;
+    }
+
+    .brand {
+      margin-bottom: 28px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .brand p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow:
+        0 12px 30px
+        rgba(0, 0, 0, 0.22);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns:
+        1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    input {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 13px 18px;
+      background: var(--accent);
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .message {
+      margin-top: 18px;
+      color: var(--muted);
+      min-height: 22px;
+    }
+
+    .result {
+      margin-top: 26px;
+      display: none;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      letter-spacing: 0.04em;
+      background: var(--panel-2);
+    }
+
+    .status-delivered {
+      background:
+        rgba(46, 204, 113, 0.15);
+      color: var(--success);
+      border:
+        1px solid rgba(
+          46,
+          204,
+          113,
+          0.35
+        );
+    }
+
+    .status-generated,
+    .status-processing {
+      background:
+        rgba(244, 185, 66, 0.15);
+      color: var(--warning);
+      border:
+        1px solid rgba(
+          244,
+          185,
+          66,
+          0.35
+        );
+    }
+
+    .status-failed {
+      background:
+        rgba(255, 107, 107, 0.15);
+      color: var(--danger);
+      border:
+        1px solid rgba(
+          255,
+          107,
+          107,
+          0.35
+        );
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .item {
+      background: var(--panel-2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 15px;
+      min-height: 86px;
+    }
+
+    .item .label {
+      color: var(--muted);
+      font-size: 0.8rem;
+      margin-bottom: 8px;
+    }
+
+    .item .value {
+      word-break: break-word;
+      font-weight: 600;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    .yes {
+      color: var(--success);
+    }
+
+    .no {
+      color: var(--danger);
+    }
+
+    .error-box {
+      border-color:
+        rgba(255, 107, 107, 0.4);
+      background:
+        rgba(255, 107, 107, 0.08);
+    }
+
+    .small {
+      margin-top: 26px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    @media (
+      max-width: 760px
+    ) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wide {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="wrap">
+    <div class="brand">
+      <h1>MOS2Career Admin</h1>
+
+      <p>
+        Private order and fulfillment lookup
+      </p>
+    </div>
+
+    <section class="panel">
+      <form id="lookupForm">
+        <div class="form-grid">
+          <div class="field">
+            <label for="submissionId">
+              M2C Submission ID
+            </label>
+
+            <input
+              id="submissionId"
+              type="text"
+              placeholder="M2C-XXXXXXXX-XXXXXX"
+              autocomplete="off"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <label for="adminSecret">
+              Admin Secret
+            </label>
+
+            <input
+              id="adminSecret"
+              type="password"
+              placeholder="Admin password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+
+          <button
+            id="lookupButton"
+            type="submit"
+          >
+            Look Up Order
+          </button>
+        </div>
+      </form>
+
+      <div
+        id="message"
+        class="message"
+      ></div>
+
+      <section
+        id="result"
+        class="result"
+      >
+        <div class="status-row">
+          <div>
+            <strong id="resultId">
+              —
+            </strong>
+          </div>
+
+          <div
+            id="statusBadge"
+            class="status-badge"
+          >
+            UNKNOWN
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="item">
+            <div class="label">
+              Environment
+            </div>
+
+            <div
+              id="mode"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">
+              Customer Email
+            </div>
+
+            <div
+              id="customerEmail"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">
+              Blueprint Exists
+            </div>
+
+            <div
+              id="blueprintExists"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">
+              PDF Exists
+            </div>
+
+            <div
+              id="pdfExists"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">
+              Generated
+            </div>
+
+            <div
+              id="generatedAt"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">
+              Delivered
+            </div>
+
+            <div
+              id="deliveredAt"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">
+              PDF Filename
+            </div>
+
+            <div
+              id="pdfFilename"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item">
+            <div class="label">
+              Resend Email ID
+            </div>
+
+            <div
+              id="resendEmailId"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item wide">
+            <div class="label">
+              Stripe Checkout Session
+            </div>
+
+            <div
+              id="checkoutSessionId"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="item wide">
+            <div class="label">
+              Stripe Event ID
+            </div>
+
+            <div
+              id="eventId"
+              class="value"
+            >
+              —
+            </div>
+          </div>
+
+          <div
+            id="errorItem"
+            class="item wide error-box"
+            style="display:none"
+          >
+            <div class="label">
+              Fulfillment Error
+            </div>
+
+            <div
+              id="errorValue"
+              class="value"
+            ></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="small">
+        The admin secret is sent only to the
+        protected serverless function for
+        authorization. It is not stored in
+        localStorage or embedded in this page.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const form =
+      document.getElementById(
+        "lookupForm"
+      );
+
+    const button =
+      document.getElementById(
+        "lookupButton"
+      );
+
+    const message =
+      document.getElementById(
+        "message"
+      );
+
+    const result =
+      document.getElementById(
+        "result"
+      );
+
+    const showText = (
+      id,
+      value
+    ) => {
+      document.getElementById(
+        id
+      ).textContent =
+        value ?? "—";
+    };
+
+    const formatDate = (
+      value
+    ) => {
+      if (!value) {
+        return "—";
+      }
+
+      const date =
+        new Date(value);
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return value;
+      }
+
+      return date.toLocaleString();
+    };
+
+    const renderBoolean = (
+      id,
+      value
+    ) => {
+      const element =
+        document.getElementById(
+          id
+        );
+
+      element.textContent =
+        value
+          ? "Yes"
+          : "No";
+
+      element.className =
+        `value ${
+          value
+            ? "yes"
+            : "no"
+        }`;
+    };
+
+    const renderStatus = (
+      status
+    ) => {
+      const badge =
+        document.getElementById(
+          "statusBadge"
+        );
+
+      const normalized =
+        String(
+          status || "unknown"
+        ).toLowerCase();
+
+      badge.textContent =
+        normalized.toUpperCase();
+
+      badge.className =
+        "status-badge";
+
+      if (
+        normalized ===
+        "delivered"
+      ) {
+        badge.classList.add(
+          "status-delivered"
+        );
+      }
+
+      if (
+        normalized ===
+          "generated" ||
+        normalized ===
+          "processing"
+      ) {
+        badge.classList.add(
+          "status-generated"
+        );
+      }
+
+      if (
+        normalized ===
+        "failed"
+      ) {
+        badge.classList.add(
+          "status-failed"
+        );
+      }
+    };
+
+    form.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        const submissionId =
+          document
+            .getElementById(
+              "submissionId"
+            )
+            .value
+            .trim()
+            .toUpperCase();
+
+        const adminSecret =
+          document
+            .getElementById(
+              "adminSecret"
+            )
+            .value;
+
+        result.classList.remove(
+          "show"
+        );
+
+        message.textContent =
+          "Looking up order...";
+
+        button.disabled = true;
+
+        try {
+          const response =
+            await fetch(
+              "/.netlify/functions/admin-order-status",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json",
+
+                  Authorization:
+                    `Bearer ${adminSecret}`,
+                },
+
+                body:
+                  JSON.stringify({
+                    submissionId,
+                  }),
+              }
+            );
+
+          let data = {};
+
+          try {
+            data =
+              await response.json();
+          } catch {
+            throw new Error(
+              "Server returned an invalid response."
+            );
+          }
+
+          if (
+            response.status ===
+            401
+          ) {
+            throw new Error(
+              "Incorrect admin secret."
+            );
+          }
+
+          if (
+            response.status ===
+            404
+          ) {
+            throw new Error(
+              "No order was found for that M2C ID."
+            );
+          }
+
+          if (!response.ok) {
+            throw new Error(
+              data?.error ||
+              "Order lookup failed."
+            );
+          }
+
+          message.textContent =
+            "Order found.";
+
+          showText(
+            "resultId",
+            data.submissionId
+          );
+
+          renderStatus(
+            data.status
+          );
+
+          showText(
+            "mode",
+            data.mode || "—"
+          );
+
+          showText(
+            "customerEmail",
+            data.customerEmail ||
+              "—"
+          );
+
+          renderBoolean(
+            "blueprintExists",
+            data.blueprintExists
+          );
+
+          renderBoolean(
+            "pdfExists",
+            data.pdfExists
+          );
+
+          showText(
+            "generatedAt",
+            formatDate(
+              data.generatedAt
+            )
+          );
+
+          showText(
+            "deliveredAt",
+            formatDate(
+              data.deliveredAt
+            )
+          );
+
+          showText(
+            "pdfFilename",
+            data.pdfFilename ||
+              "—"
+          );
+
+          showText(
+            "resendEmailId",
+            data.resendEmailId ||
+              "—"
+          );
+
+          showText(
+            "checkoutSessionId",
+            data.checkoutSessionId ||
+              "—"
+          );
+
+          showText(
+            "eventId",
+            data.eventId ||
+              "—"
+          );
+
+          const errorItem =
+            document.getElementById(
+              "errorItem"
+            );
+
+          if (data.error) {
+            errorItem.style.display =
+              "block";
+
+            showText(
+              "errorValue",
+              data.error
+            );
+          } else {
+            errorItem.style.display =
+              "none";
+          }
+
+          result.classList.add(
+            "show"
+          );
+        } catch (error) {
+          message.textContent =
+            error?.message ||
+            "Lookup failed.";
+        } finally {
+          button.disabled = false;
+        }
+      }
+    );
+  </script>
+</body>
+</html>
