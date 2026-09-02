@@ -134,7 +134,7 @@ export default async function handler(request) {
       );
 
     if (
-      existing?.data?.status ===
+      existing?.status ===
       "generated"
     ) {
       console.log(
@@ -145,7 +145,7 @@ export default async function handler(request) {
     }
 
     if (
-      existing?.data?.status ===
+      existing?.status ===
       "processing"
     ) {
       console.log(
