@@ -1,54 +1,343 @@
 import Stripe from "stripe";
 
+/*
+  MOS2Career Stripe Webhook
+  Supports:
+    - Live Stripe webhook
+    - Stripe Sandbox/Test webhook
+
+  Required Netlify environment variables:
+    STRIPE_WEBHOOK_SECRET
+    STRIPE_WEBHOOK_SECRET_TEST
+
+  Do NOT put the whsec_ values directly in this file.
+*/
+
+// A Stripe API key is not required for webhook signature verification.
+// The Stripe instance is only being used for the webhook helper.
+const stripe = new Stripe("sk_test_placeholder");
+
 export default async (request) => {
+  // Stripe webhooks must use POST.
   if (request.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
+    return new Response("Method Not Allowed", {
+      status: 405,
+      headers: {
+        Allow: "POST"
+      }
+    });
   }
 
- const liveSecret = process.env.STRIPE_WEBHOOK_SECRET;
-const testSecret = process.env.STRIPE_WEBHOOK_SECRET_TEST;
+  // Get both signing secrets from Netlify.
+  const liveSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const testSecret = process.env.STRIPE_WEBHOOK_SECRET_TEST;
 
-if (!liveSecret && !testSecret) {
-  console.error("No Stripe webhook signing secrets are configured.");
-  return new Response("Server configuration error", { status: 500 });
-}
-
-const signature = request.headers.get("stripe-signature");
-
-if (!signature) {
-  return new Response("Missing Stripe signature", { status: 400 });
-}
-
-const rawBody = await request.text();
-
-const stripe = new Stripe("sk_placeholder_for_webhook_verification_only");
-
-let event = null;
-let verifiedMode = null;
-
-for (const [mode, secret] of [
-  ["live", liveSecret],
-  ["sandbox", testSecret]
-]) {
-  if (!secret) continue;
-
-  try {
-    event = stripe.webhooks.constructEvent(
-      rawBody,
-      signature,
-      secret
+  if (!liveSecret && !testSecret) {
+    console.error(
+      "MOS2Career webhook error: No Stripe webhook secrets configured."
     );
 
-    verifiedMode = mode;
-    break;
-  } catch (err) {
-    // Try the next configured signing secret.
+    return new Response("Server configuration error", {
+      status: 500
+    });
   }
-}
 
-if (!event) {
-  console.error("Stripe webhook signature verification failed.");
-  return new Response("Invalid signature", { status: 400 });
-}
+  // Stripe sends its signature in this header.
+  const signature = request.headers.get("stripe-signature");
 
-console.log(`Stripe webhook verified using ${verifiedMode} secret.`);
+  if (!signature) {
+    console.error(
+      "MOS2Career webhook error: Missing Stripe signature."
+    );
+
+    return new Response("Missing Stripe signature", {
+      status: 400
+    });
+  }
+
+  /*
+    IMPORTANT:
+    Stripe webhook signature verification requires the original,
+    unmodified request body.
+  */
+  const rawBody = await request.text();
+
+  let event = null;
+  let verifiedMode = null;
+
+  /*
+    Try the LIVE webhook secret first.
+  */
+  if (liveSecret) {
+    try {
+      event = stripe.webhooks.constructEvent(
+        rawBody,
+        signature,
+        liveSecret
+      );
+
+      verifiedMode = "live";
+    } catch (error) {
+      // Not a valid live webhook signature.
+    }
+  }
+
+  /*
+    If live verification failed, try the SANDBOX secret.
+  */
+  if (!event && testSecret) {
+    try {
+      event = stripe.webhooks.constructEvent(
+        rawBody,
+        signature,
+        testSecret
+      );
+
+      verifiedMode = "sandbox";
+    } catch (error) {
+      // Not a valid sandbox webhook signature.
+    }
+  }
+
+  /*
+    Reject anything that cannot be authenticated by either secret.
+  */
+  if (!event) {
+    console.error(
+      "MOS2Career webhook error: Stripe signature verification failed."
+    );
+
+    return new Response("Invalid Stripe signature", {
+      status: 400
+    });
+  }
+
+  /*
+    Extra safety check.
+
+    Stripe events contain:
+      livemode: true  -> real Stripe event
+      livemode: false -> sandbox/test event
+
+    Make sure that matches the secret that verified the event.
+  */
+  if (event.livemode && verifiedMode !== "live") {
+    console.error(
+      "MOS2Career webhook configuration error: Live event verified with sandbox secret."
+    );
+
+    return new Response("Webhook environment mismatch", {
+      status: 400
+    });
+  }
+
+  if (!event.livemode && verifiedMode !== "sandbox") {
+    console.error(
+      "MOS2Career webhook configuration error: Sandbox event verified with live secret."
+    );
+
+    return new Response("Webhook environment mismatch", {
+      status: 400
+    });
+  }
+
+  console.log(
+    `MOS2Career Stripe webhook verified: ${verifiedMode}`
+  );
+
+  console.log(
+    `Stripe event ID: ${event.id}`
+  );
+
+  console.log(
+    `Stripe event type: ${event.type}`
+  );
+
+  /*
+    Only process the Checkout events MOS2Career currently needs.
+  */
+  const supportedEvents = new Set([
+    "checkout.session.completed",
+    "checkout.session.async_payment_succeeded",
+    "checkout.session.async_payment_failed"
+  ]);
+
+  if (!supportedEvents.has(event.type)) {
+    console.log(
+      `MOS2Career ignored unsupported event: ${event.type}`
+    );
+
+    return Response.json({
+      received: true,
+      ignored: true,
+      event_type: event.type
+    });
+  }
+
+  /*
+    Stripe Checkout Session
+  */
+  const session = event.data.object;
+
+  /*
+    This is the ID generated by MOS2Career before the customer
+    is sent to Stripe.
+
+    Example:
+      M2C-M12345-ABCDEF
+  */
+  const submissionId =
+    session.client_reference_id || null;
+
+  /*
+    Customer email.
+  */
+  const customerEmail =
+    session.customer_details?.email ||
+    session.customer_email ||
+    null;
+
+  /*
+    Build a normalized MOS2Career order record.
+  */
+  const order = {
+    environment: verifiedMode,
+
+    stripe_livemode: event.livemode,
+
+    event_id: event.id,
+
+    event_type: event.type,
+
+    checkout_session_id:
+      session.id || null,
+
+    submission_id:
+      submissionId,
+
+    customer_email:
+      customerEmail,
+
+    payment_status:
+      session.payment_status || null,
+
+    status:
+      session.status || null,
+
+    amount_total:
+      session.amount_total ?? null,
+
+    currency:
+      session.currency || null,
+
+    payment_intent:
+      session.payment_intent || null,
+
+    created:
+      event.created || null
+  };
+
+  /*
+    Log the Stripe order.
+
+    Later this section will be replaced/expanded with:
+      1. Retrieve MOS2Career profile
+      2. Match submission_id
+      3. Create Career Blueprint
+      4. Generate PDF
+      5. Email customer
+  */
+  console.log(
+    "MOS2Career Stripe order:",
+    JSON.stringify(order)
+  );
+
+  /*
+    Warn if Stripe received a checkout without the MOS2Career
+    client_reference_id.
+  */
+  if (!submissionId) {
+    console.warn(
+      "MOS2Career warning: Checkout Session has no client_reference_id."
+    );
+  }
+
+  /*
+    EVENT: checkout.session.completed
+
+    For card payments, payment_status will generally be "paid".
+
+    For delayed payment methods, Checkout can complete before
+    the actual payment clears.
+  */
+  if (event.type === "checkout.session.completed") {
+    if (session.payment_status === "paid") {
+      console.log(
+        `MOS2Career PAYMENT CONFIRMED: ${
+          submissionId || "NO-SUBMISSION-ID"
+        }`
+      );
+    } else {
+      console.log(
+        `MOS2Career checkout completed but payment is pending: ${
+          submissionId || "NO-SUBMISSION-ID"
+        }`
+      );
+    }
+  }
+
+  /*
+    EVENT: delayed payment successfully completed.
+  */
+  if (
+    event.type ===
+    "checkout.session.async_payment_succeeded"
+  ) {
+    console.log(
+      `MOS2Career ASYNC PAYMENT CONFIRMED: ${
+        submissionId || "NO-SUBMISSION-ID"
+      }`
+    );
+  }
+
+  /*
+    EVENT: delayed payment failed.
+  */
+  if (
+    event.type ===
+    "checkout.session.async_payment_failed"
+  ) {
+    console.warn(
+      `MOS2Career PAYMENT FAILED: ${
+        submissionId || "NO-SUBMISSION-ID"
+      }`
+    );
+  }
+
+  /*
+    Return HTTP 200 so Stripe knows the webhook was received.
+
+    Blueprint generation is intentionally NOT performed yet.
+  */
+  return Response.json({
+    received: true,
+
+    environment:
+      verifiedMode,
+
+    livemode:
+      event.livemode,
+
+    event_id:
+      event.id,
+
+    event_type:
+      event.type,
+
+    submission_id:
+      submissionId,
+
+    payment_status:
+      session.payment_status || null
+  });
+};
