@@ -396,8 +396,9 @@ let score=role.base;
   const matched=[];
   role.skills.forEach(s=>{
     if(profile.skills.includes(s)){score+=7;matched.push(s)}
+    
   });
-  
+  if(role.goals.includes(profile.goal)) score+=8;
   if(rankLeadership && role.skills.includes("leadership")) score+=4;
   if(profile.years>=12 && (role.skills.includes("leadership")||role.skills.includes("project"))) score+=4;
   if(profile.years>=20) score+=2;
@@ -409,7 +410,7 @@ let score=role.base;
   }
  const sp=profile.specialty.toLowerCase();
 specialtyBoosts.forEach(m=>{
-  if(m.terms.some(t=>sp.specialtyTermMatches(sp,t))){
+  if(m.terms.some(t=>specialtyTermMatches(sp,t))){
     const overlap=m.skills.filter(s=>role.skills.includes(s));
 if(overlap.length === 0){
   score -= 8;
