@@ -386,7 +386,7 @@ let score=role.base;
   role.skills.forEach(s=>{
     if(profile.skills.includes(s)){score+=7;matched.push(s)}
   });
-  if(role.goals.includes(profile.goal)) score+=8;
+  
   if(rankLeadership && role.skills.includes("leadership")) score+=4;
   if(profile.years>=12 && (role.skills.includes("leadership")||role.skills.includes("project"))) score+=4;
   if(profile.years>=20) score+=2;
