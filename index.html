@@ -435,7 +435,7 @@ function gapList(role, profile){
 const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
 const sp=profile.specialty.toLowerCase();
 const specialtySkills=specialtyBoosts
-  .filter(m=>m.terms.some(t=>sp.specialtyTermsMatches(sp,t)))
+  .filter(m=>m.terms.some(t=>specialtyTermsMatches(sp,t)))
   .flatMap(m=>m.skills);
 
 const demonstrated=uniq([...profile.skills,...specialtySkills]);
