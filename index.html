@@ -414,6 +414,8 @@ let score=role.base;
     if(profile.skills.includes(s)){score+=7;matched.push(s)}
     
   });
+  
+}
   if(role.goals.includes(profile.goal)) score+=8;
   if(rankLeadership && role.skills.includes("leadership")) score+=4;
   if(profile.years>=12 && (role.skills.includes("leadership")||role.skills.includes("project"))) score+=4;
@@ -426,6 +428,7 @@ let score=role.base;
   }
  const sp=profile.specialty.toLowerCase();
 specialtyBoosts.forEach(m=>{
+ 
   if(m.terms.some(t=>specialtyTermMatches(sp,t))){
     const overlap=m.skills.filter(s=>role.skills.includes(s));
 if(overlap.length === 0){
@@ -440,7 +443,9 @@ if(overlap.length === 0){
     }
   }
 });
-    
+  if(role.coreSkills && !role.coreSkills.some(s=>matched.includes(s))){
+  score-=12;
+  }
   score=Math.max(45,Math.min(98,score));
   return {score,matched};
 }
