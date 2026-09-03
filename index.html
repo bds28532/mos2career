@@ -434,8 +434,8 @@ function render(){
   if(cta){cta.style.display="block";}
 
   ranked.forEach((r,i)=>{
-    const strengths=r.matched.length?r.matched.slice(0,5):r.skills.slice(0,3);
-    const gaps=gapList(r,p);
+    const strengths=r.matched.slice(0,5)
+    const gaps=gapList(r,p); 
     const div=document.createElement("div"); div.className="result";
     div.innerHTML=`
       <div class="rhead">
