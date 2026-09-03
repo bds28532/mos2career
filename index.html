@@ -507,10 +507,13 @@ function render(){
 
   ranked.forEach((r,i)=>{
     const strengths=r.matched.slice(0,5);
-const explicitSkills=new Set(p.skills);
+const explicitSkills=new Set(
+  (Array.isArray(p.skills) ? p.skills : String(p.skills || "").split(","))
+    .map(s => s.trim().toLowerCase())
+);
 
 const strengthLines=strengths.map(s=>{
-  if(explicitSkills.has(s)){
+ if(explicitSkills.has(String(s).toLowerCase())){
     return `Your profile shows ${titleize(s)} experience.`;
   }
   return `Your military specialty aligns with ${titleize(s)}.`;
