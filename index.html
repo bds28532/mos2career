@@ -336,12 +336,15 @@ function inferSkills(text){
 function uniq(a){return [...new Set(a)]}
 function titleize(s){return s.replace(/(^|\s)\S/g,c=>c.toUpperCase()).replace("Cyber","Cybersecurity")}
 function roleScore(role, profile){
-  let score=role.base;
+const rank=(profile.rank || "").toUpperCase();
+const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
+let score=role.base;
   const matched=[];
   role.skills.forEach(s=>{
     if(profile.skills.includes(s)){score+=7;matched.push(s)}
   });
   if(role.goals.includes(profile.goal)) score+=8;
+  if(rankLeadership && role.skills.includes("leadership")) score+=4;
   if(profile.years>=12 && (role.skills.includes("leadership")||role.skills.includes("project"))) score+=4;
   if(profile.years>=20) score+=2;
   if(profile.education>=role.minEdu) score+=4;
