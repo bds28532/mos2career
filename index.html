@@ -396,17 +396,21 @@ let score=role.base;
   if(profile.worksetup==="remote"){
     if(role.remote>=3) score+=6; else if(role.remote===2) score+=3; else score-=5;
   }
-  const sp=profile.specialty.toLowerCase();
-  specialtyBoosts.forEach(m=>{
-    if(m.terms.some(t=>sp.includes(t))){
-      const overlap=m.skills.filter(s=>role.skills.includes(s)).length;
-      score+=Math.min(m.boost,overlap *2);
-      //Strongly favor roles in the members actual speciality domain.
-      if(role.skills.includes(m.skills [0])){
-        score += 8;
+ const sp=profile.specialty.toLowerCase();
+specialtyBoosts.forEach(m=>{
+  if(m.terms.some(t=>sp.includes(t))){
+    const overlap=m.skills.filter(s=>role.skills.includes(s));
+
+    if(overlap.length >= 2){
+      score += Math.min(m.boost, overlap.length * 2);
+
+      overlap.forEach(s=>{
+        if(!matched.includes(s)) matched.push(s);
+      });
     }
-    }
-  });
+  }
+});
+    
   score=Math.max(45,Math.min(98,score));
   return {score,matched};
 }
