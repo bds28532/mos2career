@@ -400,7 +400,9 @@ let score=role.base;
 specialtyBoosts.forEach(m=>{
   if(m.terms.some(t=>sp.includes(t))){
     const overlap=m.skills.filter(s=>role.skills.includes(s));
-
+if(overlap.length === 0){
+  score -= 8;
+}
     if(overlap.length >= 2){
       score += Math.min(m.boost, overlap.length * 2);
 
