@@ -372,7 +372,17 @@ function gapList(role, profile){
   if(profile.education<role.minEdu) gaps.push("Education level may be below what some employers prefer.");
   const rank=(profile.rank || "").toUpperCase();
 const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
-const missing=role.skills.filter(s=>!profile.skills.includes(s) && !(s==="leadership" && rankLeadership)).slice(0,2);
+const sp=profile.specialty.toLowerCase();
+const specialtySkills=specialtyBoosts
+  .filter(m=>m.terms.some(t=>sp.includes(t)))
+  .flatMap(m=>m.skills);
+
+const demonstrated=uniq([...profile.skills,...specialtySkills]);
+
+const missing=role.skills.filter(s=>
+  !demonstrated.includes(s) &&
+  !(s==="leadership" && rankLeadership)
+).slice(0,2);
   missing.forEach(s=>gaps.push("Build or better demonstrate " + titleize(s) + " experience."));
   if(role.clearance>0 && profile.clearance<role.clearance) gaps.push("Some defense roles may require a higher active clearance.");
   if(gaps.length===0) gaps.push(role.gap);
