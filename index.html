@@ -482,7 +482,7 @@ function render(){
 
   const avg=Math.round(ranked.slice(0,3).reduce((a,b)=>a+b.score,0)/3);
   const top=ranked[0]?.title||"—";
-  const skillCount=p.skills.length;
+  const skillCount=uniq(ranked.flatMap(r=>r.matched)).length;
   document.getElementById("summary").style.display="grid";
   document.getElementById("summary").innerHTML=`
     <div class="kpi"><div class="n">${avg}%</div><div class="l">Average top-3 match</div></div>
