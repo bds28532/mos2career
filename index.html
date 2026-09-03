@@ -354,7 +354,10 @@ function roleScore(role, profile){
   specialtyBoosts.forEach(m=>{
     if(m.terms.some(t=>sp.includes(t))){
       const overlap=m.skills.filter(s=>role.skills.includes(s)).length;
-      score+=Math.min(m.boost,overlap*2);
+      score+=Math.min(m.boost,overlap *2);
+      //Strongly favor roles in the members actual speciality domain.
+      if(role.skills.includes(m.skills [0])){
+        score += 8;
     }
   });
   score=Math.max(45,Math.min(98,score));
