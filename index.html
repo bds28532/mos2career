@@ -377,6 +377,17 @@ function inferSkills(text){
   return found;
 }
 function uniq(a){return [...new Set(a)]}
+  function specialtyTermMatches(sp, term){
+  const s=sp.toLowerCase();
+  const t=term.toLowerCase();
+
+  if(t.length <= 3){
+    const escaped=t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+    return new RegExp(`\\b${escaped}\\b`,"i").test(s);
+  }
+
+  return s.includes(t);
+}
 function titleize(s){return s.replace(/(^|\s)\S/g,c=>c.toUpperCase()).replace("Cyber","Cybersecurity")}
 function roleScore(role, profile){
 const rank=(profile.rank || "").toUpperCase();
@@ -398,7 +409,7 @@ let score=role.base;
   }
  const sp=profile.specialty.toLowerCase();
 specialtyBoosts.forEach(m=>{
-  if(m.terms.some(t=>sp.includes(t))){
+  if(m.terms.some(t=>sp.specialtyTermMatches(sp,t))){
     const overlap=m.skills.filter(s=>role.skills.includes(s));
 if(overlap.length === 0){
   score -= 8;
@@ -423,7 +434,7 @@ function gapList(role, profile){
 const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
 const sp=profile.specialty.toLowerCase();
 const specialtySkills=specialtyBoosts
-  .filter(m=>m.terms.some(t=>sp.includes(t)))
+  .filter(m=>m.terms.some(t=>sp.specialtyTermsMatches(sp,t)))
   .flatMap(m=>m.skills);
 
 const demonstrated=uniq([...profile.skills,...specialtySkills]);
