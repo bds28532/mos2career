@@ -321,8 +321,38 @@ const specialtyBoosts = [
  {terms:["logistics","ls","92a","supply"], skills:["logistics","project","data"], boost:8},
  {terms:["aviation","avionics","ae","at"], skills:["electronics","maintenance","testing","troubleshooting"], boost:7},
  {terms:["intel","intelligence","is","35"], skills:["data","documentation","cyber"], boost:6}
-];
+{terms:["11b","11b infantryman","infantry","infantryman","combat arms"], skills:["leadership","training","project","logistics"], boost:8},
 
+{terms:["military police","mp","31b","security forces","3p0","master at arms","master-at-arms","ma"], skills:["leadership","training","documentation"], boost:8},
+
+{terms:["medic","68w","corpsman","hospital corpsman","hm","medical technician"], skills:["training","documentation","leadership"], boost:8},
+
+{terms:["mechanic","91b","wheeled vehicle mechanic","diesel mechanic","vehicle maintenance"], skills:["maintenance","troubleshooting","documentation"], boost:8},
+
+{terms:["human resources","42a","personnel","yeoman","yn","administration","admin"], skills:["documentation","data","project"], boost:8},
+
+{terms:["finance","36b","financial management","accounting"], skills:["data","documentation","project"], boost:8},
+
+{terms:["communications","25u","radio operator","radio maintainer","communications specialist"], skills:["networking","electronics","troubleshooting"], boost:8},
+
+{terms:["signal","25h","25n","network operations","network specialist"], skills:["networking","cyber","troubleshooting"], boost:8},
+
+{terms:["cyber operations","17c","1b4","cyber warfare","cybersecurity"], skills:["cyber","networking","troubleshooting"], boost:8},
+
+{terms:["electrician","12r","construction electrician","ce","electrical"], skills:["electronics","maintenance","troubleshooting"], boost:8},
+
+{terms:["engineering","combat engineer","12b","civil engineer","engineering specialist"], skills:["project","maintenance","leadership"], boost:8},
+
+{terms:["aviation maintenance","15t","15u","aircraft mechanic","aircraft maintenance"], skills:["maintenance","troubleshooting","electronics"], boost:8},
+
+{terms:["supply","92y","unit supply","storekeeper","sk","material management"], skills:["logistics","data","documentation"], boost:8},
+
+{terms:["transportation","88m","motor transport","motor vehicle operator","truck driver"], skills:["logistics","maintenance","documentation"], boost:8},
+
+{terms:["operations specialist","os","operations","command and control","c2"], skills:["data","documentation","leadership"], boost:8},
+
+{terms:["public affairs","46s","mass communication","mc","public affairs specialist"], skills:["documentation","project","training"], boost:8}
+  ];
 function getCheckedSkills(){
   return [...document.querySelectorAll('.check input:checked')].map(x=>x.value);
 }
