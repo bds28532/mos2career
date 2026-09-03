@@ -370,7 +370,9 @@ let score=role.base;
 function gapList(role, profile){
   const gaps=[];
   if(profile.education<role.minEdu) gaps.push("Education level may be below what some employers prefer.");
-  const missing=role.skills.filter(s=>!profile.skills.includes(s)).slice(0,2);
+  const rank=(profile.rank || "").toUpperCase();
+const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
+const missing=role.skills.filter(s=>!profile.skills.includes(s) && !(s==="leadership" && rankLeadership)).slice(0,2);
   missing.forEach(s=>gaps.push("Build or better demonstrate " + titleize(s) + " experience."));
   if(role.clearance>0 && profile.clearance<role.clearance) gaps.push("Some defense roles may require a higher active clearance.");
   if(gaps.length===0) gaps.push(role.gap);
