@@ -481,8 +481,17 @@ function render(){
   if(cta){cta.style.display="block";}
 
   ranked.forEach((r,i)=>{
-    const strengths=r.matched.slice(0,5)
-    const gaps=gapList(r,p); 
+    const strengths=r.matched.slice(0,5);
+const explicitSkills=new Set(p.skills);
+
+const strengthLines=strengths.map(s=>{
+  if(explicitSkills.has(s)){
+    return `Your profile shows ${titleize(s)} experience.`;
+  }
+  return `Your military specialty aligns with ${titleize(s)}.`;
+});
+
+const gaps=gapList(r,p);
     const div=document.createElement("div"); div.className="result";
     div.innerHTML=`
       <div class="rhead">
@@ -492,7 +501,7 @@ function render(){
       <div class="bar"><div class="fill" style="width:${r.score}%"></div></div>
       <div class="meta">${strengths.map(s=>`<span class="tag">${titleize(s)}</span>`).join("")}</div>
       <div class="cols">
-        <div class="box"><h4>Why you may fit</h4><ul>${strengths.map(s=>`<li class="small">Your profile shows ${titleize(s)} experience.</li>`).join("")}</ul></div>
+       <div class="box"><h4>Why you may fit</h4><ul>${strengthLines.map(x=>`<li class="small">${x}</li>`).join("")}</ul></div>
         <div class="box"><h4>Likely gaps / next steps</h4><ul>${gaps.map(g=>`<li class="small">${g}</li>`).join("")}</ul></div>
       </div>
       <div class="box" style="margin-top:12px"><h4>Helpful credentials</h4><div class="small">${r.certs.join(" • ")}</div></div>
