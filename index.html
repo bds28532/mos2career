@@ -470,6 +470,7 @@ function roleScore(role, profile){
 
   return {score,matched};
 }
+ function gapList(role, profile){
   const gaps=[];
   if(profile.education<role.minEdu) gaps.push("Education level may be below what some employers prefer.");
   const rank=(profile.rank || "").toUpperCase();
