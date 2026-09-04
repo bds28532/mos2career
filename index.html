@@ -403,7 +403,11 @@ function specialtyTermMatches(sp, term){
   }
 
   return s.includes(t);
-} 
+} function titleize(s){
+  return s
+    .replace(/(^|\s)\S/g,c=>c.toUpperCase())
+    .replace("Cyber","Cybersecurity");
+}
 function roleScore(role, profile){
   const rank=(profile.rank || "").toUpperCase();
   const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
