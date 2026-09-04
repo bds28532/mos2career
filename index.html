@@ -393,7 +393,7 @@ function inferSkills(text){
   return found;
 }
 function uniq(a){return [...new Set(a)]}
-  function specialtyTermMatches(sp, term){
+function specialtyTermMatches(sp, term){
   const s=sp.toLowerCase();
   const t=term.toLowerCase();
 
@@ -402,6 +402,8 @@ function uniq(a){return [...new Set(a)]}
     return new RegExp(`\\b${escaped}\\b`,"i").test(s);
   }
 
+  return s.includes(t);
+} 
 function roleScore(role, profile){
   const rank=(profile.rank || "").toUpperCase();
   const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
