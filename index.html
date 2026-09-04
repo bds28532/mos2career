@@ -356,7 +356,7 @@ const specialtyBoosts = [
 
 {terms:["medic","68w","corpsman","hospital corpsman","hm","medical technician"], skills:["medical","emergency","training","documentation","leadership"], boost:8},
 
-{terms:["mechanic","91b","wheeled vehicle mechanic","diesel mechanic","vehicle maintenance"], skills:["maintenance","troubleshooting","mechanical","documentation"], boost:8},
+{terms:["mechanic","91b","wheeled vehicle mechanic","diesel mechanic","vehicle maintenance"], skills:["maintenance","troubleshooting","mechanical","documentation"],preferredRoles:["Diesel / Heavy Equipment Technician","Fleet Maintenance Supervisor"], boost:20},
 
 {terms:["human resources","42a","personnel","yeoman","yn","administration","admin"], skills:["documentation","data","project"], boost:8},
 
@@ -465,6 +465,9 @@ function roleScore(role, profile){
           if(!matched.includes(s)) matched.push(s);
         });
       }
+     if(m.preferredRoles && m.preferredRoles.includes(role.title)){
+  score+=6;
+} 
     }
   });
 
