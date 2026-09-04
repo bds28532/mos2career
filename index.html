@@ -469,7 +469,7 @@ function roleScore(role, profile){
 } 
     }
   });
-
+console.log(role.title, "matched:", matched, "coreSkills:", role.coreSkills);
   if(role.coreSkills && !role.coreSkills.some(s=>matched.includes(s))){
     score-=25;
   }
