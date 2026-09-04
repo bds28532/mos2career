@@ -471,7 +471,7 @@ function roleScore(role, profile){
   });
 
   if(role.coreSkills && !role.coreSkills.some(s=>matched.includes(s))){
-    score-=12;
+    score-=25;
   }
 
   score=Math.max(45,Math.min(98,score));
