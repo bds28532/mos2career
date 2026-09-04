@@ -402,54 +402,74 @@ function uniq(a){return [...new Set(a)]}
     return new RegExp(`\\b${escaped}\\b`,"i").test(s);
   }
 
-  return s.includes(t);
-}
-function titleize(s){return s.replace(/(^|\s)\S/g,c=>c.toUpperCase()).replace("Cyber","Cybersecurity")}
 function roleScore(role, profile){
-const rank=(profile.rank || "").toUpperCase();
-const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
-let score=role.base;
-  const matched=[];
-  role.skills.forEach(s=>{
-    if(profile.skills.includes(s)){score+=7;matched.push(s)}
-    
-  });
-  
-}
-  if(role.goals.includes(profile.goal)) score+=8;
-  if(rankLeadership && role.skills.includes("leadership")) score+=4;
-  if(profile.years>=12 && (role.skills.includes("leadership")||role.skills.includes("project"))) score+=4;
-  if(profile.years>=20) score+=2;
-  if(profile.education>=role.minEdu) score+=4;
-  else score-=Math.min(12,(role.minEdu-profile.education)*5);
-  if(profile.clearance>=role.clearance && role.clearance>0) score+=5;
-  if(profile.worksetup==="remote"){
-    if(role.remote>=3) score+=6; else if(role.remote===2) score+=3; else score-=5;
-  }
- const sp=profile.specialty.toLowerCase();
-specialtyBoosts.forEach(m=>{
- 
-  if(m.terms.some(t=>specialtyTermMatches(sp,t))){
-    const overlap=m.skills.filter(s=>role.skills.includes(s));
-if(overlap.length === 0){
-  score -= 8;
-}
-    if(overlap.length >= 2){
-      score += Math.min(m.boost, overlap.length * 2);
+  const rank=(profile.rank || "").toUpperCase();
+  const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
 
-      overlap.forEach(s=>{
-        if(!matched.includes(s)) matched.push(s);
-      });
+  let score=role.base;
+  const matched=[];
+
+  role.skills.forEach(s=>{
+    if(profile.skills.includes(s)){
+      score+=7;
+      matched.push(s);
     }
+  });
+
+  if(role.goals.includes(profile.goal)) score+=8;
+
+  if(rankLeadership && role.skills.includes("leadership")) score+=4;
+
+  if(profile.years>=12 && (role.skills.includes("leadership") || role.skills.includes("project"))){
+    score+=4;
   }
-});
+
+  if(profile.years>=20) score+=2;
+
+  if(profile.education>=role.minEdu){
+    score+=4;
+  } else {
+    score-=Math.min(12,(role.minEdu-profile.education)*5);
+  }
+
+  if(profile.clearance>=role.clearance && role.clearance>0){
+    score+=5;
+  }
+
+  if(profile.worksetup==="remote"){
+    if(role.remote>=3) score+=6;
+    else if(role.remote===2) score+=3;
+    else score-=5;
+  }
+
+  const sp=profile.specialty.toLowerCase();
+
+  specialtyBoosts.forEach(m=>{
+    if(m.terms.some(t=>specialtyTermMatches(sp,t))){
+      const overlap=m.skills.filter(s=>role.skills.includes(s));
+
+      if(overlap.length === 0){
+        score-=8;
+      }
+
+      if(overlap.length >= 2){
+        score+=Math.min(m.boost, overlap.length * 2);
+
+        overlap.forEach(s=>{
+          if(!matched.includes(s)) matched.push(s);
+        });
+      }
+    }
+  });
+
   if(role.coreSkills && !role.coreSkills.some(s=>matched.includes(s))){
-  score-=12;
+    score-=12;
   }
+
   score=Math.max(45,Math.min(98,score));
+
   return {score,matched};
 }
-function gapList(role, profile){
   const gaps=[];
   if(profile.education<role.minEdu) gaps.push("Education level may be below what some employers prefer.");
   const rank=(profile.rank || "").toUpperCase();
