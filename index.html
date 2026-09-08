@@ -720,10 +720,9 @@ document.addEventListener("DOMContentLoaded",()=>{
   const btn=document.getElementById("blueprintCheckoutBtn");
   if(btn){
     btn.addEventListener("click",(e)=>{
-      if(typeof gtag==="function"){
-  gtag("event","blueprint_checkout_click");
-}
+    
       if(btn.classList.contains("is-disabled")){
+          
         e.preventDefault();
         const status=document.getElementById("saveStatus");
         if(status){
@@ -731,7 +730,9 @@ document.addEventListener("DOMContentLoaded",()=>{
           status.className="save-status err";
         }
       }
-    });
+      if(typeof gtag==="function"){
+  gtag("event","blueprint_checkout_click");
+    }
   }
 });
 
