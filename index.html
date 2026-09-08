@@ -660,6 +660,10 @@ async function m2cSaveProfile(topMatchesText){
     body:new URLSearchParams(data).toString()
   });
   if(!resp.ok) throw new Error("We couldn't save your profile. Please try again.");
+  if(typeof gtag==="function" && !window.m2cTranslatorEventSent){
+  window.m2cTranslatorEventSent=true;
+  gtag("event","career_translator_completed");
+}
   if(status){
     const sidVal=document.getElementById("submissionId")?.value || "";
     status.textContent="Profile saved. Submission ID: " + sidVal;
