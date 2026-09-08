@@ -719,20 +719,35 @@ document.addEventListener("DOMContentLoaded",()=>{
   m2cSetCheckoutReady(false);
   const btn=document.getElementById("blueprintCheckoutBtn");
   if(btn){
-    btn.addEventListener("click",(e)=>{
-    
-      if(btn.classList.contains("is-disabled")){
-          
-        e.preventDefault();
-        const status=document.getElementById("saveStatus");
-        if(status){
-          status.textContent="Save your profile successfully before opening checkout.";
-          status.className="save-status err";
-        }
-      }
-      if(typeof gtag==="function"){
-  gtag("event","blueprint_checkout_click");
+btn.addEventListener("click",(e)=>{
+  if(btn.classList.contains("is-disabled")){
+    e.preventDefault();
+    const status=document.getElementById("saveStatus");
+    if(status){
+      status.textContent="Save your profile successfully before opening checkout.";
+      status.className="save-status err";
     }
+    return;
+  }
+
+  if(typeof gtag==="function"){
+    e.preventDefault();
+
+    const checkoutUrl=btn.href;
+    let redirected=false;
+
+    const goToCheckout=()=>{
+      if(redirected) return;
+      redirected=true;
+      window.location.href=checkoutUrl;
+    };
+
+    gtag("event","blueprint_checkout_click",{
+      event_callback:goToCheckout,
+      event_timeout:1000
+    });
+
+    setTimeout(goToCheckout,1200);
   }
 });
 
