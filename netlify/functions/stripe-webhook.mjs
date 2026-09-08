@@ -13,7 +13,9 @@ const jsonResponse = (status, data) =>
   });
 async function sendGA4Purchase({
   transactionId,
-  submissionId
+  submissionId,
+  amountTotal,
+  currency
 }) {
   const measurementId =
     process.env.GA4_MEASUREMENT_ID;
