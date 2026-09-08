@@ -672,10 +672,12 @@ export default async (request) => {
     });
 if (verifiedMode === "live") {
   try {
-    await sendGA4Purchase({
-      transactionId: session.id,
-      submissionId,
-    });
+  await sendGA4Purchase({
+  transactionId: session.id,
+  submissionId,
+  amountTotal: session.amount_total,
+  currency: session.currency,
+});
   } catch (analyticsError) {
     console.error(
       "GA4 purchase tracking error:",
