@@ -49,14 +49,14 @@ async function sendGA4Purchase({
         name: "purchase",
         params: {
           transaction_id: transactionId,
-          value: 39,
-          currency: "USD",
+          value: (amountTotal || 0) / 100,
+currency: (currency || "usd").toUpperCase(),
           items: [{
             item_id: "career_blueprint",
             item_name:
               "MOS2Career Personalized Career Blueprint",
-            price: 39,
-            quantity: 1
+         price: (amountTotal || 0) / 100,
+quantity: 1
           }]
         }
       }]
