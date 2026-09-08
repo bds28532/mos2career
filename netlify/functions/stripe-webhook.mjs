@@ -11,7 +11,68 @@ const jsonResponse = (status, data) =>
       "Content-Type": "application/json",
     },
   });
+async function sendGA4Purchase({
+  transactionId,
+  submissionId
+}) {
+  const measurementId =
+    process.env.GA4_MEASUREMENT_ID;
 
+  const apiSecret =
+    process.env.GA4_API_SECRET;
+
+  if (!measurementId || !apiSecret) {
+    console.warn(
+      "GA4 purchase tracking not configured"
+    );
+    return;
+  }
+
+  const clientId =
+    `mos2career.${submissionId || transactionId}`;
+
+  const url =
+    `https://www.google-analytics.com/mp/collect` +
+    `?measurement_id=${encodeURIComponent(measurementId)}` +
+    `&api_secret=${encodeURIComponent(apiSecret)}`;
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      client_id: clientId,
+      events: [{
+        name: "purchase",
+        params: {
+          transaction_id: transactionId,
+          value: 39,
+          currency: "USD",
+          items: [{
+            item_id: "career_blueprint",
+            item_name:
+              "MOS2Career Personalized Career Blueprint",
+            price: 39,
+            quantity: 1
+          }]
+        }
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    console.error(
+      "GA4 purchase tracking failed:",
+      response.status
+    );
+  } else {
+    console.log(
+      "GA4 PURCHASE SENT:",
+      transactionId
+    );
+  }
+}
 /*
  * ---------------------------------------------------------
  * FIND MOS2CAREER PROFILE
@@ -607,7 +668,19 @@ export default async (request) => {
 
       profile,
     });
-
+if (verifiedMode === "live") {
+  try {
+    await sendGA4Purchase({
+      transactionId: session.id,
+      submissionId,
+    });
+  } catch (analyticsError) {
+    console.error(
+      "GA4 purchase tracking error:",
+      analyticsError?.message || "Unknown error"
+    );
+  }
+}
     /*
      * Stripe receives success after the
      * fulfillment job has been accepted.
