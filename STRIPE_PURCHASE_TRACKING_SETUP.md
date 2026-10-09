@@ -3,7 +3,7 @@
 This feature is **inactive until configured**. It does not alter the checkout link or any page styling.
 
 ## Setup (Netlify environment variables)
-- `STRIPE_WEBHOOK_SECRET`: signing secret (`whsec_...`) for this webhook endpoint
+- `STRIPE_PURCHASE_WEBHOOK_SECRET`: signing secret (`whsec_...`) for this webhook endpoint
 - `STRIPE_PAYMENT_LINK_ID`: exact Stripe Payment Link ID (`plink_...`) of the $39 Blueprint
 - `GA4_MEASUREMENT_ID`: your GA4 web data stream ID (existing site currently uses `G-2251989Z9F`)
 - `GA4_API_SECRET`: GA4 Measurement Protocol API secret, created in the GA4 web data stream settings
