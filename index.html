@@ -10,6 +10,8 @@
 
   gtag('config', 'G-2251989Z9F');
 </script>
+<!-- GA4 funnel: page_view → translator_started → career_translator_completed → blueprint_checkout_click.
+     Do not emit purchase from browser checkout clicks. Confirm payment through Stripe webhook first. -->
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>MOS2Career Career Translator | Career Blueprint</title>
@@ -588,6 +590,10 @@ const missing=role.skills.filter(s=>
   if(gaps.length===0) gaps.push(role.gap);
   return gaps.slice(0,3);
 }
+// GA4 funnel events never include personal information or profile answers.
+function m2cTrackEvent(name,params={}){
+  if(typeof gtag==="function") gtag("event",name,params);
+}
 function render(){
   const first=document.getElementById("firstName");
   const last=document.getElementById("lastName");
@@ -613,6 +619,7 @@ function render(){
 
   const topMatchesText = ranked.map((r,i)=>`${i+1}. ${r.title} — ${r.score}%`).join("\n");
   m2cSaveProfile(topMatchesText).catch(err=>{
+     m2cTrackEvent("translator_save_failed",{failure_stage:"profile_save"});
     const status=document.getElementById("saveStatus");
     if(status){status.textContent=err.message;status.className="save-status err";}
     m2cSetCheckoutReady(false);
@@ -723,7 +730,7 @@ async function m2cSaveProfile(topMatchesText){
   if(!resp.ok) throw new Error("We couldn't save your profile. Please try again.");
   if(typeof gtag==="function" && !window.m2cTranslatorEventSent){
   window.m2cTranslatorEventSent=true;
-  gtag("event","career_translator_completed");
+  m2cTrackEvent("career_translator_completed");
 }
   if(status){
     const sidVal=document.getElementById("submissionId")?.value || "";
@@ -737,6 +744,14 @@ async function m2cSaveProfile(topMatchesText){
 
 
 const careerForm=document.querySelector('form[name="career-translator"]');
+if(careerForm){
+  let m2cFormStarted=false;
+  careerForm.addEventListener("input",e=>{
+    if(m2cFormStarted || !e.target.matches("input,select,textarea") || e.target.type==="hidden" || e.target.name==="bot-field") return;
+    m2cFormStarted=true;
+    m2cTrackEvent("translator_started");
+  });
+}
 if(careerForm){
   careerForm.addEventListener("submit",e=>e.preventDefault());
 }
