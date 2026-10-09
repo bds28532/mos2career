@@ -133,6 +133,26 @@ input,select,textarea{background-color:#111!important;color:#fff!important}
 .btn:focus-visible,.purchase-btn:focus-visible,a:focus-visible{outline:2px solid #f2c552;outline-offset:3px}
 a{accent-color:#d9a520}
 ::selection{background:#d9a520;color:#090909}
+
+/* Conversion funnel additions: presentation only; translator and checkout logic unchanged */
+.m2c-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0 4px}
+.m2c-step{border:1px solid #51452d;background:#191919;border-radius:14px;padding:16px}
+.m2c-step b{display:block;color:#f2c552;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:7px}
+.m2c-step strong{display:block;color:#fff;margin-bottom:5px}
+.m2c-step p{color:#bcb8af;font-size:.88rem;margin:0;line-height:1.5}
+.m2c-free-note{font-size:.88rem;color:#e8ca7c;margin:-7px 0 16px}
+.m2c-compare{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:16px 0}
+.m2c-tier{background:#161616;border:1px solid #55472b;border-radius:13px;padding:16px}
+.m2c-tier h4{margin:0 0 6px;color:#fff}
+.m2c-tier .m2c-price{font-size:1.65rem;font-weight:900;color:#f2c552}
+.m2c-tier p{margin:6px 0 0;font-size:.87rem}
+.m2c-sample{border:1px solid #67532c;border-radius:13px;background:#121212;padding:16px;margin:14px 0}
+.m2c-sample summary{cursor:pointer;font-weight:850;color:#f2c552}
+.m2c-sample h4{color:#fff;margin:16px 0 7px}
+.m2c-sample p,.m2c-sample li{font-size:.88rem;line-height:1.55;color:#d4d0c7}
+.m2c-sample ul{padding-left:20px}
+.m2c-sample-note{font-size:.78rem!important;color:#a9a398!important}
+@media(max-width:700px){.m2c-steps,.m2c-compare{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -145,12 +165,18 @@ a{accent-color:#d9a520}
   <h1>Translate military experience into civilian career matches.</h1>
   <p class="mission-tagline">Your Mission Doesn’t End. <span>It Evolves.</span></p>
   <p class="lead"> MOS2Career scores roles based on your military specialty, technical skills, leadership, education, clearance, years of service, and career goals. It also highlights likely strengths, gaps, and next steps.</p>
+  <div class="m2c-steps" aria-label="How MOS2Career works">
+    <div class="m2c-step"><b>Step 1</b><strong>Share your experience</strong><p>Enter your military specialty, skills, and career goals.</p></div>
+    <div class="m2c-step"><b>Step 2</b><strong>Explore free matches</strong><p>See civilian roles aligned with your background, with estimated fit and next steps.</p></div>
+    <div class="m2c-step"><b>Step 3</b><strong>Build your transition plan</strong><p>Optionally upgrade to a $39 personalized Career Blueprint.</p></div>
+  </div>
 </div></header>
 
 <main class="wrap grid">
   <section class="card">
     <div class="eyebrow">Your profile</div>
     <h2 style="margin:8px 0 16px">Military Career Profile</h2>
+    <p class="m2c-free-note">Get your career matches free. No payment required.</p>
     <form id="profileForm" class="formgrid" name="career-translator" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="career-translator">
           <input type="hidden" id="submissionId" name="submission_id" value="">
@@ -278,6 +304,23 @@ a{accent-color:#d9a520}
       <div class="eyebrow">Go deeper</div>
       <h3>Get Your Personalized Career Blueprint — $39</h3>
       <p>Turn your free matches into a detailed military-to-civilian transition plan built around your background and goals.</p>
+      <div class="m2c-compare" aria-label="Free versus paid career guidance">
+        <div class="m2c-tier"><h4>Free Career Translator</h4><div class="m2c-price">$0</div><p>Explore matched civilian roles, estimated fit, and general career guidance.</p></div>
+        <div class="m2c-tier"><h4>Personalized Career Blueprint</h4><div class="m2c-price">$39</div><p>Go further with a tailored skills, credentials, employer, resume, and 90-day transition strategy.</p></div>
+      </div>
+      <details class="m2c-sample">
+        <summary>Preview a sample Career Blueprint</summary>
+        <p class="m2c-sample-note">Illustrative excerpt using a fictional veteran profile. This is not an actual customer report or a guarantee of employment.</p>
+        <h4>Example profile: Navy electronics technician</h4>
+        <p><strong>Career direction:</strong> Electronics Test Technician, Field Service Engineer, or Technical Project Coordinator.</p>
+        <h4>Transferable strengths</h4>
+        <ul><li>Equipment troubleshooting and preventive maintenance</li><li>Technical documentation and quality checks</li><li>Team coordination and safety procedures</li></ul>
+        <h4>Potential qualification gaps</h4>
+        <p>Review civilian job postings for industry-specific tools, credentials, and employer experience requirements.</p>
+        <h4>Illustrative 90-day action plan</h4>
+        <ul><li><strong>Days 1–30:</strong> Choose target roles and translate military achievements into resume bullets.</li><li><strong>Days 31–60:</strong> Identify credential gaps and tailor applications to relevant employers.</li><li><strong>Days 61–90:</strong> Practice interviews, network with hiring teams, and refine applications.</li></ul>
+        <p class="m2c-sample-note">Your purchased Blueprint is intended to be tailored to your submitted experience and goals; the sample above is abbreviated.</p>
+      </details>
       <ul class="blueprint-features">
         <li>Top 10 civilian career matches</li>
         <li>Transferable skill analysis</li>
