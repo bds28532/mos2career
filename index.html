@@ -174,6 +174,20 @@ header .mission-tagline{font-size:clamp(1.05rem,2.1vw,1.45rem);margin:0 0 20px}
   header h1{font-size:clamp(2.1rem,8vw,3rem)}
 }
 @media(max-width:360px){.brand-emblem{width:43px;height:43px}.brand-name{font-size:1.2rem}}
+
+/* Conversion-focused masthead refinements */
+.brand-emblem{width:96px;height:96px}
+.navin{min-height:116px}
+header{padding:49px 0 30px}
+header .lead{margin-bottom:16px}
+.m2c-hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:15px;margin:18px 0 14px}
+.m2c-hero-cta{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:13px 22px;border-radius:12px;background:linear-gradient(100deg,#d9a520,#f2c552);color:#111;text-decoration:none;font-weight:900;box-shadow:0 5px 22px rgba(217,165,32,.18);transition:transform .15s ease,filter .15s ease}
+.m2c-hero-cta:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.m2c-hero-cta:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.m2c-trust-line{color:#dfd4b9;font-size:.91rem;font-weight:650}
+header .m2c-steps{margin-top:17px}
+@media(max-width:650px){.brand-emblem{width:59px;height:59px}.navin{min-height:86px}header{padding:33px 0 25px}.m2c-hero-cta{width:100%}.m2c-hero-actions{gap:10px}}
+@media(max-width:360px){.brand-emblem{width:47px;height:47px}}
 </style>
 </head>
 <body>
@@ -186,6 +200,10 @@ header .mission-tagline{font-size:clamp(1.05rem,2.1vw,1.45rem);margin:0 0 20px}
   <h1>Translate military experience into civilian career matches.</h1>
   <p class="mission-tagline">Your Mission Doesn’t End. <span>It Evolves.</span></p>
   <p class="lead"> MOS2Career scores roles based on your military specialty, technical skills, leadership, education, clearance, years of service, and career goals. It also highlights likely strengths, gaps, and next steps.</p>
+  <div class="m2c-hero-actions">
+    <a class="m2c-hero-cta" href="#profileForm">Find My Civilian Career Matches — Free ↓</a>
+    <span class="m2c-trust-line">Built for veterans and transitioning service members.</span>
+  </div>
   <div class="m2c-steps" aria-label="How MOS2Career works">
     <div class="m2c-step"><b>Step 1</b><strong>Share your experience</strong><p>Enter your military specialty, skills, and career goals.</p></div>
     <div class="m2c-step"><b>Step 2</b><strong>Explore free matches</strong><p>See civilian roles aligned with your background, with estimated fit and next steps.</p></div>
