@@ -155,6 +155,25 @@ a{accent-color:#d9a520}
 .m2c-sample ul{padding-left:20px}
 .m2c-sample-note{font-size:.78rem!important;color:#a9a398!important}
 @media(max-width:700px){.m2c-steps,.m2c-compare{grid-template-columns:1fr}}
+/* Larger, more prominent MOS2Career masthead — responsive, presentation only */
+nav{background:linear-gradient(105deg,rgba(7,7,7,.98),rgba(31,25,12,.97) 55%,rgba(8,8,8,.98));border-bottom:2px solid rgba(217,165,32,.58);box-shadow:0 10px 32px rgba(0,0,0,.4)}
+.navin{min-height:112px;justify-content:center;padding-top:12px;padding-bottom:12px}
+.brand{gap:22px;filter:drop-shadow(0 3px 8px rgba(0,0,0,.45))}
+.brand-emblem{width:84px;height:84px;filter:drop-shadow(0 0 12px rgba(217,165,32,.23))}
+.brand-name{font-size:clamp(1.8rem,4vw,3.05rem);font-weight:950;letter-spacing:.075em;line-height:1.05;text-shadow:0 2px 18px rgba(0,0,0,.7)}
+header{padding:78px 0 48px;background:radial-gradient(ellipse at 50% 0%,rgba(217,165,32,.13),transparent 66%);border-bottom:1px solid rgba(217,165,32,.13)}
+header h1{max-width:1030px;line-height:1.07;letter-spacing:-.035em}
+header .eyebrow{font-size:.88rem;letter-spacing:.18em}
+header .mission-tagline{font-size:clamp(1.05rem,2.1vw,1.45rem);margin:0 0 20px}
+@media(max-width:650px){
+  .navin{min-height:84px;padding-top:10px;padding-bottom:10px}
+  .brand{gap:12px}
+  .brand-emblem{width:52px;height:52px}
+  .brand-name{font-size:clamp(1.35rem,6vw,1.85rem);letter-spacing:.025em}
+  header{padding:46px 0 32px}
+  header h1{font-size:clamp(2.1rem,8vw,3rem)}
+}
+@media(max-width:360px){.brand-emblem{width:43px;height:43px}.brand-name{font-size:1.2rem}}
 </style>
 </head>
 <body>
