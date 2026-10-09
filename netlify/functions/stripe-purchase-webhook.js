@@ -1,5 +1,5 @@
 // Stripe Payment Link purchase tracking for Netlify Functions.
-// Configure STRIPE_WEBHOOK_SECRET, STRIPE_PAYMENT_LINK_ID, GA4_MEASUREMENT_ID,
+// Configure STRIPE_PURCHASE_WEBHOOK_SECRET, STRIPE_PAYMENT_LINK_ID, GA4_MEASUREMENT_ID,
 // and GA4_API_SECRET in Netlify environment variables. Never expose secrets in browser code.
 const crypto = require("node:crypto");
 
