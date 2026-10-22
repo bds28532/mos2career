@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mos2career.com/sitemap.xml
