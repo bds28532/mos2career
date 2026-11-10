@@ -4,6 +4,9 @@
   "description": "MOS2Career military-to-civilian career transition platform",
   "private": true,
   "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
   "dependencies": {
     "@netlify/blobs": "^10.0.0",
     "openai": "^5.0.0",

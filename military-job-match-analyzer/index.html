@@ -5,7 +5,7 @@
 <link rel="canonical" href="https://www.mos2career.com/military-job-match-analyzer/">
 <link rel="stylesheet" href="/career-guides.css">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2251989Z9F"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-2251989Z9F')</script>
-<style>.analyzer{max-width:850px;margin:0 auto 45px}.field{margin:15px 0}.field label{display:block;font-weight:750;margin-bottom:7px}input,select,textarea{display:block;width:100%;background:#191919;color:#fff;border:1px solid #80682e;border-radius:9px;padding:13px;font:inherit}textarea{min-height:150px}button.button{border:0;cursor:pointer}button:disabled{opacity:.6;cursor:wait}.result{white-space:normal}.result li{margin:7px 0}.error{color:#ffb6a9}.muted{color:#c4c0b8}.hidden{display:none}</style></head>
+<style>.analyzer{max-width:850px;margin:0 auto 45px}.field{margin:15px 0}.field label{display:block;font-weight:750;margin-bottom:7px}input,select,textarea{display:block;width:100%;background:#191919;color:#fff;border:1px solid #80682e;border-radius:9px;padding:13px;font:inherit}textarea{min-height:150px}button.button{border:0;cursor:pointer}button:disabled{opacity:.6;cursor:wait}.result{white-space:normal}.result li{margin:7px 0}.error{color:#ffb6a9}.muted{color:#c4c0b8}.hidden,[hidden]{display:none!important}.report-actions{display:flex;flex-wrap:wrap;gap:12px;margin:24px 0 12px}.report-actions .button{background:#25211a;color:#f2c552;border:1px solid #80682e}.button:focus-visible{outline:3px solid #fff;outline-offset:4px}.report-status{min-height:1.6em}.result .cta{margin-top:28px}.result .cta h3{margin-top:0}#manualCopy label{display:block;margin:12px 0 8px}#reportText{min-height:220px}@media(max-width:500px){.report-actions .button,.result .cta .button{width:100%}.result .cta{padding:20px}}</style></head>
 <body><a class="skip-link" href="#main">Skip to content</a><div class="topbar"><div class="wrap topbar-inner"><a class="brand" href="/">MOS<strong>2</strong>Career</a><nav class="navigation"><a class="nav-detail" href="/">Career Translator</a><a class="button" href="/">Explore Careers</a></nav></div></div>
 <main class="wrap" id="main"><header class="hero"><p class="eyebrow">Free veteran career tool</p><h1>Military-to-Civilian Job Match Analyzer</h1><p class="lead">Paste a civilian job posting and compare it with your actual military duties. Get a practical breakdown of transferable skills, qualifications to verify, and next steps. Free, no account required.</p></header>
 <section class="analyzer"><form id="matchForm" class="card">
@@ -16,7 +16,23 @@
 <div class="field"><label for="job">Civilian job description</label><textarea id="job" minlength="80" maxlength="10000" required placeholder="Paste the job title, responsibilities, and qualifications (at least 80 characters)."></textarea></div>
 <p class="note">Do not include classified, sensitive, or personal identifying information. Your inputs are sent to an AI service to produce this report. Results are guidance, not a hiring decision.</p>
 <button class="button" id="submit" type="submit">Analyze My Job Match — Free</button><p id="status" role="status" aria-live="polite"></p></form>
-<div id="results" class="card result hidden" aria-live="polite"><h2>Your Job Match Analysis</h2><p id="summary"></p><div id="sections"></div><p><strong>Resume wording example:</strong> <span id="resume"></span></p><div class="cta"><h3>Build your full transition plan</h3><p>Use the free Career Translator, then explore the optional $39 personalized Career Blueprint.</p><a class="button" id="blueprintLink" href="/">Open Free Career Translator</a></div></div></section>
+<div id="results" class="card result hidden" aria-live="polite">
+<h2>Your Job Match Analysis</h2><p id="summary"></p><div id="sections"></div>
+<p><strong>Resume wording example:</strong> <span id="resume"></span></p>
+<div class="report-actions" role="group" aria-label="Save your job match report">
+<button class="button" id="copyReport" type="button">Copy report</button>
+<button class="button" id="downloadReport" type="button">Download report (.txt)</button>
+</div>
+<p class="note report-status" id="reportActionStatus" role="status" aria-live="polite"></p>
+<div id="manualCopy" hidden><label for="reportText">Your report — select and copy</label><textarea id="reportText" readonly></textarea></div>
+<p class="note">This report reflects the answers used for this analysis. Run the analyzer again after making changes.</p>
+<div class="cta">
+<p class="eyebrow">Keep building your next career</p>
+<h3>Turn your next steps into a full transition plan</h3>
+<p>Your free analysis compares your experience with one job posting. The optional <strong>$39 personalized Career Blueprint</strong> adds broader career matches, skills and credential gaps, resume and LinkedIn strategy, interview preparation, and a 90-day transition plan.</p>
+<a class="button" id="blueprintLink" href="/?from=job-match#profileForm">Continue with my answers — Free</a>
+<p class="note" style="margin-top:14px">Your branch, specialty, duties, and any credentials you entered carry over for review in this tab. Complete your profile and generate free career matches before choosing whether to buy. No payment required to continue.</p>
+</div></div></section>
 <section><h2>How to interpret your results</h2><p>Military job titles alone do not establish civilian qualifications. This tool distinguishes skills you described from possible transferable skills that need verification. Review job requirements and tailor your application to your real experience.</p><p>Explore our <a href="/navy-it-civilian-jobs/">Navy IT</a>, <a href="/army-25b-civilian-jobs/">Army 25B</a>, <a href="/navy-ls-civilian-jobs/">Navy LS</a>, and <a href="/navy-fire-controlman-civilian-careers.html">Navy Fire Controlman</a> career guides.</p></section></main>
 <footer><div class="wrap"><a href="/">MOS2Career</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></div></footer>
-<script src="/military-job-match-analyzer/analyzer.js" defer></script></body></html>
+<script type="module" src="/military-job-match-analyzer/analyzer.js"></script></body></html>
