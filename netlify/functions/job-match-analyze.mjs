@@ -1,3 +1,5 @@
+import { getStore } from "@netlify/blobs";
+import { createHash } from "node:crypto";
 import OpenAI from "openai";
 const branches = new Set(["Navy","Army","Air Force","Marine Corps","Coast Guard","Space Force"]);
 const json = (body,status=200)=>new Response(JSON.stringify(body),{status,headers:{"Content-Type":"application/json","Cache-Control":"no-store"}});
@@ -11,6 +13,23 @@ export default async function handler(request){
   const job=String(data.jobDescription||"").trim().slice(0,10000);
   if(!branches.has(branch)||!specialty||job.length<80||String(data.jobDescription||"").length>10000) return json({error:"Choose a branch and specialty, and paste a job description of at least 80 characters (maximum 10,000)."},400);
   if(!process.env.OPENAI_API_KEY) return json({error:"Analyzer temporarily unavailable"},503);
+  // Best-effort per-IP hourly cap backed by Netlify Blobs. A distributed atomic
+  // gateway limiter is recommended before high-volume public launch.
+  const ip=request.headers.get("x-nf-client-connection-ip")||request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  if(!ip) return json({error:"Unable to verify request origin"},429);
+  const key=createHash("sha256").update(ip).digest("hex");
+  const windowId=Math.floor(Date.now()/3600000);
+  try {
+    const store=getStore("job-match-rate-limits");
+    const id=windowId+"-"+key;
+    const prior=await store.get(id,{type:"json"});
+    if((prior?.count||0)>=5)return json({error:"Hourly free analysis limit reached. Please try again later."},429);
+    await store.setJSON(id,{count:(prior?.count||0)+1},{ttl:7200});
+  } catch(e) {
+    console.error("Rate limit store unavailable",e?.name);
+    return json({error:"Analyzer temporarily unavailable. Please try again later."},503);
+  }
+
   try{
     const ai=new OpenAI({apiKey:process.env.OPENAI_API_KEY,timeout:20000,maxRetries:0});
     const result=await ai.responses.create({
