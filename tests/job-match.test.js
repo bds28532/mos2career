@@ -166,3 +166,120 @@ test('ordinary translator visits do not apply analyzer answers or display a hand
   assert.equal(elements.jobMatchHandoffNotice.hidden, true);
   assert.notEqual(storage.getItem(HANDOFF_KEY), null);
 });
+
+async function analyzerPage(run, options = {}) {
+  const nodes = new Map();
+  function element(id = '') {
+    const classes = new Set(id === 'results' ? ['hidden'] : []);
+    return {
+      value: '', textContent: '', hidden: id === 'manualCopy', disabled: false,
+      listeners: {}, children: [], href: '',
+      classList: { add: name => classes.add(name), remove: name => classes.delete(name), contains: name => classes.has(name) },
+      addEventListener(name, callback) { this.listeners[name] = callback; },
+      append(...children) { this.children.push(...children); },
+      replaceChildren() { this.children = []; },
+      scrollIntoView() {}, focus() {}, select() { this.selected = true; }, remove() {},
+      click() { if (this.download) downloads.push(this); }
+    };
+  }
+  const get = id => {
+    if (!nodes.has(id)) nodes.set(id, element(id));
+    return nodes.get(id);
+  };
+  for (const [id, value] of Object.entries({ branch: profile.branch, specialty: profile.specialty, duties: profile.duties, certifications: profile.certifications, job: profile.jobDescription })) get(id).value = value;
+  const storage = options.storage || memoryStorage();
+  const copies = [], downloads = [], blobs = [], events = [];
+  const previous = Object.fromEntries(['window', 'document', 'fetch', 'setTimeout'].map(key => [key, globalThis[key]]));
+  const navigatorDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'navigator');
+  const originalCreate = URL.createObjectURL, originalRevoke = URL.revokeObjectURL;
+  globalThis.window = { sessionStorage: storage, matchMedia: () => ({ matches: false }), gtag: (...args) => events.push(args) };
+  globalThis.document = { getElementById: get, createElement: () => element(), body: element() };
+  globalThis.fetch = options.fetch || (async () => ({ ok: true, json: async () => ({ report }) }));
+  globalThis.setTimeout = () => 0;
+  Object.defineProperty(globalThis, 'navigator', { configurable: true, value: { clipboard: { writeText: async text => {
+    if (options.denyClipboard) throw new Error('Clipboard denied');
+    copies.push(text);
+  } } } });
+  URL.createObjectURL = blob => { blobs.push(blob); return 'blob:local-test'; };
+  URL.revokeObjectURL = () => {};
+  const event = (id, name) => get(id).listeners[name]({ preventDefault() {}, currentTarget: get(id) });
+  try {
+    await import('../military-job-match-analyzer/analyzer.js?test=' + moduleNumber++);
+    await run({ get, event, copies, downloads, blobs, storage, events });
+  } finally {
+    for (const [key, value] of Object.entries(previous)) globalThis[key] = value;
+    if (navigatorDescriptor) Object.defineProperty(globalThis, 'navigator', navigatorDescriptor);
+    else delete globalThis.navigator;
+    URL.createObjectURL = originalCreate;
+    URL.revokeObjectURL = originalRevoke;
+  }
+}
+
+test('copy, download, and continuation use the completed analysis even after form edits', async () => {
+  await analyzerPage(async ({ get, event, copies, downloads, blobs, storage, events }) => {
+    await event('matchForm', 'submit');
+    assert.equal(get('results').classList.contains('hidden'), false);
+    get('specialty').value = 'Edited specialty';
+    get('duties').value = 'Edited duties';
+    await event('copyReport', 'click');
+    event('downloadReport', 'click');
+    event('blueprintLink', 'click');
+    assert.equal(copies.length, 1);
+    assert.equal(downloads[0].download, 'MOS2Career_Job_Match_Report.txt');
+    assert.equal(await blobs[0].text(), copies[0]);
+    assert.ok(copies[0].includes('Military specialty: 25B'));
+    assert.equal(copies[0].includes('Edited duties'), false);
+    assert.equal(get('blueprintLink').href, '/?from=job-match#profileForm');
+    assert.equal(consumeProfileHandoff(storage).duties, profile.duties);
+    for (const [, , payload] of events) assert.deepEqual(payload, { tool: 'military_job_match' });
+  });
+});
+
+test('blocked clipboard exposes selectable report text and keeps downloading available', async () => {
+  await analyzerPage(async ({ get, event, blobs }) => {
+    await event('matchForm', 'submit');
+    await event('copyReport', 'click');
+    assert.equal(get('manualCopy').hidden, false);
+    assert.equal(get('reportText').selected, true);
+    assert.ok(get('reportActionStatus').textContent.includes('Automatic copying is unavailable'));
+    event('downloadReport', 'click');
+    assert.equal(await blobs[0].text(), get('reportText').value);
+  }, { denyClipboard: true });
+});
+
+test('failed repeat analysis cannot export a stale successful report', async () => {
+  let requests = 0;
+  await analyzerPage(async ({ get, event, copies, downloads }) => {
+    await event('matchForm', 'submit');
+    await event('matchForm', 'submit');
+    await event('copyReport', 'click');
+    event('downloadReport', 'click');
+    assert.equal(copies.length, 0);
+    assert.equal(downloads.length, 0);
+    assert.equal(get('results').classList.contains('hidden'), true);
+    assert.equal(get('status').textContent, 'Try again later');
+    assert.equal(get('submit').disabled, false);
+  }, { fetch: async () => ({ ok: ++requests === 1, json: async () => requests === 1 ? { report } : { error: 'Try again later' } }) });
+});
+
+test('repeat submissions while analyzing produce only one request', async () => {
+  let release, requests = 0;
+  const pending = new Promise(resolve => { release = resolve; });
+  await analyzerPage(async ({ get, event }) => {
+    const first = event('matchForm', 'submit');
+    await event('matchForm', 'submit');
+    assert.equal(requests, 1);
+    assert.equal(get('submit').disabled, true);
+    release({ ok: true, json: async () => ({ report }) });
+    await first;
+    assert.equal(get('submit').disabled, false);
+  }, { fetch: () => { requests++; return pending; } });
+});
+
+test('blocked storage still offers a working translator link with an explicit fallback marker', async () => {
+  await analyzerPage(async ({ get, event }) => {
+    await event('matchForm', 'submit');
+    event('blueprintLink', 'click');
+    assert.equal(get('blueprintLink').href, '/?from=job-match&handoff=unavailable#profileForm');
+  }, { storage: { setItem() { throw new Error('Storage blocked'); } } });
+});
