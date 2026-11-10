@@ -7,8 +7,14 @@ export default async function handler(request){
   if(request.method!=="POST") return json({error:"Method not allowed"},405);
   if(Number(request.headers.get("content-length")||0)>20000) return json({error:"Request too large"},413);
   let data;
-  try {data=await request.json()}catch{return json({error:"Invalid request"},400)}
+  try {
+    const raw=await request.text();
+    if(raw.length>20000)return json({error:"Request too large"},413);
+    data=JSON.parse(raw);
+    if(!data||typeof data!=="object"||Array.isArray(data))return json({error:"Invalid request"},400);
+  }catch{return json({error:"Invalid request"},400)}
   const branch=String(data.branch||"").trim(),specialty=String(data.specialty||"").trim().slice(0,100);
+  if(String(data.specialty||"").length>100||String(data.duties||"").length>2000||String(data.certifications||"").length>500)return json({error:"Input exceeds the allowed length"},400);
   const duties=String(data.duties||"").trim().slice(0,2000),certifications=String(data.certifications||"").trim().slice(0,500);
   const job=String(data.jobDescription||"").trim().slice(0,10000);
   if(!branches.has(branch)||!specialty||job.length<80||String(data.jobDescription||"").length>10000) return json({error:"Choose a branch and specialty, and paste a job description of at least 80 characters (maximum 10,000)."},400);
