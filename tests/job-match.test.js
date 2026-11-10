@@ -103,9 +103,19 @@ test('incomplete AI responses cannot produce a successful report', () => {
 });
 
 let moduleNumber = 0;
-async function translatorPage(search, values = {}, storage = memoryStorage()) {
+async function translatorPage(search, values = {}, storage = memoryStorage(), interact = () => {}) {
   const elements = {
-    jobMatchHandoffNotice: { hidden: true, textContent: '' },
+    jobMatchHandoff: { hidden: true },
+    jobMatchHandoffNotice: { textContent: '' },
+    jobMatchApplyAnswers: {
+      hidden: true, disabled: false, listeners: {},
+      addEventListener(name, callback) { this.listeners[name] = callback; },
+      click() { if (!this.hidden && !this.disabled) this.listeners.click?.(); }
+    },
+    profileForm: {
+      listeners: {},
+      addEventListener(name, callback) { this.listeners[name] = callback; }
+    },
     branch: { value: values.branch || 'Navy' },
     specialty: { value: values.specialty || '' },
     duties: { value: values.duties || '' },
@@ -114,10 +124,11 @@ async function translatorPage(search, values = {}, storage = memoryStorage()) {
   };
   const events = [];
   const previous = { window: globalThis.window, document: globalThis.document };
-  globalThis.window = { location: { search }, sessionStorage: storage, gtag: (...args) => events.push(args) };
+  globalThis.window = { location: { search }, sessionStorage: storage, currentReport: values.hasReport ? {} : undefined, gtag: (...args) => events.push(args) };
   globalThis.document = { getElementById: id => elements[id] };
   try {
     await import('../career-translator-handoff.js?test=' + moduleNumber++);
+    await interact({ elements, events });
     return { elements, events };
   } finally {
     globalThis.window = previous.window;
@@ -125,27 +136,107 @@ async function translatorPage(search, values = {}, storage = memoryStorage()) {
   }
 }
 
-test('translator fills real answers without changing identity, education, or sending answers to analytics', async () => {
+test('translator applies the analyzer profile only after the visitor chooses it', async () => {
   const storage = memoryStorage();
   saveProfileHandoff(storage, profile);
-  const { elements, events } = await translatorPage('?from=job-match', {}, storage);
+  const { elements, events } = await translatorPage('?from=job-match', {}, storage, ({ elements, events }) => {
+    assert.equal(elements.branch.value, 'Navy');
+    assert.equal(elements.specialty.value, '');
+    assert.equal(elements.duties.value, '');
+    assert.equal(elements.jobMatchApplyAnswers.hidden, false);
+    assert.deepEqual(events, []);
+    elements.jobMatchApplyAnswers.click();
+  });
   assert.equal(elements.branch.value, 'Army');
   assert.equal(elements.specialty.value, '25B');
   assert.equal(elements.duties.value, translatorDuties(profile));
   assert.equal(elements.firstName.value, 'Existing name');
   assert.equal(elements.email.value, 'existing@example.invalid');
   assert.equal(elements.education.value, '0');
-  assert.equal(elements.jobMatchHandoffNotice.hidden, false);
+  assert.equal(elements.jobMatchHandoff.hidden, false);
+  assert.equal(elements.jobMatchApplyAnswers.hidden, true);
   assert.deepEqual(events, [['event', 'job_match_profile_prefilled', { tool: 'military_job_match' }]]);
 });
 
-test('translator preserves existing profile entries', async () => {
+test('translator preserves the complete existing profile until replacement is chosen', async () => {
   const storage = memoryStorage();
   saveProfileHandoff(storage, profile);
-  const { elements } = await translatorPage('?from=job-match', { branch: 'Navy', specialty: 'IT', duties: 'My edited duties.' }, storage);
+  const { elements, events } = await translatorPage('?from=job-match', { branch: 'Navy', specialty: 'IT', duties: 'My edited duties.' }, storage);
   assert.equal(elements.branch.value, 'Navy');
   assert.equal(elements.specialty.value, 'IT');
   assert.equal(elements.duties.value, 'My edited duties.');
+  assert.deepEqual(events, []);
+});
+
+for (const [label, existing] of [
+  ['an edited branch', { branch: 'Air Force', specialty: '', duties: '' }],
+  ['an intentional default branch', { branch: 'Navy', specialty: '', duties: '' }],
+  ['a specialty with blank duties', { branch: 'Navy', specialty: 'IT', duties: '' }],
+  ['duties with a blank specialty', { branch: 'Navy', specialty: '', duties: 'Existing Navy duties.' }]
+]) {
+  test('handoff keeps ' + label + ' intact and replaces the whole group only on request', async () => {
+    const storage = memoryStorage();
+    saveProfileHandoff(storage, profile);
+    await translatorPage('?from=job-match', existing, storage, ({ elements, events }) => {
+      for (const field of ['branch', 'specialty', 'duties']) assert.equal(elements[field].value, existing[field]);
+      assert.deepEqual(events, []);
+      elements.jobMatchApplyAnswers.click();
+      assert.equal(elements.branch.value, profile.branch);
+      assert.equal(elements.specialty.value, profile.specialty);
+      assert.equal(elements.duties.value, translatorDuties(profile));
+      assert.deepEqual(events, [['event', 'job_match_profile_prefilled', { tool: 'military_job_match' }]]);
+    });
+  });
+}
+
+test('choosing an analyzer profile with empty duties clears old duties instead of mixing profiles', async () => {
+  const storage = memoryStorage();
+  saveProfileHandoff(storage, { ...profile, duties: '', certifications: '' });
+  await translatorPage('?from=job-match', { branch: 'Navy', specialty: 'IT', duties: 'Existing duties.' }, storage, ({ elements }) => {
+    assert.equal(elements.duties.value, 'Existing duties.');
+    elements.jobMatchApplyAnswers.click();
+    assert.equal(elements.branch.value, 'Army');
+    assert.equal(elements.specialty.value, '25B');
+    assert.equal(elements.duties.value, '');
+  });
+});
+
+test('submitting the existing profile closes the pending handoff choice', async () => {
+  const storage = memoryStorage();
+  saveProfileHandoff(storage, profile);
+  await translatorPage('?from=job-match', { branch: 'Navy', specialty: 'IT', duties: 'Existing duties.' }, storage, ({ elements, events }) => {
+    assert.equal(elements.jobMatchApplyAnswers.hidden, false);
+    window.currentReport = {};
+    elements.profileForm.listeners.submit();
+    elements.jobMatchApplyAnswers.click();
+    assert.equal(elements.jobMatchApplyAnswers.hidden, true);
+    assert.equal(elements.branch.value, 'Navy');
+    assert.equal(elements.specialty.value, 'IT');
+    assert.equal(elements.duties.value, 'Existing duties.');
+    assert.deepEqual(events, []);
+  });
+});
+
+test('a rejected profile submission keeps the analyzer choice available', async () => {
+  const storage = memoryStorage();
+  saveProfileHandoff(storage, profile);
+  await translatorPage('?from=job-match', {}, storage, ({ elements }) => {
+    elements.profileForm.listeners.submit();
+    assert.equal(elements.jobMatchApplyAnswers.hidden, false);
+    elements.jobMatchApplyAnswers.click();
+    assert.equal(elements.specialty.value, '25B');
+  });
+});
+
+test('a late-loading handoff never replaces an already-generated career profile', async () => {
+  const storage = memoryStorage();
+  saveProfileHandoff(storage, profile);
+  const { elements, events } = await translatorPage('?from=job-match', { branch: 'Navy', specialty: 'IT', duties: 'Existing duties.', hasReport: true }, storage);
+  assert.equal(elements.jobMatchApplyAnswers.hidden, true);
+  assert.equal(elements.branch.value, 'Navy');
+  assert.equal(elements.specialty.value, 'IT');
+  assert.equal(elements.duties.value, 'Existing duties.');
+  assert.deepEqual(events, []);
 });
 
 test('unavailable marker never restores an older stored profile', async () => {
@@ -155,6 +246,7 @@ test('unavailable marker never restores an older stored profile', async () => {
   assert.equal(elements.specialty.value, '');
   assert.ok(elements.jobMatchHandoffNotice.textContent.includes('could not be carried over'));
   assert.equal(events.length, 0);
+  assert.equal(elements.jobMatchApplyAnswers.hidden, true);
   assert.equal(storage.getItem(HANDOFF_KEY), null);
 });
 
@@ -163,7 +255,8 @@ test('ordinary translator visits do not apply analyzer answers or display a hand
   saveProfileHandoff(storage, profile);
   const { elements } = await translatorPage('', {}, storage);
   assert.equal(elements.specialty.value, '');
-  assert.equal(elements.jobMatchHandoffNotice.hidden, true);
+  assert.equal(elements.jobMatchHandoff.hidden, true);
+  assert.equal(elements.jobMatchApplyAnswers.hidden, true);
   assert.notEqual(storage.getItem(HANDOFF_KEY), null);
 });
 
