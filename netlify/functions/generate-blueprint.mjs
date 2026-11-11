@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { normalizeBlueprintProfile as cleanProfile } from "./lib/blueprint-profile.mjs";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -19,81 +20,6 @@ function jsonResponse(body, status = 200) {
       "Content-Type": "application/json",
     },
   });
-}
-
-function cleanProfile(profile = {}) {
-  return {
-    submissionId:
-      profile.submissionId ||
-      profile.submission_id ||
-      profile["submission-id"] ||
-      "",
-
-    name:
-      profile.name ||
-      profile.fullName ||
-      "",
-
-    email:
-      profile.email ||
-      "",
-
-    branch:
-      profile.branch ||
-      "",
-
-    militarySpecialty:
-      profile.militarySpecialty ||
-      profile.military_specialty ||
-      profile.specialty ||
-      profile.mos ||
-      profile.rating ||
-      profile.afsc ||
-      "",
-
-    rank:
-      profile.rank ||
-      "",
-
-    yearsOfService:
-      profile.yearsOfService ||
-      profile.years_of_service ||
-      profile.years ||
-      "",
-
-    education:
-      profile.education ||
-      "",
-
-    clearance:
-      profile.clearance ||
-      "",
-
-    careerGoal:
-      profile.careerGoal ||
-      profile.career_goal ||
-      profile.goal ||
-      "",
-
-    workSetup:
-      profile.workSetup ||
-      profile.work_setup ||
-      profile.workPreference ||
-      "",
-
-    skills:
-      profile.skills ||
-      "",
-
-    duties:
-      profile.duties ||
-      "",
-
-    topMatches:
-      profile.topMatches ||
-      profile.top_matches ||
-      "",
-  };
 }
 
 function parseResponse(response, phaseName) {
@@ -1005,3 +931,4 @@ export default async function handler(req) {
     );
   }
 }
+
