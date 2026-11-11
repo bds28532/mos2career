@@ -156,8 +156,16 @@ await check("Forms API failure remains retryable and queues nothing", async () =
   assert.equal((await w.handler(webhookRequest(event()))).status, 500);
   assert.equal(w.queued.length, 0);
 });
+await check("Paid delayed-payment success queues the matched profile", async () => {
+  const w = await webhook(() => Response.json([{ data: profile }]));
+  const response = await w.handler(webhookRequest(event("paid", "checkout.session.async_payment_succeeded")));
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).paymentConfirmed, true);
+  assert.equal(w.queued.length, 1);
+});
 for (const [name, payload, signature] of [
   ["Unpaid payment does not queue", event("unpaid"), "fixture-signature"],
+  ["Delayed-success event with unpaid status does not queue", event("unpaid", "checkout.session.async_payment_succeeded"), "fixture-signature"],
   ["Failed delayed payment does not queue", event("unpaid", "checkout.session.async_payment_failed"), "fixture-signature"],
   ["Missing signature does not look up or queue a customer", event(), null],
 ]) await check(name, async () => {

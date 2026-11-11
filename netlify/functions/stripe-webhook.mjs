@@ -424,23 +424,12 @@ export default async (request) => {
    * -------------------------------------------------------
    */
 
-  let paymentConfirmed = false;
-
-  if (
-    event.type ===
-      "checkout.session.completed" &&
-    session.payment_status ===
-      "paid"
-  ) {
-    paymentConfirmed = true;
-  }
-
-  if (
-    event.type ===
-    "checkout.session.async_payment_succeeded"
-  ) {
-    paymentConfirmed = true;
-  }
+  // Both immediate and delayed notifications must carry a paid session.
+  // An event name alone must never authorize fulfillment of an unpaid order.
+  const paymentConfirmed =
+    (event.type === "checkout.session.completed" ||
+      event.type === "checkout.session.async_payment_succeeded") &&
+    session.payment_status === "paid";
 
   /*
    * Async payment failed.
