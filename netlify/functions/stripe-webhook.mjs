@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { findMOS2CareerProfile } from "./lib/find-profile.mjs";
 
 const stripe = new Stripe(
   "sk_placeholder_for_webhook_verification_only"
@@ -80,84 +81,6 @@ quantity: 1
  * FIND MOS2CAREER PROFILE
  * ---------------------------------------------------------
  */
-
-async function findMOS2CareerProfile(submissionId) {
-  const token = process.env.NETLIFY_API_TOKEN;
-  const siteId = process.env.NETLIFY_SITE_ID;
-
-  if (!token) {
-    throw new Error(
-      "NETLIFY_API_TOKEN is not configured"
-    );
-  }
-
-  if (!siteId) {
-    throw new Error(
-      "NETLIFY_SITE_ID is not configured"
-    );
-  }
-
-  const url =
-    `https://api.netlify.com/api/v1/sites/` +
-    `${encodeURIComponent(siteId)}/submissions`;
-
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    const body = await response.text();
-
-    throw new Error(
-      `Netlify submissions API failed: ` +
-      `${response.status} ${body}`
-    );
-  }
-
-  const submissions = await response.json();
-
-  if (!Array.isArray(submissions)) {
-    throw new Error(
-      "Unexpected Netlify submissions response"
-    );
-  }
-
-  const wantedId = String(
-    submissionId || ""
-  )
-    .trim()
-    .toUpperCase();
-
-  const match = submissions.find(
-    (submission) => {
-      const data =
-        submission.data || {};
-
-      const possibleIds = [
-        data.submissionId,
-        data.submission_id,
-        data["submission-id"],
-        data.referenceId,
-        data.reference_id,
-      ]
-        .filter(Boolean)
-        .map((value) =>
-          String(value)
-            .trim()
-            .toUpperCase()
-        );
-
-      return possibleIds.includes(
-        wantedId
-      );
-    }
-  );
-
-  return match || null;
-}
 
 /*
  * ---------------------------------------------------------
@@ -599,11 +522,16 @@ export default async (request) => {
         `${submissionId}`
       );
 
-      return jsonResponse(200, {
+      // A saved form can become visible after the payment event. A 5xx
+      // response keeps Stripe's delivery retryable until we can queue the job.
+      return jsonResponse(503, {
         received: true,
         paymentConfirmed: true,
         submissionId,
         profileFound: false,
+        fulfillmentQueued: false,
+        retryable: true,
+        error: "profile_not_available",
       });
     }
 
@@ -726,3 +654,4 @@ if (verifiedMode === "live") {
     });
   }
 };
+
