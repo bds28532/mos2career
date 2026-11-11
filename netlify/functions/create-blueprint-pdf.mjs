@@ -209,17 +209,27 @@ function createWriter(
     const after =
       options.after ?? 10;
 
+    const lines = wrapText(
+      text,
+      fonts.bold,
+      size,
+      PAGE_WIDTH - MARGIN_X * 2
+    );
+    if (!lines.length) return;
+
+    const lineHeight = options.lineHeight || size * 1.25;
+    const pageTitle = options.pageTitle || "Personalized Career Blueprint";
+
     ensureSpace(
-      size + before + after + 10,
-      options.pageTitle ||
-        "Personalized Career Blueprint"
+      before + size + (lines.length - 1) * lineHeight + after + 10,
+      pageTitle
     );
 
     y -= before;
 
-    page.drawText(
-      safeText(text),
-      {
+    lines.forEach((line, index) => {
+      ensureSpace(size + after + 10, pageTitle);
+      page.drawText(line, {
         x: MARGIN_X,
         y,
         size,
@@ -227,10 +237,11 @@ function createWriter(
         color:
           options.color ||
           COLORS.navy,
-      }
-    );
+      });
+      y -= index < lines.length - 1 ? lineHeight : size;
+    });
 
-    y -= size + after;
+    y -= after;
   }
 
   function paragraph(
@@ -1451,3 +1462,4 @@ export default async function handler(
     );
   }
 }
+
