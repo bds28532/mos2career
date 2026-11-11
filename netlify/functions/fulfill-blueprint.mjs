@@ -1,4 +1,5 @@
 import { getStore } from "@netlify/blobs";
+import { claimFulfillment } from "./lib/fulfillment-claim.mjs";
 import { buildBlueprintPDF } from "./create-blueprint-pdf.mjs";
 import {
   generateCompleteCareerBlueprint,
@@ -156,101 +157,18 @@ export default async function handler(request) {
      * ------------------------------------------------------
      */
 
-    const existing =
-      await fulfillmentStore.get(
-        fulfillmentKey,
-        {
-          type: "json",
-          consistency: "strong",
-        }
-      );
-
-    if (
-      existing?.status ===
-      "delivered"
-    ) {
-      console.log(
-        `MOS2Career FULFILLMENT ALREADY DELIVERED: ${submissionId}`
-      );
-
+    const claim = await claimFulfillment(fulfillmentStore, fulfillmentKey, {
+      submissionId,
+      checkoutSessionId: checkoutSessionId || null,
+      eventId: eventId || null,
+      mode: mode || null,
+      // Retain the accepted job privately so scheduled recovery does not
+      // depend on Forms visibility or another payment notification.
+      profile,
+    });
+    if (!claim.acquired) {
+      console.log(`MOS2Career FULFILLMENT SKIPPED (${claim.reason}): ${submissionId}`);
       return;
-    }
-
-    if (
-      existing?.status ===
-      "processing"
-    ) {
-      console.log(
-        `MOS2Career FULFILLMENT ALREADY PROCESSING: ${submissionId}`
-      );
-
-      return;
-    }
-
-    /*
-     * ------------------------------------------------------
-     * 7. CLAIM JOB
-     * ------------------------------------------------------
-     */
-
-    if (!existing) {
-      const claim =
-        await fulfillmentStore.setJSON(
-          fulfillmentKey,
-          {
-            status: "processing",
-
-            submissionId,
-
-            checkoutSessionId:
-              checkoutSessionId || null,
-
-            eventId:
-              eventId || null,
-
-            mode:
-              mode || null,
-
-            startedAt:
-              new Date().toISOString(),
-          },
-          {
-            onlyIfNew: true,
-          }
-        );
-
-      if (!claim.modified) {
-        console.log(
-          `MOS2Career FULFILLMENT CLAIMED BY ANOTHER RUN: ${submissionId}`
-        );
-
-        return;
-      }
-    } else {
-      await fulfillmentStore.setJSON(
-        fulfillmentKey,
-        {
-          ...existing,
-
-          status: "processing",
-
-          submissionId,
-
-          checkoutSessionId:
-            checkoutSessionId || null,
-
-          eventId:
-            eventId || null,
-
-          mode:
-            mode || null,
-
-          retryingPreviousAttempt: true,
-
-          startedAt:
-            new Date().toISOString(),
-        }
-      );
     }
 
     console.log(
@@ -332,6 +250,7 @@ export default async function handler(request) {
             completeBlueprint,
         };
 
+        await claim.update({ stage: "storing_blueprint" });
         await blueprintStore.setJSON(
           fulfillmentKey,
           storedBlueprint
@@ -348,27 +267,12 @@ export default async function handler(request) {
        * ----------------------------------------------------
        */
 
-      await fulfillmentStore.setJSON(
-        fulfillmentKey,
-        {
-          status: "generated",
-
-          submissionId,
-
-          checkoutSessionId:
-            checkoutSessionId || null,
-
-          eventId:
-            eventId || null,
-
-          mode:
-            mode || null,
-
-          generatedAt:
-            storedBlueprint?.generatedAt ||
-            new Date().toISOString(),
-        }
-      );
+      // Keep the lease while rendering and emailing. A generated Blueprint
+      // is not a completed job and must not admit a concurrent retry.
+      await claim.update({
+        stage: "generated",
+        generatedAt: storedBlueprint?.generatedAt || new Date().toISOString(),
+      });
 
       /*
        * ----------------------------------------------------
@@ -386,10 +290,14 @@ export default async function handler(request) {
         `MOS2Career PDF CREATION STARTED: ${submissionId}`
       );
 
-      const pdfBytes =
-        await buildBlueprintPDF(
-          storedBlueprint
-        );
+      const savedPdf = await pdfStore.get(fulfillmentKey, {
+        type: "arrayBuffer", consistency: "strong",
+      });
+      // Reuse the exact attachment on retries, including an ambiguous email
+      // timeout, so the existing Resend idempotency key has the same payload.
+      const pdfBytes = savedPdf
+        ? Buffer.from(savedPdf)
+        : await buildBlueprintPDF(storedBlueprint);
 
       if (
         !pdfBytes ||
@@ -409,6 +317,7 @@ export default async function handler(request) {
        * ----------------------------------------------------
        */
 
+      await claim.update({ stage: "storing_pdf" });
       await pdfStore.set(
         fulfillmentKey,
         pdfBytes,
@@ -460,6 +369,7 @@ export default async function handler(request) {
         `MOS2Career EMAIL DELIVERY STARTED: ${submissionId}`
       );
 
+      await claim.update({ stage: "sending_email" });
       const resendResponse =
         await fetch(
           "https://api.resend.com/emails",
@@ -684,10 +594,10 @@ Career matches and compensation figures are planning estimates. MOS2Career does 
        * ----------------------------------------------------
        */
 
-      await fulfillmentStore.setJSON(
-        fulfillmentKey,
-        {
+      await claim.update({
           status: "delivered",
+          profile: null,
+          leaseExpiresAt: null,
 
           submissionId,
 
@@ -719,8 +629,7 @@ Career matches and compensation figures are planning estimates. MOS2Career does 
             null,
 
           emailIdempotencyKey,
-        }
-      );
+      });
 
       console.log(
         `MOS2Career FULFILLMENT DELIVERED: ${submissionId}`
@@ -743,30 +652,16 @@ Career matches and compensation figures are planning estimates. MOS2Career does 
        * generation already succeeded we can reuse it.
        */
 
-      await fulfillmentStore.setJSON(
-        fulfillmentKey,
-        {
+      try {
+        await claim.update({
           status: "failed",
-
-          submissionId,
-
-          checkoutSessionId:
-            checkoutSessionId || null,
-
-          eventId:
-            eventId || null,
-
-          mode:
-            mode || null,
-
-          failedAt:
-            new Date().toISOString(),
-
-          error:
-            error?.message ||
-            "Unknown fulfillment error",
-        }
-      );
+          failedAt: new Date().toISOString(),
+          error: error?.message || "Unknown fulfillment error",
+        });
+      } catch (stateError) {
+        // A late worker must never overwrite a newer claim or delivery.
+        console.error("MOS2Career failure state was not saved:", stateError.message);
+      }
 
       throw error;
     }
@@ -784,3 +679,4 @@ Career matches and compensation figures are planning estimates. MOS2Career does 
 export const config = {
   background: true,
 };
+
