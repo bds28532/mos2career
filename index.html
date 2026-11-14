@@ -200,6 +200,35 @@ header .m2c-steps{margin-top:17px}
 .m2c-career-guides a{display:inline-flex;align-items:center;min-height:44px;padding:8px 14px;border:1px solid #6d592f;border-radius:10px;background:#171510;color:#f2c552;text-decoration:none;font-size:.9rem;font-weight:750}
 .m2c-career-guides a:hover{background:#292211;text-decoration:underline}
 .m2c-career-guides a:focus-visible{outline:3px solid #fff;outline-offset:3px}
+
+/* Clear free-tool choices and public sample previews. */
+header{padding:32px 0 24px}
+header .lead{max-width:860px;margin-bottom:18px}
+.m2c-tool-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0 16px}
+.m2c-tool-choice{display:flex;flex-direction:column;gap:10px;min-width:0;padding:22px;border:1px solid #80682e;border-radius:16px;background:linear-gradient(135deg,#211c10,#141414);color:var(--text);text-decoration:none}
+.m2c-tool-choice h2{font-size:1.35rem;line-height:1.25;margin:0}
+.m2c-tool-choice p{color:#d4d0c7;font-size:.96rem;line-height:1.5;margin:0;flex:1}
+.m2c-tool-choice .eyebrow{font-size:.72rem;letter-spacing:.1em}
+.m2c-choice-action{display:inline-flex;align-items:center;justify-content:center;gap:8px;align-self:flex-start;min-height:46px;margin-top:4px;padding:11px 15px;border-radius:10px;background:linear-gradient(100deg,var(--accent),var(--accent2));color:#111;font-size:.93rem;font-weight:850;line-height:1.35}
+.m2c-tool-choice:hover{border-color:var(--accent2);background:linear-gradient(135deg,#2a2211,#191919)}
+.m2c-tool-choice:focus-visible{outline:3px solid #f2c552;outline-offset:4px}
+.m2c-start-note{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;color:#dfd4b9;font-size:.88rem}
+.m2c-start-note a,.m2c-preview-link{color:var(--accent2);font-weight:750;text-underline-offset:3px}
+.m2c-previews{padding-top:30px;padding-bottom:28px}
+.m2c-previews h2,.m2c-support>h2{font-size:1.65rem;line-height:1.2;margin:8px 0 10px}
+.m2c-preview-note{color:var(--muted);font-size:.86rem;margin:0 0 18px;max-width:860px}
+.m2c-preview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.m2c-preview-card{min-width:0;padding:22px;border:1px solid #65522c;border-radius:16px;background:#151515}
+.m2c-preview-card h3{font-size:1.16rem;line-height:1.3;margin:8px 0 12px}
+.m2c-preview-card p{color:#d4d0c7;font-size:.9rem;margin:0 0 12px}
+.m2c-preview-card p:last-child{margin-bottom:0}
+.m2c-preview-card .small{font-size:.8rem;color:var(--muted)}
+.m2c-sample-roles{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0;margin:0 0 16px}
+.m2c-sample-roles li{max-width:100%;border:1px solid #65522c;border-radius:9px;background:#241f14;color:#f2c552;padding:7px 10px;font-size:.84rem;font-weight:700}
+.m2c-support{padding-bottom:36px}
+.m2c-support .m2c-career-guides{position:static;top:auto;z-index:auto;background:none;border:0;box-shadow:none;backdrop-filter:none;margin-bottom:0}
+#sample-results,#blueprint-sample{scroll-margin-top:130px}
+@media(max-width:700px){.m2c-tool-choices,.m2c-preview-grid{grid-template-columns:1fr}.m2c-tool-choice{padding:18px;gap:8px}.m2c-tool-choice h2{font-size:1.22rem}.m2c-choice-action{align-self:stretch}.m2c-preview-card{padding:19px}.m2c-previews{padding-top:24px;padding-bottom:24px}.m2c-start-note{font-size:.82rem}header{padding:25px 0 22px}}
 </style>
 </head>
 <body>
@@ -211,19 +240,62 @@ header .m2c-steps{margin-top:17px}
   <div class="eyebrow">Career Translator </div>
   <h1>Turn Your Military Experience Into Civilian Career Opportunities</h1>
   <p class="mission-tagline">Your Mission Doesn’t End. <span>It Evolves.</span></p>
-  <p class="lead"> MOS2Career scores roles based on your military specialty, technical skills, leadership, education, clearance, years of service, and career goals. It also highlights likely strengths, gaps, and next steps.</p>
-  <div class="m2c-hero-actions">
-    <a class="m2c-hero-cta" href="#profileForm">Find My Civilian Career Matches — Free ↓</a>
-    <span class="m2c-trust-line">Built for veterans and transitioning service members.</span>
+  <p class="lead">Explore civilian career options from your military experience, or compare your duties with a job posting. Start with either free tool.</p>
+  <div class="m2c-tool-choices" aria-label="Choose a free career tool">
+    <a class="m2c-tool-choice" href="#profileForm" aria-labelledby="explore-careers-title">
+      <span class="eyebrow">Free Career Translator</span>
+      <h2 id="explore-careers-title">Explore civilian careers</h2>
+      <p>Use your military specialty, skills, and goals to discover possible civilian roles and next steps.</p>
+      <span class="m2c-choice-action">Find My Career Matches — Free <span aria-hidden="true">→</span></span>
+    </a>
+    <a class="m2c-tool-choice" href="/military-job-match-analyzer/" aria-labelledby="compare-job-title">
+      <span class="eyebrow">Free Job Match Analyzer</span>
+      <h2 id="compare-job-title">Compare a job posting</h2>
+      <p>Already have a job in mind? Compare its requirements with your actual duties and get resume suggestions.</p>
+      <span class="m2c-choice-action">Analyze My Job Match — Free <span aria-hidden="true">→</span></span>
+    </a>
   </div>
-  <div style="margin:18px 0;padding:18px;border:1px solid #80682e;border-radius:14px;background:#1c1a14"><strong style="display:block;margin-bottom:8px;color:#f2c552">NEW: Free Military Job Match Analyzer</strong><p style="margin:0 0 12px">Paste a civilian job posting and see how your actual military experience compares, including skill gaps and resume tips.</p><a class="btn" href="/military-job-match-analyzer/" style="display:inline-block;text-decoration:none">Analyze a Civilian Job — Free</a></div>
-  <nav class="m2c-career-guides" aria-label="Military specialty career guides"><p>Explore civilian careers by military specialty</p><div><a href="/navy-fire-controlman-civilian-careers.html">Navy Fire Controlman</a><a href="/navy-it-civilian-jobs/">Navy IT</a><a href="/army-25b-civilian-jobs/">Army 25B</a><a href="/navy-ls-civilian-jobs/">Navy LS</a></div></nav>
-  <div class="m2c-steps" aria-label="How MOS2Career works">
-    <div class="m2c-step"><b>Step 1</b><strong>Share your experience</strong><p>Enter your military specialty, skills, and career goals.</p></div>
-    <div class="m2c-step"><b>Step 2</b><strong>Explore free matches</strong><p>See civilian roles aligned with your background, with estimated fit and next steps.</p></div>
-    <div class="m2c-step"><b>Step 3</b><strong>Build your transition plan</strong><p>Optionally upgrade to a $39 personalized Career Blueprint.</p></div>
-  </div>
+  <div class="m2c-start-note"><span>Built for veterans and transitioning service members.</span><a href="#sample-results">See example results <span aria-hidden="true">↓</span></a></div>
 </div></header>
+
+
+<section class="wrap m2c-previews" id="sample-results" aria-labelledby="sample-results-title">
+  <div class="eyebrow">A look inside</div>
+  <h2 id="sample-results-title">See what you can get</h2>
+  <p class="m2c-preview-note">Illustrative examples using a fictional veteran profile. Your matches and plan depend on your own experience and goals.</p>
+  <div class="m2c-preview-grid">
+    <article class="m2c-preview-card" aria-labelledby="free-example-title">
+      <div class="eyebrow">Free career matches · $0</div>
+      <h3 id="free-example-title">Find directions worth exploring</h3>
+      <p><strong>Fictional profile:</strong> Navy electronics technician; troubleshooting, maintenance, and technical documentation.</p>
+      <p class="small">Example civilian roles to research</p>
+      <ul class="m2c-sample-roles"><li>Field Service Engineer</li><li>Engineering Technician</li><li>Defense Systems Technician</li></ul>
+      <p><strong>Transferable strengths:</strong> Fault isolation, preventive maintenance, and service documentation.</p>
+      <p><strong>Example next step:</strong> Check role-specific tools, training, and education requirements before applying.</p>
+      <p class="small">Employers determine hiring qualifications. These examples do not guarantee employment.</p>
+    </article>
+    <article class="m2c-preview-card" aria-labelledby="blueprint-example-title">
+      <div class="eyebrow">Optional Career Blueprint · $39</div>
+      <h3 id="blueprint-example-title">Turn your direction into a plan</h3>
+      <p>See skills and credential gaps, resume strategy, and a 90-day action plan tailored to your background.</p>
+      <p><strong>Sample first step:</strong> Choose target roles and translate military achievements into resume bullets.</p>
+      <details class="m2c-sample">
+        <summary id="blueprint-sample">Preview a sample Career Blueprint</summary>
+        <p class="m2c-sample-note">Illustrative excerpt using a fictional veteran profile. This is not an actual customer report or a guarantee of employment.</p>
+        <h4>Example profile: Navy electronics technician</h4>
+        <p><strong>Career direction:</strong> Electronics Test Technician, Field Service Engineer, or Technical Project Coordinator.</p>
+        <h4>Transferable strengths</h4>
+        <ul><li>Equipment troubleshooting and preventive maintenance</li><li>Technical documentation and quality checks</li><li>Team coordination and safety procedures</li></ul>
+        <h4>Potential qualification gaps</h4>
+        <p>Review civilian job postings for industry-specific tools, credentials, and employer experience requirements.</p>
+        <h4>Illustrative 90-day action plan</h4>
+        <ul><li><strong>Days 1–30:</strong> Choose target roles and translate military achievements into resume bullets.</li><li><strong>Days 31–60:</strong> Identify credential gaps and tailor applications to relevant employers.</li><li><strong>Days 61–90:</strong> Practice interviews, network with hiring teams, and refine applications.</li></ul>
+        <p class="m2c-sample-note">Your purchased Blueprint is intended to be tailored to your submitted experience and goals; the sample above is abbreviated.</p>
+      </details>
+      <p class="small">Start with free matches. The $39 Career Blueprint is optional.</p>
+    </article>
+  </div>
+</section>
 
 <main class="wrap grid">
   <section class="card">
@@ -365,19 +437,7 @@ header .m2c-steps{margin-top:17px}
         <div class="m2c-tier"><h4>Free Career Translator</h4><div class="m2c-price">$0</div><p>Explore matched civilian roles, estimated fit, and general career guidance.</p></div>
         <div class="m2c-tier"><h4>Personalized Career Blueprint</h4><div class="m2c-price">$39</div><p>Go further with a tailored skills, credentials, employer, resume, and 90-day transition strategy.</p></div>
       </div>
-      <details class="m2c-sample">
-        <summary>Preview a sample Career Blueprint</summary>
-        <p class="m2c-sample-note">Illustrative excerpt using a fictional veteran profile. This is not an actual customer report or a guarantee of employment.</p>
-        <h4>Example profile: Navy electronics technician</h4>
-        <p><strong>Career direction:</strong> Electronics Test Technician, Field Service Engineer, or Technical Project Coordinator.</p>
-        <h4>Transferable strengths</h4>
-        <ul><li>Equipment troubleshooting and preventive maintenance</li><li>Technical documentation and quality checks</li><li>Team coordination and safety procedures</li></ul>
-        <h4>Potential qualification gaps</h4>
-        <p>Review civilian job postings for industry-specific tools, credentials, and employer experience requirements.</p>
-        <h4>Illustrative 90-day action plan</h4>
-        <ul><li><strong>Days 1–30:</strong> Choose target roles and translate military achievements into resume bullets.</li><li><strong>Days 31–60:</strong> Identify credential gaps and tailor applications to relevant employers.</li><li><strong>Days 61–90:</strong> Practice interviews, network with hiring teams, and refine applications.</li></ul>
-        <p class="m2c-sample-note">Your purchased Blueprint is intended to be tailored to your submitted experience and goals; the sample above is abbreviated.</p>
-      </details>
+      <p><a class="m2c-preview-link" href="#blueprint-sample">Preview a sample Career Blueprint ↑</a></p>
       <ul class="blueprint-features">
         <li>Top 10 civilian career matches</li>
         <li>Transferable skill analysis</li>
@@ -404,6 +464,17 @@ header .m2c-steps{margin-top:17px}
 
   </section>
 </main>
+
+<section class="wrap m2c-support" aria-labelledby="how-it-works-title">
+  <h2 id="how-it-works-title">How MOS2Career works</h2>
+  <div class="m2c-steps" aria-label="How MOS2Career works">
+    <div class="m2c-step"><b>Step 1</b><strong>Share your experience</strong><p>Enter your military specialty, skills, and career goals.</p></div>
+    <div class="m2c-step"><b>Step 2</b><strong>Explore free matches</strong><p>See civilian roles aligned with your background, with estimated fit and next steps.</p></div>
+    <div class="m2c-step"><b>Step 3</b><strong>Build your transition plan</strong><p>Optionally upgrade to a $39 personalized Career Blueprint.</p></div>
+  </div>
+  <nav class="m2c-career-guides" aria-label="Military specialty career guides"><p>Explore civilian careers by military specialty</p><div><a href="/navy-fire-controlman-civilian-careers.html">Navy Fire Controlman</a><a href="/navy-it-civilian-jobs/">Navy IT</a><a href="/army-25b-civilian-jobs/">Army 25B</a><a href="/navy-ls-civilian-jobs/">Navy LS</a></div></nav>
+</section>
+
 
 <script>
 const ROLES = [
