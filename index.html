@@ -325,13 +325,16 @@ header .lead{max-width:860px;margin-bottom:18px}
 <main class="wrap grid">
   <section class="card">
     <div class="eyebrow">Your profile</div>
-    <h2 style="margin:8px 0 16px">Military Career Profile</h2>
-    <p class="m2c-free-note">Preview your matches first. Saving your profile and buying a Blueprint are optional.</p>
-    <form id="profileForm" class="formgrid" name="career-translator" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
+    <h2 id="profileTitle" style="margin:8px 0 16px">Military Career Profile</h2>
+    <p id="profileIntro" class="m2c-free-note">Preview your matches first. Saving your profile and buying a Blueprint are optional.</p>
+    <form id="profileForm" class="formgrid" name="career-translator" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" aria-labelledby="profileTitle" aria-describedby="profileIntro">
           <input type="hidden" name="form-name" value="career-translator">
           <input type="hidden" id="submissionId" name="submission_id" value="">
           <input type="hidden" id="topMatchesHidden" name="top_matches" value="">
-          <p class="bot-field" aria-hidden="true"><label>Don’t fill this out: <input name="bot-field"></label></p>
+          <input type="hidden" id="gaClientId" name="ga_client_id" value="">
+          <input type="hidden" id="gaSessionId" name="ga_session_id" value="">
+          <input type="hidden" name="ga_tracking_status" value="">
+          <p class="bot-field" aria-hidden="true"><label>Don’t fill this out: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
           <div id="jobMatchHandoff" class="notice full" hidden>
             <p id="jobMatchHandoffNotice" role="status"></p>
             <button id="jobMatchApplyAnswers" class="btn secondary" type="button" hidden>Use my analyzer answers</button>
@@ -339,9 +342,9 @@ header .lead{max-width:860px;margin-bottom:18px}
 
 
       <p id="stepProgress" class="m2c-step-progress full" role="status">Step 1 of 2 · Explore your experience</p>
-      <fieldset id="experienceStep" class="m2c-step-fields full" tabindex="-1">
+      <fieldset id="experienceStep" class="m2c-step-fields full" tabindex="-1" aria-describedby="experienceHelp">
         <legend>Your military experience</legend>
-        <p class="helper full">Preview free matches without entering your name or email. Start with your specialty and the duties you actually performed.</p>
+        <p id="experienceHelp" class="helper full">Preview free matches without entering your name or email. Military specialty is required; other experience details are optional.</p>
         <div class="field">
         <label for="branch">Branch</label>
         <select id="branch" name="branch">
@@ -367,12 +370,12 @@ header .lead{max-width:860px;margin-bottom:18px}
       </div>
 <div class="field full">
         <label for="duties">Primary duties</label>
-        <textarea id="duties" placeholder="Describe what you actually did: led teams, maintained systems, performed testing, troubleshooting, trained personnel, managed schedules, wrote technical procedures..." name="primary_duties"></textarea>
-        <div class="data-warning">
+        <textarea id="duties" placeholder="Describe what you actually did: led teams, maintained systems, performed testing, troubleshooting, trained personnel, managed schedules, wrote technical procedures..." name="primary_duties" aria-describedby="dutiesSecurity dutiesHelp"></textarea>
+        <div id="dutiesSecurity" class="data-warning">
           <strong>Security reminder:</strong> Do not enter classified, CUI, export-controlled, proprietary, or sensitive operational information. Describe duties only at an unclassified, résumé-safe level.
         </div>
 
-        <div class="helper">The translator also reads keywords from this description.</div>
+        <div id="dutiesHelp" class="helper">The translator also reads keywords from this description.</div>
       </div>
         <details class="m2c-profile-extra full"><summary>Add skills, service details, and work preferences (optional)</summary>
           <p class="helper">Review these choices for more tailored matches.</p>
@@ -435,9 +438,9 @@ header .lead{max-width:860px;margin-bottom:18px}
         <noscript><p class="helper full">Enable JavaScript to preview career matches. You can also <a href="/support.html">contact support</a> for help.</p></noscript>
         <div class="full"><button id="profilePreviewBtn" class="btn" type="submit" disabled>Preview My Free Matches</button></div>
       </fieldset>
-      <fieldset id="contactStep" class="m2c-step-fields full" tabindex="-1" hidden disabled>
+      <fieldset id="contactStep" class="m2c-step-fields full" tabindex="-1" aria-describedby="contactHelp" hidden disabled>
         <legend>Save your profile (optional)</legend>
-        <p class="helper full">Your free matches are ready. Add your contact details only if you want to save this profile for the optional $39 Career Blueprint.</p>
+        <p id="contactHelp" class="helper full">Your free matches are ready. Add your contact details only if you want to save this profile for the optional $39 Career Blueprint. All three contact fields are required to save.</p>
         <div class="field">
         <label for="firstName">First name</label>
         <input id="firstName" name="first_name" type="text" autocomplete="given-name" required placeholder="First name">
@@ -448,9 +451,9 @@ header .lead{max-width:860px;margin-bottom:18px}
       </div>
 <div class="field full">
         <label for="email">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+        <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" aria-describedby="profilePrivacy">
       </div>
-        <p class="helper full">We use saved contact and career details to support your profile and deliver a purchased Blueprint. <a class="m2c-preview-link" href="/privacy.html">Read the Privacy Policy.</a></p>
+        <p id="profilePrivacy" class="helper full">We use saved contact and career details to support your profile and deliver a purchased Blueprint. <a class="m2c-preview-link" href="/privacy.html">Read the Privacy Policy.</a></p>
         <div class="m2c-step-actions full"><button id="profileBackBtn" class="btn secondary" type="button">Back to my experience</button><button id="profileSaveBtn" class="btn" type="submit">Save My Profile</button></div>
       </fieldset>
       <div id="saveStatus" class="save-status full" role="status" aria-live="polite">Free previews do not save your contact or career profile.</div>
@@ -520,7 +523,7 @@ header .lead{max-width:860px;margin-bottom:18px}
   <p>MOS2Career LLC is an independent career-planning service for veterans and transitioning service members.</p>
   <div class="m2c-about-grid">
     <article><h3>How your matches are created</h3><p>The free Career Translator uses your profile answers and matching rules to rank possible civilian roles and highlight strengths and gaps. The Job Match Analyzer and personalized Career Blueprint use AI-assisted analysis. Compare suggestions with current job requirements and your actual qualifications.</p></article>
-    <article><h3>How your information is used</h3><p>Free career previews run in your browser without submitting your profile. When you choose to save, your contact and career details help us save your results, deliver a purchased Blueprint, and provide support. AI-assisted tools may process information through our service providers. Payments are handled by Stripe.</p><p><a href="/privacy.html">Privacy Policy</a> · <a href="/support.html">Contact support</a></p></article>
+    <article><h3>How your information is used</h3><p>Free career previews run in your browser without submitting your profile. When you choose to save, your contact and career details help us save your results, deliver a purchased Blueprint, and provide support. Existing Google Analytics identifiers may also link a confirmed purchase to the visit that brought you here; names, email addresses, and career answers are not sent in purchase analytics. AI-assisted tools may process information through our service providers. Payments are handled by Stripe.</p><p><a href="/privacy.html">Privacy Policy</a> · <a href="/support.html">Contact support</a></p></article>
   </div>
 </section>
 
@@ -872,6 +875,38 @@ function m2cSubmissionId(){
   return "M2C-"+Date.now().toString(36).toUpperCase()+"-"+rand;
 }
 function m2cEncode(data){ return new URLSearchParams(data).toString(); }
+// Read the existing tag's identifiers only when a visitor explicitly saves.
+// Never parse cookies, create tracking IDs, or wait indefinitely for a blocked tag.
+function m2cReadAnalyticsIds(timeoutMs=600){
+  const measurementId="G-2251989Z9F";
+  if(window["ga-disable-"+measurementId]===true || typeof gtag!=="function") return Promise.resolve({});
+  return new Promise(resolve=>{
+    const ids={};
+    let remaining=2;
+    let finished=false;
+    const finish=()=>{
+      if(finished) return;
+      finished=true;
+      clearTimeout(timer);
+      resolve(ids.ga_client_id ? ids : {});
+    };
+    const timer=setTimeout(finish,timeoutMs);
+    const read=(field,name,pattern)=>{
+      try{
+        gtag("get",measurementId,field,value=>{
+          if(finished) return;
+          const id=String(value??"");
+          if(pattern.test(id)) ids[name]=id;
+          if(--remaining===0) finish();
+        });
+      }catch{
+        if(--remaining===0) finish();
+      }
+    };
+    read("client_id","ga_client_id",/^\d{1,20}\.\d{1,20}$/);
+    read("session_id","ga_session_id",/^\d{1,16}$/);
+  });
+}
 async function m2cSaveProfile(topMatchesText){
   const profileRevision=window.m2cProfileRevision||0;
   const form=document.querySelector('form[name="career-translator"]');
@@ -892,6 +927,11 @@ async function m2cSaveProfile(topMatchesText){
   if(!data.get("form-name")) data.set("form-name","career-translator");
   const status=document.getElementById("saveStatus");
   if(status){status.textContent="Saving your profile…";status.className="save-status";}
+  const analyticsIds=await m2cReadAnalyticsIds();
+  if(profileRevision!==(window.m2cProfileRevision||0)) return false;
+  data.set("ga_client_id",analyticsIds.ga_client_id||"");
+  data.set("ga_session_id",analyticsIds.ga_session_id||"");
+  data.set("ga_tracking_status",analyticsIds.ga_client_id?"available":"unavailable");
   const resp=await fetch("/",{
     method:"POST",
     headers:{"Content-Type":"application/x-www-form-urlencoded"},
