@@ -53,7 +53,7 @@ test("every choice in the live form has the same meaning in the paid report", ()
     const options = [...select[1].matchAll(/<option value="([^"]+)">([^<]+)<\/option>/g)];
     assert.ok(options.length > 0);
     for (const [, value, label] of options) {
-      assert.equal(normalizeBlueprintProfile({ [input]: value })[output], label, id + "=" + value);
+      assert.equal(normalizeBlueprintProfile({ [input]: value })[output], value === "" ? "" : label, id + "=" + value);
     }
   }
 });

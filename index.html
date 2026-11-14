@@ -229,6 +229,31 @@ header .lead{max-width:860px;margin-bottom:18px}
 .m2c-support .m2c-career-guides{position:static;top:auto;z-index:auto;background:none;border:0;box-shadow:none;backdrop-filter:none;margin-bottom:0}
 #sample-results,#blueprint-sample{scroll-margin-top:130px}
 @media(max-width:700px){.m2c-tool-choices,.m2c-preview-grid{grid-template-columns:1fr}.m2c-tool-choice{padding:18px;gap:8px}.m2c-tool-choice h2{font-size:1.22rem}.m2c-choice-action{align-self:stretch}.m2c-preview-card{padding:19px}.m2c-previews{padding-top:24px;padding-bottom:24px}.m2c-start-note{font-size:.82rem}header{padding:25px 0 22px}}
+
+/* Short profile steps and transparent product information. */
+.grid>.card{min-width:0}
+.m2c-step-fields{min-width:0;margin:0;padding:0;border:0;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.m2c-step-fields[hidden]{display:none!important}
+.m2c-step-fields legend{font-weight:850;font-size:1.1rem;margin-bottom:12px;color:#f2c552}
+.m2c-step-fields:focus{outline:none}
+.m2c-step-progress{padding:10px 12px;margin:0 0 4px;border:1px solid #65522c;border-radius:10px;background:#241f14;color:#f2c552;font-size:.84rem;font-weight:750}
+.m2c-profile-extra{padding:14px;border:1px solid #65522c;border-radius:12px;background:#151515}
+.m2c-profile-extra summary{cursor:pointer;font-size:.9rem;font-weight:750;color:#f2c552}
+.m2c-profile-extra[open]>.formgrid{margin-top:14px}
+.m2c-step-actions{display:flex;flex-wrap:wrap;gap:10px}
+#skills-label{font-size:.88rem;font-weight:800;color:#f0ece3}
+#profileSaveBtn:disabled{opacity:.6;cursor:wait}
+#experienceStep,#contactStep,#matchesTitle,#about-mos2career{scroll-margin-top:130px}
+#matchesTitle:focus{outline:none}
+.m2c-about{padding-top:30px;padding-bottom:30px;border-top:1px solid #51452d}
+.m2c-about h2{font-size:1.65rem;line-height:1.25;margin:8px 0 16px;max-width:900px}
+.m2c-about p{color:#d4d0c7;font-size:.94rem;line-height:1.6;max-width:1000px}
+.m2c-about-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+.m2c-about-grid article{min-width:0;padding:22px;border:1px solid #65522c;border-radius:16px;background:#151515}
+.m2c-about-grid h3{font-size:1.12rem;margin:0 0 10px}
+.m2c-about a{color:#f2c552;text-underline-offset:3px}
+@media(max-width:900px){.m2c-step-fields{grid-template-columns:1fr}.m2c-step-fields>.full{grid-column:1/-1}}
+@media(max-width:700px){.m2c-about-grid{grid-template-columns:1fr}.m2c-about-grid article{padding:19px}.m2c-step-actions>.btn{flex:1 1 100%}}
 </style>
 </head>
 <body>
@@ -255,7 +280,7 @@ header .lead{max-width:860px;margin-bottom:18px}
       <span class="m2c-choice-action">Analyze My Job Match — Free <span aria-hidden="true">→</span></span>
     </a>
   </div>
-  <div class="m2c-start-note"><span>Built for veterans and transitioning service members.</span><a href="#sample-results">See example results <span aria-hidden="true">↓</span></a></div>
+  <div class="m2c-start-note"><span>Built for veterans and transitioning service members. <a href="#about-mos2career">About MOS2Career</a></span><a href="#sample-results">See example results <span aria-hidden="true">↓</span></a></div>
 </div></header>
 
 
@@ -301,7 +326,7 @@ header .lead{max-width:860px;margin-bottom:18px}
   <section class="card">
     <div class="eyebrow">Your profile</div>
     <h2 style="margin:8px 0 16px">Military Career Profile</h2>
-    <p class="m2c-free-note">Get your career matches free. No payment required.</p>
+    <p class="m2c-free-note">Preview your matches first. Saving your profile and buying a Blueprint are optional.</p>
     <form id="profileForm" class="formgrid" name="career-translator" method="POST" data-netlify="true" data-netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="career-translator">
           <input type="hidden" id="submissionId" name="submission_id" value="">
@@ -312,60 +337,23 @@ header .lead{max-width:860px;margin-bottom:18px}
             <button id="jobMatchApplyAnswers" class="btn secondary" type="button" hidden>Use my analyzer answers</button>
           </div>
 
-      <div class="field">
-        <label>First name</label>
-        <input id="firstName" name="first_name" type="text" autocomplete="given-name" required placeholder="First name">
-      </div>
-      <div class="field">
-        <label>Last name</label>
-        <input id="lastName" name="last_name" type="text" autocomplete="family-name" required placeholder="Last name">
-      </div>
-      <div class="field full">
-        <label>Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
-      </div>
 
-      <div class="field">
-        <label>Branch</label>
+      <p id="stepProgress" class="m2c-step-progress full" role="status">Step 1 of 2 · Explore your experience</p>
+      <fieldset id="experienceStep" class="m2c-step-fields full" tabindex="-1">
+        <legend>Your military experience</legend>
+        <p class="helper full">Preview free matches without entering your name or email. Start with your specialty and the duties you actually performed.</p>
+        <div class="field">
+        <label for="branch">Branch</label>
         <select id="branch" name="branch">
           <option>Navy</option><option>Army</option><option>Air Force</option><option>Marine Corps</option><option>Coast Guard</option><option>Space Force</option>
         </select>
       </div>
-      <div class="field">
-        <label>Military specialty</label>
-        <input id="specialty" placeholder="Example: Fire Controlman, 25B, 1D7X1" name="military_specialty">
+<div class="field">
+        <label for="specialty">Military specialty</label>
+        <input id="specialty" required placeholder="Example: Fire Controlman, 25B, 1D7X1" name="military_specialty">
       </div>
-      <div class="field">
-        <label>Rank / grade</label>
-        <input id="rank" placeholder="Example: E-6" name="rank_grade">
-      </div>
-      <div class="field">
-        <label>Years of service</label>
-        <input id="years" type="number" min="0" max="50" value="8" name="years_service">
-      </div>
-      <div class="field">
-        <label>Education</label>
-        <select id="education" name="education">
-          <option value="0">High school / GED</option>
-          <option value="1">Some college</option>
-          <option value="2">Associate degree</option>
-          <option value="3">Bachelor's degree</option>
-          <option value="4">Master's or higher</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Clearance</label>
-        <select id="clearance" name="clearance_category">
-          <option value="0">None / Unknown</option>
-          <option value="1">Confidential</option>
-          <option value="2">Secret</option>
-          <option value="3">Top Secret</option>
-          <option value="4">TS/SCI</option>
-        </select>
-      </div>
-
-      <div class="field full">
-        <label>Career goal</label>
+<div class="field full">
+        <label for="goal">Career goal</label>
         <select id="goal" name="career_goal">
           <option value="defense">Defense / government contracting</option>
           <option value="engineering">Engineering / technical</option>
@@ -377,10 +365,20 @@ header .lead{max-width:860px;margin-bottom:18px}
           <option value="income">Highest earning potential</option>
         </select>
       </div>
+<div class="field full">
+        <label for="duties">Primary duties</label>
+        <textarea id="duties" placeholder="Describe what you actually did: led teams, maintained systems, performed testing, troubleshooting, trained personnel, managed schedules, wrote technical procedures..." name="primary_duties"></textarea>
+        <div class="data-warning">
+          <strong>Security reminder:</strong> Do not enter classified, CUI, export-controlled, proprietary, or sensitive operational information. Describe duties only at an unclassified, résumé-safe level.
+        </div>
 
-      <div class="field full">
-        <label>Strongest skills</label>
-        <div class="checks">
+        <div class="helper">The translator also reads keywords from this description.</div>
+      </div>
+        <details class="m2c-profile-extra full"><summary>Add skills, service details, and work preferences (optional)</summary>
+          <p class="helper">Review these choices for more tailored matches.</p>
+          <div class="formgrid"><div class="field full">
+        <span id="skills-label">Strongest skills (optional)</span>
+        <div class="checks" role="group" aria-labelledby="skills-label">
           <label class="check"><input type="checkbox" value="testing" name="skills"> Testing / validation</label>
           <label class="check"><input type="checkbox" value="troubleshooting" name="skills"> Troubleshooting</label>
           <label class="check"><input type="checkbox" value="electronics" name="skills"> Electronics</label>
@@ -395,35 +393,74 @@ header .lead{max-width:860px;margin-bottom:18px}
           <label class="check"><input type="checkbox" value="data" name="skills"> Data / analytics</label>
         </div>
       </div>
-
-      <div class="field full">
-        <label>Primary duties</label>
-        <textarea id="duties" placeholder="Describe what you actually did: led teams, maintained systems, performed testing, troubleshooting, trained personnel, managed schedules, wrote technical procedures..." name="primary_duties"></textarea>
-        <div class="data-warning">
-          <strong>Security reminder:</strong> Do not enter classified, CUI, export-controlled, proprietary, or sensitive operational information. Describe duties only at an unclassified, résumé-safe level.
-        </div>
-
-        <div class="helper">The translator also reads keywords from this description.</div>
+<div class="field">
+        <label for="rank">Rank / grade</label>
+        <input id="rank" placeholder="Example: E-6" name="rank_grade">
       </div>
-
-      <div class="field full">
-        <label>Preferred work setup</label>
+<div class="field">
+        <label for="years">Years of service</label>
+        <input id="years" type="number" min="0" max="50" placeholder="Optional" name="years_service">
+      </div>
+<div class="field">
+        <label for="education">Education</label>
+        <select id="education" name="education">
+          <option value="">Not provided</option>
+          <option value="0">High school / GED</option>
+          <option value="1">Some college</option>
+          <option value="2">Associate degree</option>
+          <option value="3">Bachelor's degree</option>
+          <option value="4">Master's or higher</option>
+        </select>
+      </div>
+<div class="field">
+        <label for="clearance">Clearance</label>
+        <select id="clearance" name="clearance_category">
+          <option value="0">None / Unknown</option>
+          <option value="1">Confidential</option>
+          <option value="2">Secret</option>
+          <option value="3">Top Secret</option>
+          <option value="4">TS/SCI</option>
+        </select>
+      </div>
+<div class="field full">
+        <label for="worksetup">Preferred work setup</label>
         <select id="worksetup" name="work_setup">
           <option value="any">No preference</option>
           <option value="onsite">On-site</option>
           <option value="hybrid">Hybrid</option>
           <option value="remote">Remote</option>
         </select>
+      </div></div>
+        </details>
+        <noscript><p class="helper full">Enable JavaScript to preview career matches. You can also <a href="/support.html">contact support</a> for help.</p></noscript>
+        <div class="full"><button id="profilePreviewBtn" class="btn" type="submit" disabled>Preview My Free Matches</button></div>
+      </fieldset>
+      <fieldset id="contactStep" class="m2c-step-fields full" tabindex="-1" hidden disabled>
+        <legend>Save your profile (optional)</legend>
+        <p class="helper full">Your free matches are ready. Add your contact details only if you want to save this profile for the optional $39 Career Blueprint.</p>
+        <div class="field">
+        <label for="firstName">First name</label>
+        <input id="firstName" name="first_name" type="text" autocomplete="given-name" required placeholder="First name">
       </div>
-
-      <div class="field full"><button class="btn" type="submit">Generate Career Matches</button>
-<div id="saveStatus" class="save-status">Your profile will be saved when you generate results.</div></div>
+<div class="field">
+        <label for="lastName">Last name</label>
+        <input id="lastName" name="last_name" type="text" autocomplete="family-name" required placeholder="Last name">
+      </div>
+<div class="field full">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com">
+      </div>
+        <p class="helper full">We use saved contact and career details to support your profile and deliver a purchased Blueprint. <a class="m2c-preview-link" href="/privacy.html">Read the Privacy Policy.</a></p>
+        <div class="m2c-step-actions full"><button id="profileBackBtn" class="btn secondary" type="button">Back to my experience</button><button id="profileSaveBtn" class="btn" type="submit">Save My Profile</button></div>
+      </fieldset>
+      <div id="saveStatus" class="save-status full" role="status" aria-live="polite">Free previews do not save your contact or career profile.</div>
     </form>
   </section>
 
   <section class="card">
     <div class="eyebrow">Your results</div>
-    <h2 style="margin:8px 0 16px">Top Civilian Matches</h2>
+    <h2 id="matchesTitle" tabindex="-1" style="margin:8px 0 16px">Top Civilian Matches</h2>
+    <p id="profileSavePrompt" class="helper" hidden><a class="m2c-preview-link" href="#contactStep">Save this profile for the optional Career Blueprint</a>. Your free matches are available below.</p>
     <div id="summary" class="kpis" style="display:none"></div>
     <div id="results" class="results"><div class="empty">Complete your profile and generate matches.</div></div>
     <div class="notice">Career guidance only. Match scores are estimates, not hiring guarantees. Salary ranges, licensing, education requirements, certifications,
@@ -475,6 +512,17 @@ header .lead{max-width:860px;margin-bottom:18px}
   <nav class="m2c-career-guides" aria-label="Military specialty career guides"><p>Explore civilian careers by military specialty</p><div><a href="/navy-fire-controlman-civilian-careers.html">Navy Fire Controlman</a><a href="/navy-it-civilian-jobs/">Navy IT</a><a href="/army-25b-civilian-jobs/">Army 25B</a><a href="/navy-ls-civilian-jobs/">Navy LS</a></div></nav>
 </section>
 
+
+<section class="wrap m2c-about" id="about-mos2career" aria-labelledby="about-title">
+  <div class="eyebrow">About MOS2Career</div>
+  <h2 id="about-title">Built from military service and career-transition experience</h2>
+  <p>MOS2Career was created from firsthand experience serving as a Navy Fire Controlman and working as a government contractor for BAE. That experience informs our focus on helping veterans explain their work in civilian terms and plan practical next steps.</p>
+  <p>MOS2Career LLC is an independent career-planning service for veterans and transitioning service members.</p>
+  <div class="m2c-about-grid">
+    <article><h3>How your matches are created</h3><p>The free Career Translator uses your profile answers and matching rules to rank possible civilian roles and highlight strengths and gaps. The Job Match Analyzer and personalized Career Blueprint use AI-assisted analysis. Compare suggestions with current job requirements and your actual qualifications.</p></article>
+    <article><h3>How your information is used</h3><p>Free career previews run in your browser without submitting your profile. When you choose to save, your contact and career details help us save your results, deliver a purchased Blueprint, and provide support. AI-assisted tools may process information through our service providers. Payments are handled by Stripe.</p><p><a href="/privacy.html">Privacy Policy</a> · <a href="/support.html">Contact support</a></p></article>
+  </div>
+</section>
 
 <script>
 const ROLES = [
@@ -648,9 +696,9 @@ function roleScore(role, profile){
 
   if(profile.years>=20) score+=2;
 
-  if(profile.education>=role.minEdu){
+  if(profile.education!==null && profile.education>=role.minEdu){
     score+=4;
-  } else {
+  } else if(profile.education!==null) {
     score-=Math.min(12,(role.minEdu-profile.education)*5);
   }
 
@@ -697,7 +745,8 @@ console.log(role.title, "matched:", matched, "coreSkills:", role.coreSkills);
 }
  function gapList(role, profile){
   const gaps=[];
-  if(profile.education<role.minEdu) gaps.push("Education level may be below what some employers prefer.");
+  if(profile.education===null) gaps.push("Education was not provided; verify the employer's education requirements.");
+  else if(profile.education<role.minEdu) gaps.push("Education level may be below what some employers prefer.");
   const rank=(profile.rank || "").toUpperCase();
 const rankLeadership=/E-?[5-9]|W-?[1-5]|O-?[1-9]/.test(rank);
 const sp=profile.specialty.toLowerCase();
@@ -721,19 +770,14 @@ function m2cTrackEvent(name,params={}){
   if(typeof gtag==="function") gtag("event",name,params);
 }
 function render(){
-  const first=document.getElementById("firstName");
-  const last=document.getElementById("lastName");
-  const email=document.getElementById("email");
-  if(!first.value.trim()){ first.focus(); alert("Please enter your first name."); return; }
-  if(!last.value.trim()){ last.focus(); alert("Please enter your last name."); return; }
-  if(!email.checkValidity()){ email.reportValidity(); return; }
+  m2cSetCheckoutReady(false);
 
   const p={
     branch:document.getElementById("branch").value,
     specialty:document.getElementById("specialty").value.trim(),
     rank:document.getElementById("rank").value.trim(),
-    years:+document.getElementById("years").value||0,
-    education:+document.getElementById("education").value,
+    years:document.getElementById("years").value===''?null:+document.getElementById("years").value,
+    education:document.getElementById("education").value===''?null:+document.getElementById("education").value,
     clearance:+document.getElementById("clearance").value,
     goal:document.getElementById("goal").value,
     worksetup:document.getElementById("worksetup").value,
@@ -744,13 +788,7 @@ function render(){
   window.currentReport={profile:p,results:ranked};
 
   const topMatchesText = ranked.map((r,i)=>`${i+1}. ${r.title} — ${r.score}%`).join("\n");
-  m2cSaveProfile(topMatchesText).catch(err=>{
-     m2cTrackEvent("translator_save_failed",{failure_stage:"profile_save"});
-    const status=document.getElementById("saveStatus");
-    if(status){status.textContent=err.message;status.className="save-status err";}
-    m2cSetCheckoutReady(false);
-    console.error(err);
-  });
+  window.m2cTopMatchesText=topMatchesText;
 
   const avg=Math.round(ranked.slice(0,3).reduce((a,b)=>a+b.score,0)/3);
   const top=ranked[0]?.title||"—";
@@ -797,8 +835,13 @@ const gaps=gapList(r,p);
     `;
     out.appendChild(div);
   });
+  if(!window.m2cTranslatorEventSent){
+    window.m2cTranslatorEventSent=true;
+    m2cTrackEvent("career_translator_completed");
+  }
+  return true;
 }
-document.getElementById("profileForm").addEventListener("submit",e=>{e.preventDefault();render();});
+// The two-step controller below owns profile preview and save submissions.
 function downloadReport(){
   if(!window.currentReport){alert("Generate your career matches first.");return;}
   const r=window.currentReport;
@@ -808,7 +851,7 @@ function downloadReport(){
   lines.push(`Branch: ${r.profile.branch}`);
   lines.push(`Specialty: ${r.profile.specialty}`);
   lines.push(`Rank: ${r.profile.rank}`);
-  lines.push(`Years: ${r.profile.years}`);
+  lines.push(`Years: ${r.profile.years ?? "Not provided"}`);
   lines.push(`Detected skills: ${r.profile.skills.join(", ") || "None selected"}`);
   lines.push("");
   r.results.forEach((x,i)=>{
@@ -830,6 +873,7 @@ function m2cSubmissionId(){
 }
 function m2cEncode(data){ return new URLSearchParams(data).toString(); }
 async function m2cSaveProfile(topMatchesText){
+  const profileRevision=window.m2cProfileRevision||0;
   const form=document.querySelector('form[name="career-translator"]');
   if(!form) return true;
   const first=document.getElementById("firstName");
@@ -854,6 +898,7 @@ async function m2cSaveProfile(topMatchesText){
     body:new URLSearchParams(data).toString()
   });
   if(!resp.ok) throw new Error("We couldn't save your profile. Please try again.");
+  if(profileRevision!==(window.m2cProfileRevision||0)) return false;
   if(typeof gtag==="function" && !window.m2cTranslatorEventSent){
   window.m2cTranslatorEventSent=true;
   m2cTrackEvent("career_translator_completed");
@@ -954,6 +999,108 @@ btn.addEventListener("click",(e)=>{
   });
   }
   });
+
+
+// Progressive profile flow: preview locally, then explicitly save a complete profile.
+(() => {
+  const form=document.getElementById("profileForm");
+  const experience=document.getElementById("experienceStep");
+  const contact=document.getElementById("contactStep");
+  const progress=document.getElementById("stepProgress");
+  const back=document.getElementById("profileBackBtn");
+  const save=document.getElementById("profileSaveBtn");
+  const status=document.getElementById("saveStatus");
+  if(!form || !experience || !contact) return;
+  form.noValidate=true;
+  window.m2cProfileRevision=0;
+  let saving=false;
+  function showStep(step){
+    const savingStep=step===2;
+    experience.hidden=savingStep;
+    contact.hidden=!savingStep;
+    contact.disabled=!savingStep;
+    document.getElementById("profileSavePrompt").hidden=!savingStep;
+    progress.textContent=savingStep?'Step 2 of 2 · Save your profile (optional)':'Step 1 of 2 · Explore your experience';
+  }
+  function invalidate(experienceChanged=false){
+    window.m2cProfileRevision++;
+    document.getElementById("submissionId").value='';
+    document.getElementById("topMatchesHidden").value='';
+    m2cSetCheckoutReady(false);
+    status.className='save-status';
+    status.textContent='Save your current details before opening optional checkout.';
+    if(experienceChanged){
+      window.currentReport=null;
+      window.m2cTopMatchesText='';
+      document.getElementById("summary").style.display='none';
+      document.getElementById("results").innerHTML='<div class="empty">Your experience changed. Preview your updated matches.</div>';
+      document.getElementById("blueprintCta").style.display='none';
+      document.getElementById("profileSavePrompt").hidden=true;
+      showStep(1);
+      status.textContent='Preview your updated experience before saving a profile.';
+    }
+  }
+  function validate(group){
+    for(const control of group.querySelectorAll('input,select,textarea')){
+      if(control.id==='specialty') control.value=control.value.trim();
+      if(control.disabled || control.checkValidity()) continue;
+      if(experience.contains(control) && experience.hidden) showStep(1);
+      const details=control.closest('details');
+      if(details) details.open=true;
+      control.reportValidity();
+      control.focus();
+      return false;
+    }
+    return true;
+  }
+  form.addEventListener('submit',async event=>{
+    event.preventDefault();
+    if(contact.hidden){
+      if(!validate(experience)) return;
+      invalidate();
+      if(!render()) return;
+      showStep(2);
+      status.textContent='Free matches are ready. Saving is optional; checkout unlocks only after a successful profile save.';
+      document.getElementById("profileSavePrompt").hidden=false;
+      document.getElementById("matchesTitle").focus();
+      document.getElementById("matchesTitle").scrollIntoView?.({block:'start',behavior:'smooth'});
+      return;
+    }
+    if(saving) return;
+    if(!window.currentReport || !window.m2cTopMatchesText){showStep(1);status.textContent='Preview your experience before saving.';return;}
+    if(!validate(experience)){showStep(1);return;}
+    if(!validate(contact)) return;
+    const revision=window.m2cProfileRevision;
+    saving=true;
+    save.disabled=true;
+    save.textContent='Saving your profile…';
+    try{
+      const saved=await m2cSaveProfile(window.m2cTopMatchesText);
+      if(saved===false || revision!==window.m2cProfileRevision) return;
+      status.textContent+=' You can now choose the optional Career Blueprint.';
+    }catch(error){
+      if(revision===window.m2cProfileRevision){
+        m2cSetCheckoutReady(false);
+        status.className='save-status err';
+        status.textContent=error.message||'Your profile could not be saved. Please try again.';
+        m2cTrackEvent('translator_save_failed',{failure_stage:'profile_save'});
+      }
+    }finally{
+      saving=false;
+      save.disabled=false;
+      save.textContent='Save My Profile';
+    }
+  });
+  back.addEventListener('click',()=>{invalidate();showStep(1);experience.focus();});
+  function changed(event){
+    if(!event.target.matches('input,select,textarea') || event.target.type==='hidden' || event.target.name==='bot-field') return;
+    invalidate(experience.contains(event.target));
+  }
+  form.addEventListener('input',changed);
+  form.addEventListener('change',changed);
+  showStep(1);
+  document.getElementById("profilePreviewBtn").disabled=false;
+})();
 
 </script>
 <script type="module" src="/career-translator-handoff.js"></script>
