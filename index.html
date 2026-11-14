@@ -242,7 +242,7 @@ header .lead{max-width:860px;margin-bottom:18px}
 .m2c-step-actions{display:flex;flex-wrap:wrap;gap:10px}
 #skills-label{font-size:.88rem;font-weight:800;color:#f0ece3}
 #profileSaveBtn:disabled{opacity:.6;cursor:wait}
-#experienceStep,#contactStep,#matchesTitle{scroll-margin-top:130px}
+#experienceStep,#contactStep,#matchesTitle,#about-mos2career{scroll-margin-top:130px}
 #matchesTitle:focus{outline:none}
 .m2c-about{padding-top:30px;padding-bottom:30px;border-top:1px solid #51452d}
 .m2c-about h2{font-size:1.65rem;line-height:1.25;margin:8px 0 16px;max-width:900px}
@@ -279,7 +279,7 @@ header .lead{max-width:860px;margin-bottom:18px}
       <span class="m2c-choice-action">Analyze My Job Match — Free <span aria-hidden="true">→</span></span>
     </a>
   </div>
-  <div class="m2c-start-note"><span>Built for veterans and transitioning service members.</span><a href="#sample-results">See example results <span aria-hidden="true">↓</span></a></div>
+  <div class="m2c-start-note"><span>Built for veterans and transitioning service members. <a href="#about-mos2career">About MOS2Career</a></span><a href="#sample-results">See example results <span aria-hidden="true">↓</span></a></div>
 </div></header>
 
 
@@ -1062,6 +1062,7 @@ btn.addEventListener("click",(e)=>{
       status.textContent='Free matches are ready. Saving is optional; checkout unlocks only after a successful profile save.';
       document.getElementById("profileSavePrompt").hidden=false;
       document.getElementById("matchesTitle").focus();
+      document.getElementById("matchesTitle").scrollIntoView?.({block:'start',behavior:'smooth'});
       return;
     }
     if(saving) return;
