@@ -254,6 +254,31 @@ header .lead{max-width:860px;margin-bottom:18px}
 .m2c-about a{color:#f2c552;text-underline-offset:3px}
 @media(max-width:900px){.m2c-step-fields{grid-template-columns:1fr}.m2c-step-fields>.full{grid-column:1/-1}}
 @media(max-width:700px){.m2c-about-grid{grid-template-columns:1fr}.m2c-about-grid article{padding:19px}.m2c-step-actions>.btn{flex:1 1 100%}}
+
+/* Military-to-civilian explanations, specialty guide cards, and common questions. */
+.m2c-translation-copy{max-width:1000px;color:#d4d0c7;font-size:.94rem;line-height:1.6}
+.m2c-translation-example{margin:20px 0 26px;padding:18px 20px;border:1px solid #65522c;border-radius:14px;background:#151515}
+.m2c-translation-example h3{margin:0 0 8px;font-size:1.08rem;color:#f2c552}
+.m2c-translation-example p{margin:0;color:#d4d0c7;font-size:.92rem;line-height:1.6}
+.m2c-career-guides h3{margin:0 0 8px;font-size:1.25rem;line-height:1.3}
+.m2c-career-guides>.m2c-guide-intro{margin:0 0 16px;color:var(--muted);font-size:.9rem;font-weight:400}
+.m2c-career-guides>.m2c-guide-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.m2c-career-guides .m2c-guide-card{display:flex;flex-direction:column;align-items:flex-start;gap:10px;min-width:0;padding:18px 20px}
+.m2c-guide-card h4{margin:0;font-size:1.04rem;line-height:1.4;color:#f2c552}
+.m2c-career-guides .m2c-guide-card p{margin:0;color:#d4d0c7;font-size:.9rem;line-height:1.6;font-weight:400}
+.m2c-guide-action{margin-top:auto;font-size:.82rem;font-weight:800;color:#f2c552}
+.m2c-career-guides .m2c-guide-card:hover{text-decoration:none}
+.m2c-guide-card:hover h4{text-decoration:underline;text-underline-offset:3px}
+.m2c-faq{padding-top:30px;padding-bottom:34px;border-top:1px solid #51452d}
+.m2c-faq h2{margin:8px 0 20px;font-size:1.65rem;line-height:1.25}
+.m2c-faq details{margin:0 0 12px;border:1px solid #65522c;border-radius:14px;background:#151515}
+.m2c-faq summary{padding:18px 20px;cursor:pointer;font-size:.97rem;font-weight:800;line-height:1.5;color:#f2c552}
+.m2c-faq summary:focus-visible{outline:2px solid #f2c552;outline-offset:3px;border-radius:12px}
+.m2c-faq-answer{padding:0 20px 18px}
+.m2c-faq-answer p{margin:0;color:#d4d0c7;font-size:.92rem;line-height:1.65}
+.m2c-faq a{color:#f2c552;text-underline-offset:3px}
+#how-it-works-title,#career-guides,#homepage-faq{scroll-margin-top:130px}
+@media(max-width:700px){.m2c-career-guides>.m2c-guide-grid{grid-template-columns:1fr}.m2c-translation-example,.m2c-career-guides .m2c-guide-card{padding:17px}.m2c-faq summary{padding:16px 17px}.m2c-faq-answer{padding:0 17px 16px}}
 </style>
 </head>
 <body>
@@ -265,7 +290,7 @@ header .lead{max-width:860px;margin-bottom:18px}
   <div class="eyebrow">Career Translator </div>
   <h1>Turn Your Military Experience Into Civilian Career Opportunities</h1>
   <p class="mission-tagline">Your Mission Doesn’t End. <span>It Evolves.</span></p>
-  <p class="lead">Explore civilian career options from your military experience, or compare your duties with a job posting. Start with either free tool.</p>
+  <p class="lead">Explore civilian jobs using your Army MOS, Navy rating, or Air Force AFSC and the duties you actually performed. Start with free career matches or compare your experience with a job posting.</p>
   <div class="m2c-tool-choices" aria-label="Choose a free career tool">
     <a class="m2c-tool-choice" href="#profileForm" aria-labelledby="explore-careers-title">
       <span class="eyebrow">Free Career Translator</span>
@@ -280,7 +305,7 @@ header .lead{max-width:860px;margin-bottom:18px}
       <span class="m2c-choice-action">Analyze My Job Match — Free <span aria-hidden="true">→</span></span>
     </a>
   </div>
-  <div class="m2c-start-note"><span>Built for veterans and transitioning service members. <a href="#about-mos2career">About MOS2Career</a></span><a href="#sample-results">See example results <span aria-hidden="true">↓</span></a></div>
+  <div class="m2c-start-note"><span>Built for veterans and transitioning service members. <a href="#about-mos2career">About MOS2Career</a> <span aria-hidden="true">·</span> <a href="#homepage-faq">FAQs</a></span><a href="#sample-results">See example results <span aria-hidden="true">↓</span></a></div>
 </div></header>
 
 
@@ -506,15 +531,73 @@ header .lead{max-width:860px;margin-bottom:18px}
 </main>
 
 <section class="wrap m2c-support" aria-labelledby="how-it-works-title">
-  <h2 id="how-it-works-title">How MOS2Career works</h2>
+  <h2 id="how-it-works-title">How MOS2Career translates military experience</h2>
+  <p class="m2c-translation-copy">Your military specialty is a starting point. Enter your Army MOS, Navy rating, Air Force AFSC, or specialty name, then describe the work you actually performed. The free Career Translator uses your answers and matching rules to suggest civilian jobs, transferable skills, and possible qualification gaps.</p>
   <div class="m2c-steps" aria-label="How MOS2Career works">
     <div class="m2c-step"><b>Step 1</b><strong>Share your experience</strong><p>Enter your military specialty, skills, and career goals.</p></div>
     <div class="m2c-step"><b>Step 2</b><strong>Explore free matches</strong><p>See civilian roles aligned with your background, with estimated fit and next steps.</p></div>
     <div class="m2c-step"><b>Step 3</b><strong>Build your transition plan</strong><p>Optionally upgrade to a $39 personalized Career Blueprint.</p></div>
   </div>
-  <nav class="m2c-career-guides" aria-label="Military specialty career guides"><p>Explore civilian careers by military specialty</p><div><a href="/navy-fire-controlman-civilian-careers.html">Navy Fire Controlman</a><a href="/navy-it-civilian-jobs/">Navy IT</a><a href="/army-25b-civilian-jobs/">Army 25B</a><a href="/navy-ls-civilian-jobs/">Navy LS</a></div></nav>
+  <aside class="m2c-translation-example" aria-labelledby="translation-example-title">
+    <h3 id="translation-example-title">Example: Navy Fire Controlman to civilian job language</h3>
+    <p>A Navy Fire Controlman who maintained and tested electronics could describe fault isolation, preventive maintenance, and technical documentation. These skills may support a search for engineering technician or field service roles. Use the duties you actually performed and compare them with the employer’s requirements.</p>
+  </aside>
+  <nav class="m2c-career-guides" id="career-guides" aria-label="Military specialty career guides">
+    <h3>Explore civilian careers by military specialty</h3>
+    <p class="m2c-guide-intro">Start with a guide to civilian roles, transferable duties, qualifications, salary sources, and resume examples for your specialty.</p>
+    <div class="m2c-guide-grid">
+      <a class="m2c-guide-card" href="/army-25b-civilian-jobs/" aria-labelledby="army-25b-guide-title" aria-describedby="army-25b-guide-description">
+        <h4 id="army-25b-guide-title">Army 25B civilian jobs</h4>
+        <p id="army-25b-guide-description">Explore IT support, systems support, and networking paths, with transferable skills, qualifications, and resume examples.</p>
+        <span class="m2c-guide-action">Read the Army 25B guide <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="m2c-guide-card" href="/navy-it-civilian-jobs/" aria-labelledby="navy-it-guide-title" aria-describedby="navy-it-guide-description">
+        <h4 id="navy-it-guide-title">Navy IT civilian jobs</h4>
+        <p id="navy-it-guide-description">Connect your Information Systems Technician duties with civilian support, network, and systems roles.</p>
+        <span class="m2c-guide-action">Read the Navy IT guide <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="m2c-guide-card" href="/navy-ls-civilian-jobs/" aria-labelledby="navy-ls-guide-title" aria-describedby="navy-ls-guide-description">
+        <h4 id="navy-ls-guide-title">Navy LS civilian careers</h4>
+        <p id="navy-ls-guide-description">Translate inventory, supply, and logistics duties into civilian career options and resume examples.</p>
+        <span class="m2c-guide-action">Read the Navy LS guide <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="m2c-guide-card" href="/navy-fire-controlman-civilian-careers.html" aria-labelledby="navy-fc-guide-title" aria-describedby="navy-fc-guide-description">
+        <h4 id="navy-fc-guide-title">Navy Fire Controlman civilian jobs</h4>
+        <p id="navy-fc-guide-description">Explore electronics, testing, troubleshooting, and technical support careers based on the work you performed.</p>
+        <span class="m2c-guide-action">Read the Fire Controlman guide <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
+  </nav>
 </section>
 
+<section class="wrap m2c-faq" id="homepage-faq" aria-labelledby="homepage-faq-title">
+  <div class="eyebrow">Common questions</div>
+  <h2 id="homepage-faq-title">Military-to-civilian career questions</h2>
+  <details open>
+    <summary>Can I use my Army MOS, Navy rating, or Air Force AFSC?</summary>
+    <div class="m2c-faq-answer"><p>Enter your specialty code or job title, then add your duties and skills. You can select any listed service branch. The Career Translator uses matching rules and keywords, so a code alone may not capture your experience. If suggestions miss the mark, spell out your specialty and describe the work you actually performed.</p></div>
+  </details>
+  <details>
+    <summary>What is free, and what does the $39 Career Blueprint add?</summary>
+    <div class="m2c-faq-answer"><p>The <a href="#profileForm">free Career Translator</a> previews civilian career matches and possible gaps. The <a href="/military-job-match-analyzer/">free Job Match Analyzer</a> compares your duties with a civilian job posting and offers resume suggestions; usage limits apply. The optional $39 Career Blueprint adds a personalized skills, credentials, resume, and 90-day transition strategy. You can <a href="#blueprint-sample">preview a sample Blueprint</a> before deciding.</p></div>
+  </details>
+  <details>
+    <summary>Do I need to enter my name or email to see career matches?</summary>
+    <div class="m2c-faq-answer"><p>No. You can preview free career matches in your browser without entering contact details or saving your profile. Name and email are required only if you choose to save a profile for the optional Career Blueprint. Checkout unlocks after a successful save. Read our <a href="/privacy.html">Privacy Policy</a> for details about saved information.</p></div>
+  </details>
+  <details>
+    <summary>Which free tool should I start with?</summary>
+    <div class="m2c-faq-answer"><p>Use the <a href="#profileForm">Career Translator</a> when you want to explore civilian career directions from your background and goals. If you already have a job posting in mind, use the <a href="/military-job-match-analyzer/">Job Match Analyzer</a> to compare its requirements with your actual duties and identify qualifications to verify.</p></div>
+  </details>
+  <details>
+    <summary>Can MOS2Career help with my civilian resume?</summary>
+    <div class="m2c-faq-answer"><p>The Job Match Analyzer offers resume wording suggestions based on the experience you provide, and the Career Blueprint includes resume and LinkedIn strategy. The specialty guides also include resume examples. Keep your official military job title in your work history and describe relevant duties, tools, and outcomes accurately in civilian language.</p></div>
+  </details>
+  <details>
+    <summary>Do my career matches mean I qualify for a job?</summary>
+    <div class="m2c-faq-answer"><p>Matches are career-planning estimates, not job offers or guarantees of employment. Employers determine qualifications, and requirements for education, experience, credentials, licensing, and clearances vary. Compare each suggestion with current job postings and your actual qualifications before deciding on an application or training plan.</p></div>
+  </details>
+</section>
 
 <section class="wrap m2c-about" id="about-mos2career" aria-labelledby="about-title">
   <div class="eyebrow">About MOS2Career</div>
