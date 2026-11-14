@@ -12,13 +12,17 @@ const decode = text => text.replace(/&(?:amp|quot|apos|lt|gt);|&#(?:x[0-9a-f]+|\
 
 // Exercise the browser scripts and native form semantics without sending a
 // visitor profile to Netlify or opening a real Stripe checkout.
-function page({ response = { ok: true }, specialty = 'IT', executeScripts = true } = {}) {
+function page({ response = { ok: true }, specialty = 'IT', executeScripts = true, analytics = 'available', analyticsIds = { client_id: '123456789.1700000000', session_id: '1700000000' }, analyticsOptOut = false } = {}) {
   const ids = new Map();
   const all = [];
   const requests = [];
   const nativeSubmissions = [];
   const alerts = [];
   const errors = [];
+  const analyticsCalls = [];
+  const analyticsCallbacks = [];
+  const timers = new Map();
+  let nextTimerId = 0;
   let document;
   class Element {
     constructor(tagName, attributes = {}) {
@@ -191,7 +195,8 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
     alert: message => alerts.push(message),
     console: { error: (...args) => errors.push(args), log() {} },
     location: { href: 'https://mos2career.com/', search: '' },
-    setTimeout: () => 1, clearTimeout() {},
+    setTimeout: (handler, delay) => { const id = ++nextTimerId; timers.set(id, { handler, delay }); return id; },
+    clearTimeout: id => timers.delete(id),
     fetch: (url, options) => { requests.push({ url, options }); return typeof response === 'function' ? response() : Promise.resolve(response); }
   };
   context.window = context;
@@ -201,6 +206,28 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
     vm.runInContext(source, context, { timeout: 3000 });
   }
   document.dispatchEvent({ type: 'DOMContentLoaded' });
+  // Preserve normal tag events while supplying deterministic get callbacks.
+  // A real blocked tag queues the command without ever invoking its callback.
+  const queuedGtag = context.gtag;
+  if (analytics === 'absent') context.gtag = undefined;
+  else if (executeScripts) context.gtag = (...args) => {
+    queuedGtag(...args);
+    if (args[0] !== 'get') return;
+    const [, measurementId, field, callback] = args;
+    analyticsCalls.push({ measurementId, field });
+    if (analytics === 'throws') throw new Error('Analytics tag blocked');
+    if (analytics === 'timeout' || analytics === 'deferred') analyticsCallbacks.push({ field, callback });
+    else callback(analyticsIds[field]);
+  };
+  context['ga-disable-G-2251989Z9F'] = analyticsOptOut;
+  const resolveAnalytics = (values = analyticsIds) => {
+    for (const { field, callback } of analyticsCallbacks.splice(0)) callback(values[field]);
+  };
+  const expireAnalytics = () => {
+    const scheduled = [...timers.entries()].filter(([, timer]) => timer.delay === 600);
+    assert.equal(scheduled.length, 1, 'The analytics lookup must have one bounded timeout');
+    for (const [id, timer] of scheduled) { timers.delete(id); timer.handler(); }
+  };
   const element = id => { assert.ok(ids.has(id), 'Expected page control: ' + id); return ids.get(id); };
   // Most cases begin with a valid service answer so each test can isolate the
   // contact/save behavior. Empty-specialty validation has its own case below.
@@ -211,7 +238,7 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
   const preview = () => element('profilePreviewBtn').click();
   const save = () => element('profileSaveBtn').click();
   const contact = () => { change('firstName', 'Sam'); change('lastName', 'Veteran'); change('email', 'sam@example.invalid'); };
-  return { context, document, element, change, preview, save, contact, requests, nativeSubmissions, alerts, errors };
+  return { context, document, element, change, preview, save, contact, requests, nativeSubmissions, alerts, errors, analyticsCalls, resolveAnalytics, expireAnalytics };
 }
 
 const settle = async () => { await new Promise(resolve => setImmediate(resolve)); };
@@ -328,6 +355,7 @@ test('repeated save clicks while a request is pending create one profile POST', 
   const deferred = defer();
   const p = page({ response: () => deferred.promise });
   p.preview(); p.contact(); p.save(); p.save();
+  await settle();
   assert.equal(p.requests.length, 1);
   locked(p);
   deferred.resolve({ ok: true });
@@ -340,6 +368,8 @@ test('contact edits during a pending save cannot unlock checkout with an outdate
   const deferred = defer();
   const p = page({ response: () => deferred.promise });
   p.preview(); p.contact(); p.save();
+  await settle();
+  assert.equal(p.requests.length, 1, 'Exercise an edit after the profile POST has started');
   p.change('email', 'new-address@example.invalid');
   deferred.resolve({ ok: true });
   await settle();
@@ -387,6 +417,7 @@ test('an older save response cannot unlock or replace a newer experience preview
   let attempt = 0;
   const p = page({ response: () => ++attempt === 1 ? deferred.promise : Promise.resolve({ ok: true }) });
   p.preview(); p.contact(); p.save();
+  await settle();
   assert.equal(p.requests.length, 1);
   p.element('profileBackBtn').click();
   p.change('specialty', 'LS', 'change');
@@ -419,6 +450,116 @@ test('free preview analytics contain no contact or career-profile answers', () =
   const analytics = JSON.stringify(p.context.dataLayer);
   for (const privateValue of ['PrivateFirstName', 'PrivateLastName', 'private-person@example.invalid', 'PRIVATE-DUTIES']) assert.equal(analytics.includes(privateValue), false, privateValue);
   assert.ok(analytics.includes('career_translator_completed'));
+});
+
+test('analytics identifiers are read only on explicit save and accompany that profile POST', async () => {
+  const p = page();
+  // These accessors make a cookie/storage fallback fail this flow immediately.
+  Object.defineProperty(p.document, 'cookie', { get() { throw new Error('Do not parse analytics cookies'); } });
+  p.context.localStorage = { getItem() { throw new Error('Do not read stored analytics identifiers'); } };
+  assert.equal(p.element('gaClientId').value, '');
+  assert.equal(p.element('gaSessionId').value, '');
+  p.change('duties', 'PRIVATE-SAVED-DUTIES: maintained networks.');
+  p.preview();
+  p.contact();
+  assert.equal(p.requests.length, 0);
+  assert.deepEqual(p.analyticsCalls, [], 'Preview and contact edits must not request tracking identifiers');
+  p.save();
+  await settle();
+  assert.equal(p.requests.length, 1);
+  assert.deepEqual(p.analyticsCalls, [
+    { measurementId: 'G-2251989Z9F', field: 'client_id' },
+    { measurementId: 'G-2251989Z9F', field: 'session_id' }
+  ]);
+  const body = new URLSearchParams(p.requests[0].options.body);
+  assert.equal(body.get('ga_client_id'), '123456789.1700000000');
+  assert.equal(body.get('ga_session_id'), '1700000000');
+  assert.equal(body.get('ga_tracking_status'), 'available');
+  const events = JSON.stringify(p.context.dataLayer);
+  for (const privateValue of ['Sam', 'Veteran', 'sam@example.invalid', 'PRIVATE-SAVED-DUTIES']) assert.equal(events.includes(privateValue), false, privateValue);
+  assert.equal(new URL(p.element('blueprintCheckoutBtn').href).searchParams.get('client_reference_id'), body.get('submission_id'));
+});
+
+test('an unanswered analytics lookup times out without blocking save or accepting late identifiers', async () => {
+  const p = page({ analytics: 'timeout' });
+  p.preview(); p.contact(); p.save(); p.save();
+  await settle();
+  assert.equal(p.requests.length, 0, 'Wait for the bounded identifier lookup before posting');
+  assert.equal(p.analyticsCalls.length, 2, 'Repeated save must not start a second lookup');
+  locked(p);
+  p.expireAnalytics();
+  await settle();
+  assert.equal(p.requests.length, 1);
+  const body = new URLSearchParams(p.requests[0].options.body);
+  assert.equal(body.get('ga_client_id'), '');
+  assert.equal(body.get('ga_session_id'), '');
+  assert.equal(body.get('ga_tracking_status'), 'unavailable');
+  assert.equal(p.element('blueprintCheckoutBtn').getAttribute('aria-disabled'), 'false');
+  p.resolveAnalytics();
+  await settle();
+  assert.equal(p.requests.length, 1, 'Late tag callbacks must not post or replace the saved payload');
+  assert.equal(new URLSearchParams(p.requests[0].options.body).get('ga_client_id'), '');
+});
+
+for (const [label, options] of [
+  ['opted out', { analyticsOptOut: true }],
+  ['absent', { analytics: 'absent' }],
+  ['throwing', { analytics: 'throws' }]
+]) test(`${label === 'throwing' ? 'a' : 'an'} ${label} analytics tag does not prevent profile saving`, async () => {
+  const p = page(options);
+  p.preview(); p.contact(); p.save();
+  await settle();
+  assert.equal(p.requests.length, 1);
+  const body = new URLSearchParams(p.requests[0].options.body);
+  assert.equal(body.get('ga_client_id'), '');
+  assert.equal(body.get('ga_session_id'), '');
+  assert.equal(body.get('ga_tracking_status'), 'unavailable');
+  if (label !== 'throwing') assert.equal(p.analyticsCalls.length, 0);
+  assert.equal(p.element('blueprintCheckoutBtn').getAttribute('aria-disabled'), 'false');
+});
+
+test('non-numeric or oversized analytics identifiers cannot enter the saved profile', async () => {
+  for (const analyticsIds of [
+    { client_id: 'person@example.invalid', session_id: '1700000000' },
+    { client_id: '<script>alert(1)</script>', session_id: 'https://attacker.invalid/' },
+    { client_id: '1'.repeat(21) + '.2', session_id: '1'.repeat(17) }
+  ]) {
+    const p = page({ analyticsIds });
+    p.preview(); p.contact(); p.save();
+    await settle();
+    assert.equal(p.requests.length, 1);
+    const body = new URLSearchParams(p.requests[0].options.body);
+    assert.equal(body.get('ga_client_id'), '');
+    assert.equal(body.get('ga_session_id'), '', 'A session alone must not mark an unrecognized client as trackable');
+    assert.equal(body.get('ga_tracking_status'), 'unavailable');
+  }
+  const p = page({ analyticsIds: { client_id: '123.456', session_id: 'sam@example.invalid' } });
+  p.preview(); p.contact(); p.save();
+  await settle();
+  const body = new URLSearchParams(p.requests[0].options.body);
+  assert.equal(body.get('ga_client_id'), '123.456');
+  assert.equal(body.get('ga_session_id'), '');
+  assert.equal(body.get('ga_tracking_status'), 'available');
+});
+
+test('edits while analytics is pending cancel the stale POST and allow a fresh save', async () => {
+  const p = page({ analytics: 'deferred' });
+  p.preview(); p.contact(); p.save();
+  assert.equal(p.requests.length, 0);
+  assert.equal(p.analyticsCalls.length, 2);
+  p.change('email', 'fresh-address@example.invalid');
+  p.resolveAnalytics();
+  await settle();
+  assert.equal(p.requests.length, 0, 'An edited profile must not be posted after identifier lookup');
+  assert.equal(p.element('submissionId').value, '');
+  assert.ok(p.context.currentReport, 'Contact edits preserve the free preview');
+  locked(p);
+  p.save();
+  p.resolveAnalytics();
+  await settle();
+  assert.equal(p.requests.length, 1);
+  assert.equal(new URLSearchParams(p.requests[0].options.body).get('email'), 'fresh-address@example.invalid');
+  assert.equal(p.element('blueprintCheckoutBtn').getAttribute('aria-disabled'), 'false');
 });
 
 test('blocked JavaScript cannot turn the Preview button into a native profile POST', () => {

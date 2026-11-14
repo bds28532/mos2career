@@ -4,6 +4,7 @@ import assert from "node:assert/strict";
 import vm from "node:vm";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { createHash } from "node:crypto";
 
 const root = path.resolve(import.meta.dirname, "..");
 const NOW = Date.parse("2026-11-10T12:00:00Z");
@@ -118,6 +119,7 @@ async function webhook(forms) {
   const pages = [];
   const { default: handler } = await load("netlify/functions/stripe-webhook.mjs", {
     stripe: { default: StripeFixture },
+    "node:crypto": { createHash },
   }, async (url, options) => {
     if (String(url).startsWith("https://api.netlify.com/")) {
       pages.push(Number(new URL(url).searchParams.get("page")));

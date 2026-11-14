@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { findMOS2CareerProfile } from "./lib/find-profile.mjs";
+import { sendGA4Purchase } from "./lib/ga4-purchase.mjs";
 
 const stripe = new Stripe(
   "sk_placeholder_for_webhook_verification_only"
@@ -12,70 +13,6 @@ const jsonResponse = (status, data) =>
       "Content-Type": "application/json",
     },
   });
-async function sendGA4Purchase({
-  transactionId,
-  submissionId,
-  amountTotal,
-  currency
-}) {
-  const measurementId =
-    process.env.GA4_MEASUREMENT_ID;
-
-  const apiSecret =
-    process.env.GA4_API_SECRET;
-
-  if (!measurementId || !apiSecret) {
-    console.warn(
-      "GA4 purchase tracking not configured"
-    );
-    return;
-  }
-
-  const clientId =
-    `mos2career.${submissionId || transactionId}`;
-
-  const url =
-    `https://www.google-analytics.com/mp/collect` +
-    `?measurement_id=${encodeURIComponent(measurementId)}` +
-    `&api_secret=${encodeURIComponent(apiSecret)}`;
-
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      client_id: clientId,
-      events: [{
-        name: "purchase",
-        params: {
-          transaction_id: transactionId,
-          value: (amountTotal || 0) / 100,
-currency: (currency || "usd").toUpperCase(),
-          items: [{
-            item_id: "career_blueprint",
-            item_name:
-              "MOS2Career Personalized Career Blueprint",
-         price: (amountTotal || 0) / 100,
-quantity: 1
-          }]
-        }
-      }]
-    })
-  });
-
-  if (!response.ok) {
-    console.error(
-      "GA4 purchase tracking failed:",
-      response.status
-    );
-  } else {
-    console.log(
-      "GA4 PURCHASE SENT:",
-      transactionId
-    );
-  }
-}
 /*
  * ---------------------------------------------------------
  * FIND MOS2CAREER PROFILE
@@ -587,21 +524,16 @@ export default async (request) => {
 
       profile,
     });
-if (verifiedMode === "live") {
-  try {
-  await sendGA4Purchase({
-  transactionId: session.id,
-  submissionId,
-  amountTotal: session.amount_total,
-  currency: session.currency,
-});
-  } catch (analyticsError) {
-    console.error(
-      "GA4 purchase tracking error:",
-      analyticsError?.message || "Unknown error"
-    );
-  }
-}
+    if (verifiedMode === "live") {
+      const analytics = await sendGA4Purchase({
+        transactionId: session.id,
+        submissionId,
+        amountTotal: session.amount_total,
+        currency: session.currency,
+        profile,
+      });
+      if (!analytics.sent) console.warn("GA4 purchase tracking:", analytics.reason);
+    }
     /*
      * Stripe receives success after the
      * fulfillment job has been accepted.
@@ -643,4 +575,3 @@ if (verifiedMode === "live") {
     });
   }
 };
-
