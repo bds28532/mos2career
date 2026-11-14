@@ -17,6 +17,23 @@
 <title>Military to Civilian Job Translator | MOS2Career</title>
 <meta name="description" content="Turn your military MOS, Navy rating, or Air Force AFSC into civilian career options. Discover transferable skills, job matches, and resume guidance for free."/>
 <link rel="canonical" href="https://mos2career.com/"/>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"/>
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="MOS2Career"/>
+<meta property="og:url" content="https://mos2career.com/"/>
+<meta property="og:title" content="Military to Civilian Job Translator | MOS2Career"/>
+<meta property="og:description" content="Turn your military MOS, Navy rating, or Air Force AFSC into civilian career options. Discover transferable skills, job matches, and resume guidance for free."/>
+<meta property="og:image" content="https://mos2career.com/assets/mos2career-social.png"/>
+<meta property="og:image:width" content="1200"/>
+<meta property="og:image:height" content="630"/>
+<meta property="og:image:type" content="image/png"/>
+<meta property="og:image:alt" content="MOS2Career: Military experience. Civilian opportunities. Explore civilian career matches for free."/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Military to Civilian Job Translator | MOS2Career"/>
+<meta name="twitter:description" content="Turn your military MOS, Navy rating, or Air Force AFSC into civilian career options. Discover transferable skills, job matches, and resume guidance for free."/>
+<meta name="twitter:image" content="https://mos2career.com/assets/mos2career-social.png"/>
+<meta name="twitter:image:alt" content="MOS2Career: Military experience. Civilian opportunities. Explore civilian career matches for free."/>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://mos2career.com/#organization","name":"MOS2Career","legalName":"MOS2Career LLC","url":"https://mos2career.com/","description":"Career-planning tools for veterans and transitioning service members.","email":"support@mos2career.com","logo":{"@type":"ImageObject","url":"https://mos2career.com/assets/mos2career-logo.png","width":600,"height":160}},{"@type":"WebSite","@id":"https://mos2career.com/#website","url":"https://mos2career.com/","name":"MOS2Career","inLanguage":"en-US","publisher":{"@id":"https://mos2career.com/#organization"}}]}</script>
 <style>
 :root{
   --bg:#090909;--panel:#191919;--panel2:#252525;--line:#48402b;
@@ -279,6 +296,13 @@ header .lead{max-width:860px;margin-bottom:18px}
 .m2c-faq a{color:#f2c552;text-underline-offset:3px}
 #how-it-works-title,#career-guides,#homepage-faq{scroll-margin-top:130px}
 @media(max-width:700px){.m2c-career-guides>.m2c-guide-grid{grid-template-columns:1fr}.m2c-translation-example,.m2c-career-guides .m2c-guide-card{padding:17px}.m2c-faq summary{padding:16px 17px}.m2c-faq-answer{padding:0 17px 16px}}
+.m2c-pay-benchmark{margin-top:9px;line-height:1.6;overflow-wrap:anywhere}
+.m2c-pay-benchmark a,.m2c-pay-guide a{color:#f2c552;text-underline-offset:3px}
+.m2c-pay-guide{margin-top:14px;padding:14px;border:1px solid #65522c;border-radius:12px;background:#151515;scroll-margin-top:130px}
+.m2c-pay-guide summary{cursor:pointer;font-size:.88rem;font-weight:800;color:#f2c552}
+.m2c-pay-guide summary:focus-visible{outline:2px solid #f2c552;outline-offset:4px}
+.m2c-pay-guide p{font-size:.83rem;line-height:1.6;color:#d4d0c7}
+.rhead>.rtitle{min-width:0;overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -494,6 +518,13 @@ header .lead{max-width:860px;margin-bottom:18px}
     <div class="notice">Career guidance only. Match scores are estimates, not hiring guarantees. Salary ranges, licensing, education requirements, certifications,
       and role requirements vary by employer and location and should be verified against current job postings and authoritative career data.</div>
 
+    <details class="m2c-pay-guide" id="salary-sources">
+      <summary>How to use salary benchmarks and sources</summary>
+      <p>Figures shown with matches are U.S. annual occupational medians from the <a href="https://www.bls.gov/ooh/">Bureau of Labor Statistics Occupational Outlook Handbook</a>, using May 2025 wage data. Sources reviewed <time datetime="2026-11-14">November 14, 2026</time>.</p>
+      <p>Each figure names and links its related occupation. That occupation can be broader than the suggested job title, and the data include workers across experience levels, locations, and industries. A median is not a starting salary, an individual offer, or a prediction of your earnings. Match the source occupation to the duties of an actual posting.</p>
+      <p>Where there is no close occupational benchmark, no salary number is shown. Compare current local postings and use <a href="https://www.onetonline.org/">O*NET OnLine</a> to research occupation-specific state and local wages. Consider responsibilities, credentials, industry, location, and benefits.</p>
+    </details>
+
     <div id="blueprintCta" class="blueprint-cta">
       <div class="eyebrow">Go deeper</div>
       <h3>Get Your Personalized Career Blueprint — $39</h3>
@@ -612,73 +643,196 @@ header .lead{max-width:860px;margin-bottom:18px}
 
 <script>
 const ROLES = [
- {title:"Systems Test Engineer", base:56, skills:["testing","troubleshooting","electronics","documentation","data"],coreSkills:["testing"], goals:["engineering","defense","income"], minEdu:2, clearance:1, remote:1, salary:"$90K–$145K", certs:["ISTQB or relevant test credential","INCOSE knowledge helpful"], gap:"Some employers prefer a bachelor's degree in engineering or a related technical field."},
- {title:"Systems Integration Engineer", base:54, skills:["testing","troubleshooting","electronics","networking","documentation","project"], goals:["engineering","defense","income"], minEdu:3, clearance:1, remote:1, salary:"$95K–$155K", certs:["INCOSE ASEP/CSEP","Vendor-specific systems training"], gap:"A bachelor's degree is commonly preferred; formal systems-engineering experience strengthens fit."},
- {title:"Field Service Engineer", base:50, skills:["troubleshooting","electronics","maintenance","training","documentation"], goals:["engineering","defense"], minEdu:1, clearance:0, remote:0, salary:"$75K–$125K", certs:["OEM/vendor certifications","CompTIA A+ for some tech paths"], gap:"Travel and customer-facing experience may be required depending on employer."},
- {title:"Technical Program Manager", base:46, skills:["leadership","project","training","documentation","data"], goals:["management","defense","income"], minEdu:3, clearance:1, remote:2, salary:"$105K–$170K", certs:["PMP","Scrum / Agile certification"], gap:"Formal budget, schedule, and program ownership experience can be important."},
- {title:"Project Manager", base:45, skills:["leadership","project","training","documentation","logistics"], goals:["management","operations","remote"], minEdu:2, clearance:0, remote:2, salary:"$80K–$135K", certs:["PMP","CAPM if early-career"], gap:"Translate mission planning and team coordination into measurable project outcomes."},
- {title:"Cybersecurity Analyst", base:45, skills:["cyber","networking","troubleshooting","documentation","data"], goals:["cyber","defense","remote","income"], minEdu:1, clearance:2, remote:3, salary:"$85K–$140K", certs:["Security+","CySA+","CISSP later-career"], gap:"Hands-on cyber or networking evidence is important; Security+ can materially improve competitiveness."},
- {title:"SOC Analyst", base:42, skills:["cyber","networking","data","troubleshooting","documentation"], goals:["cyber","remote"], minEdu:1, clearance:0, remote:3, salary:"$70K–$115K", certs:["Security+","CySA+","Splunk fundamentals"], gap:"Build practical SIEM, incident-response, and log-analysis experience."},
- {title:"Network Administrator", base:43, skills:["networking","troubleshooting","documentation","cyber"], goals:["cyber","remote","defense"], minEdu:1, clearance:1, remote:2, salary:"$70K–$115K", certs:["Network+","CCNA"], gap:"Demonstrable routing, switching, TCP/IP, and enterprise network experience strengthens fit."},
- {title:"IT Systems Administrator", base:43, skills:["networking","troubleshooting","cyber","documentation","training"], goals:["cyber","remote","defense"], minEdu:1, clearance:1, remote:2, salary:"$70K–$120K", certs:["Security+","Microsoft/Azure certifications"], gap:"Employers may expect Windows/Linux server administration or cloud platform experience."},
- {title:"Quality Assurance Engineer", base:46, skills:["testing","documentation","data","troubleshooting"], goals:["engineering","remote"], minEdu:2, clearance:0, remote:2, salary:"$80K–$130K", certs:["ISTQB","Lean Six Sigma"], gap:"Software QA roles may require coding or automation knowledge; hardware QA may align more directly."},
- {title:"Technical Operations Manager", base:47, skills:["leadership","maintenance","project","training","logistics"], goals:["management","operations","defense"], minEdu:2, clearance:0, remote:1, salary:"$90K–$145K", certs:["PMP","Lean Six Sigma"], gap:"Quantify team size, readiness metrics, downtime reduction, and operational performance."},
- {title:"Logistics Manager", base:43, skills:["logistics","leadership","project","data","documentation"], goals:["operations","management"], minEdu:2, clearance:0, remote:1, salary:"$75K–$125K", certs:["APICS/ASCM","Lean Six Sigma"], gap:"Supply-chain tools and civilian ERP experience can improve marketability."},
- {title:"Training & Development Manager", base:41, skills:["training","leadership","documentation","project"], goals:["management","remote"], minEdu:2, clearance:0, remote:2, salary:"$75K–$125K", certs:["ATD certifications","Instructional design training"], gap:"Translate military qualification programs into civilian learning and performance outcomes."},
- {title:"Technical Writer", base:41, skills:["documentation","training","testing","electronics"], goals:["remote","engineering"], minEdu:1, clearance:0, remote:3, salary:"$70K–$115K", certs:["Technical writing portfolio","MadCap Flare / documentation tools"], gap:"A strong civilian writing portfolio is often more important than additional credentials."},
- {title:"Data Analyst", base:39, skills:["data","documentation","project","troubleshooting"], goals:["remote","income"], minEdu:2, clearance:0, remote:3, salary:"$70K–$120K", certs:["SQL","Power BI/Tableau","Google Data Analytics"], gap:"You will usually need demonstrable SQL, spreadsheet, BI, or Python analytics skills."},
- {title:"Defense Systems Technician", base:52, skills:["electronics","maintenance","troubleshooting","testing","documentation"], coreSkills:["electronics","testing"], goals:["defense","engineering"], minEdu:0, clearance:1, remote:0, salary:"$70K–$115K", certs:["OEM/vendor certifications","IPC certification depending on role"], gap:"Often one of the most direct military-to-civilian translations for hands-on technical specialties."},
- {title:"Engineering Technician", base:48, skills:["electronics","testing","maintenance","troubleshooting","documentation"], goals:["engineering","defense"], minEdu:1, clearance:0, remote:0, salary:"$65K–$105K", certs:["ET-related credentials","Vendor certifications"], gap:"An associate degree can be enough for many roles; exact requirements vary by industry."},
- {title:"Configuration Management Specialist", base:42, skills:["documentation","project","data","testing"], goals:["defense","operations","remote"], minEdu:1, clearance:1, remote:2, salary:"$75K–$120K", certs:["CMII or configuration-management training","ITIL helpful"], gap:"Highlight baseline control, technical records, change tracking, and verification experience."},
- {title:"Test Director / Test Manager", base:48, skills:["testing","leadership","project","documentation","data"],coreSkills:["testing"], goals:["defense","engineering","management","income"], minEdu:2, clearance:2, remote:1, salary:"$95K–$155K", certs:["PMP","Test & evaluation coursework"], gap:"Civilian employers may look for formal test planning, risk management, and customer-facing reporting."},
+ {title:"Systems Test Engineer", base:56, skills:["testing","troubleshooting","electronics","documentation","data"],coreSkills:["testing"], goals:["engineering","defense","income"], minEdu:2, clearance:1, remote:1, certs:["ISTQB or relevant test credential","INCOSE knowledge helpful"], gap:"Some employers prefer a bachelor's degree in engineering or a related technical field."},
+ {title:"Systems Integration Engineer", base:54, skills:["testing","troubleshooting","electronics","networking","documentation","project"], goals:["engineering","defense","income"], minEdu:3, clearance:1, remote:1, certs:["INCOSE ASEP/CSEP","Vendor-specific systems training"], gap:"A bachelor's degree is commonly preferred; formal systems-engineering experience strengthens fit."},
+ {title:"Field Service Engineer", base:50, skills:["troubleshooting","electronics","maintenance","training","documentation"], goals:["engineering","defense"], minEdu:1, clearance:0, remote:0, certs:["OEM/vendor certifications","CompTIA A+ for some tech paths"], gap:"Travel and customer-facing experience may be required depending on employer."},
+ {title:"Technical Program Manager", base:46, skills:["leadership","project","training","documentation","data"], goals:["management","defense","income"], minEdu:3, clearance:1, remote:2, certs:["PMP","Scrum / Agile certification"], gap:"Formal budget, schedule, and program ownership experience can be important."},
+ {title:"Project Manager", base:45, skills:["leadership","project","training","documentation","logistics"], goals:["management","operations","remote"], minEdu:2, clearance:0, remote:2, certs:["PMP","CAPM if early-career"], gap:"Translate mission planning and team coordination into measurable project outcomes."},
+ {title:"Cybersecurity Analyst", base:45, skills:["cyber","networking","troubleshooting","documentation","data"], goals:["cyber","defense","remote","income"], minEdu:1, clearance:2, remote:3, certs:["Security+","CySA+","CISSP later-career"], gap:"Hands-on cyber or networking evidence is important; Security+ can materially improve competitiveness."},
+ {title:"SOC Analyst", base:42, skills:["cyber","networking","data","troubleshooting","documentation"], goals:["cyber","remote"], minEdu:1, clearance:0, remote:3, certs:["Security+","CySA+","Splunk fundamentals"], gap:"Build practical SIEM, incident-response, and log-analysis experience."},
+ {title:"Network Administrator", base:43, skills:["networking","troubleshooting","documentation","cyber"], goals:["cyber","remote","defense"], minEdu:1, clearance:1, remote:2, certs:["Network+","CCNA"], gap:"Demonstrable routing, switching, TCP/IP, and enterprise network experience strengthens fit."},
+ {title:"IT Systems Administrator", base:43, skills:["networking","troubleshooting","cyber","documentation","training"], goals:["cyber","remote","defense"], minEdu:1, clearance:1, remote:2, certs:["Security+","Microsoft/Azure certifications"], gap:"Employers may expect Windows/Linux server administration or cloud platform experience."},
+ {title:"Quality Assurance Engineer", base:46, skills:["testing","documentation","data","troubleshooting"], goals:["engineering","remote"], minEdu:2, clearance:0, remote:2, certs:["ISTQB","Lean Six Sigma"], gap:"Software QA roles may require coding or automation knowledge; hardware QA may align more directly."},
+ {title:"Technical Operations Manager", base:47, skills:["leadership","maintenance","project","training","logistics"], goals:["management","operations","defense"], minEdu:2, clearance:0, remote:1, certs:["PMP","Lean Six Sigma"], gap:"Quantify team size, readiness metrics, downtime reduction, and operational performance."},
+ {title:"Logistics Manager", base:43, skills:["logistics","leadership","project","data","documentation"], goals:["operations","management"], minEdu:2, clearance:0, remote:1, certs:["APICS/ASCM","Lean Six Sigma"], gap:"Supply-chain tools and civilian ERP experience can improve marketability."},
+ {title:"Training & Development Manager", base:41, skills:["training","leadership","documentation","project"], goals:["management","remote"], minEdu:2, clearance:0, remote:2, certs:["ATD certifications","Instructional design training"], gap:"Translate military qualification programs into civilian learning and performance outcomes."},
+ {title:"Technical Writer", base:41, skills:["documentation","training","testing","electronics"], goals:["remote","engineering"], minEdu:1, clearance:0, remote:3, certs:["Technical writing portfolio","MadCap Flare / documentation tools"], gap:"A strong civilian writing portfolio is often more important than additional credentials."},
+ {title:"Data Analyst", base:39, skills:["data","documentation","project","troubleshooting"], goals:["remote","income"], minEdu:2, clearance:0, remote:3, certs:["SQL","Power BI/Tableau","Google Data Analytics"], gap:"You will usually need demonstrable SQL, spreadsheet, BI, or Python analytics skills."},
+ {title:"Defense Systems Technician", base:52, skills:["electronics","maintenance","troubleshooting","testing","documentation"], coreSkills:["electronics","testing"], goals:["defense","engineering"], minEdu:0, clearance:1, remote:0, certs:["OEM/vendor certifications","IPC certification depending on role"], gap:"Often one of the most direct military-to-civilian translations for hands-on technical specialties."},
+ {title:"Engineering Technician", base:48, skills:["electronics","testing","maintenance","troubleshooting","documentation"], goals:["engineering","defense"], minEdu:1, clearance:0, remote:0, certs:["ET-related credentials","Vendor certifications"], gap:"An associate degree can be enough for many roles; exact requirements vary by industry."},
+ {title:"Configuration Management Specialist", base:42, skills:["documentation","project","data","testing"], goals:["defense","operations","remote"], minEdu:1, clearance:1, remote:2, certs:["CMII or configuration-management training","ITIL helpful"], gap:"Highlight baseline control, technical records, change tracking, and verification experience."},
+ {title:"Test Director / Test Manager", base:48, skills:["testing","leadership","project","documentation","data"],coreSkills:["testing"], goals:["defense","engineering","management","income"], minEdu:2, clearance:2, remote:1, certs:["PMP","Test & evaluation coursework"], gap:"Civilian employers may look for formal test planning, risk management, and customer-facing reporting."},
  {title:"Operations Analyst", base:39, skills:["data","project","documentation","logistics","leadership"], goals:["operations","remote"], minEdu:2, clearance:0,
-  remote:3, salary:"$70K–$115K", certs:["Excel/Power BI","Lean Six Sigma"], gap:"Quantitative analysis skills and business-process metrics strengthen fit."},
-{title:"Operations Manager", base:46, skills:["leadership","project","logistics","training","data"], goals:["management","operations"], minEdu:1, clearance:0, remote:1, salary:"$75K–$130K", certs:["PMP or CAPM","Lean Six Sigma"], gap:"Civilian operations roles often value measurable experience leading people, resources, schedules, and mission execution."},
+  remote:3, certs:["Excel/Power BI","Lean Six Sigma"], gap:"Quantitative analysis skills and business-process metrics strengthen fit."},
+{title:"Operations Manager", base:46, skills:["leadership","project","logistics","training","data"], goals:["management","operations"], minEdu:1, clearance:0, remote:1, certs:["PMP or CAPM","Lean Six Sigma"], gap:"Civilian operations roles often value measurable experience leading people, resources, schedules, and mission execution."},
 
-{title:"Training Specialist", base:44, skills:["training","leadership","documentation","project"], goals:["management","operations","remote"], minEdu:1, clearance:0, remote:2, salary:"$60K–$100K", certs:["ATD certifications","Instructional design training"], gap:"Translate military instruction, qualification, mentoring, and training responsibilities into civilian learning outcomes."},
+{title:"Training Specialist", base:44, skills:["training","leadership","documentation","project"], goals:["management","operations","remote"], minEdu:1, clearance:0, remote:2, certs:["ATD certifications","Instructional design training"], gap:"Translate military instruction, qualification, mentoring, and training responsibilities into civilian learning outcomes."},
 
-{title:"Security Manager", base:45, skills:["leadership","training","documentation","project"], goals:["management","defense","operations"], minEdu:1, clearance:0, remote:0, salary:"$70K–$120K", certs:["ASIS CPP","Security+ for some technical environments"], gap:"Civilian security management experience and industry-specific requirements vary considerably by employer."},
+{title:"Security Manager", base:45, skills:["leadership","training","documentation","project"], goals:["management","defense","operations"], minEdu:1, clearance:0, remote:0, certs:["ASIS CPP","Security+ for some technical environments"], gap:"Civilian security management experience and industry-specific requirements vary considerably by employer."},
 
-{title:"Emergency Management Specialist", base:43, skills:["leadership","training","project","documentation","logistics"], goals:["operations","management","defense"], minEdu:1, clearance:0, remote:1, salary:"$65K–$110K", certs:["FEMA Professional Development Series","Certified Emergency Manager later-career"], gap:"Emergency-management coursework and civilian incident-management experience can strengthen competitiveness."},
+{title:"Emergency Management Specialist", base:43, skills:["leadership","training","project","documentation","logistics"], goals:["operations","management","defense"], minEdu:1, clearance:0, remote:1, certs:["FEMA Professional Development Series","Certified Emergency Manager later-career"], gap:"Emergency-management coursework and civilian incident-management experience can strengthen competitiveness."},
 
-{title:"Safety Specialist", base:42, skills:["training","documentation","leadership","data"], goals:["operations","management"], minEdu:1, clearance:0, remote:0, salary:"$65K–$105K", certs:["OSHA training","BCSP credentials as experience allows"], gap:"Many safety positions require knowledge of civilian occupational-safety regulations and industry standards."},
+{title:"Safety Specialist", base:42, skills:["training","documentation","leadership","data"], goals:["operations","management"], minEdu:1, clearance:0, remote:0, certs:["OSHA training","BCSP credentials as experience allows"], gap:"Many safety positions require knowledge of civilian occupational-safety regulations and industry standards."},
 
-{title:"Field Operations Supervisor", base:45, skills:["leadership","training","logistics","project","maintenance"], goals:["operations","management"], minEdu:0, clearance:0, remote:0, salary:"$65K–$110K", certs:["Lean Six Sigma","Industry-specific supervisor training"], gap:"Translate military team leadership, resource coordination, and operational execution into measurable civilian accomplishments."},
+{title:"Field Operations Supervisor", base:45, skills:["leadership","training","logistics","project","maintenance"], goals:["operations","management"], minEdu:0, clearance:0, remote:0, certs:["Lean Six Sigma","Industry-specific supervisor training"], gap:"Translate military team leadership, resource coordination, and operational execution into measurable civilian accomplishments."},
 
-{title:"Project Coordinator", base:41, skills:["project","documentation","leadership","logistics","data"], goals:["operations","management","remote"], minEdu:1, clearance:0, remote:2, salary:"$60K–$95K", certs:["CAPM","Agile fundamentals"], gap:"Civilian project tools, budgeting, scheduling, and stakeholder coordination can strengthen the transition."},
-{title:"Emergency Medical Technician / Paramedic", base:45, skills:["medical","training","documentation","emergency"],coreSkills:["medical","emergency"], goals:["healthcare","operations"], minEdu:0, clearance:0, remote:0, salary:"$40K–$75K", certs:["State EMT or Paramedic license","NREMT where applicable"], gap:"Civilian EMT or paramedic positions require applicable state certification or licensure."},
+{title:"Project Coordinator", base:41, skills:["project","documentation","leadership","logistics","data"], goals:["operations","management","remote"], minEdu:1, clearance:0, remote:2, certs:["CAPM","Agile fundamentals"], gap:"Civilian project tools, budgeting, scheduling, and stakeholder coordination can strengthen the transition."},
+{title:"Emergency Medical Technician / Paramedic", base:45, skills:["medical","training","documentation","emergency"],coreSkills:["medical","emergency"], goals:["healthcare","operations"], minEdu:0, clearance:0, remote:0, certs:["State EMT or Paramedic license","NREMT where applicable"], gap:"Civilian EMT or paramedic positions require applicable state certification or licensure."},
 
-{title:"Healthcare Operations Coordinator", base:44, skills:["medical","leadership","documentation","project","data"], goals:["healthcare","operations","management"], minEdu:1, clearance:0, remote:1, salary:"$55K–$90K", certs:["Lean Six Sigma","Healthcare administration training"], gap:"Healthcare organizations may prefer civilian healthcare operations or administrative experience."},
+{title:"Healthcare Operations Coordinator", base:44, skills:["medical","leadership","documentation","project","data"], goals:["healthcare","operations","management"], minEdu:1, clearance:0, remote:1, certs:["Lean Six Sigma","Healthcare administration training"], gap:"Healthcare organizations may prefer civilian healthcare operations or administrative experience."},
 
-{title:"Medical Training Specialist", base:44, skills:["medical","training","documentation","leadership"],coreSkills:["medical"], goals:["healthcare","management","operations"], minEdu:1, clearance:0, remote:1, salary:"$55K–$90K", certs:["BLS/ACLS instructor credentials where applicable","ATD certifications"], gap:"Civilian instructor credentials or healthcare-specific training qualifications may strengthen competitiveness."},
+{title:"Medical Training Specialist", base:44, skills:["medical","training","documentation","leadership"],coreSkills:["medical"], goals:["healthcare","management","operations"], minEdu:1, clearance:0, remote:1, certs:["BLS/ACLS instructor credentials where applicable","ATD certifications"], gap:"Civilian instructor credentials or healthcare-specific training qualifications may strengthen competitiveness."},
 
-{title:"Occupational Health & Safety Specialist", base:43, skills:["medical","training","documentation","safety","data"],coreSkills:["medical","safety"], goals:["healthcare","operations","management"], minEdu:1, clearance:0, remote:1, salary:"$65K–$105K", certs:["OSHA training","BCSP credentials as experience allows"], gap:"Civilian safety roles may require knowledge of OSHA regulations and industry-specific safety standards."},
+{title:"Occupational Health & Safety Specialist", base:43, skills:["medical","training","documentation","safety","data"],coreSkills:["medical","safety"], goals:["healthcare","operations","management"], minEdu:1, clearance:0, remote:1, certs:["OSHA training","BCSP credentials as experience allows"], gap:"Civilian safety roles may require knowledge of OSHA regulations and industry-specific safety standards."},
 
 
-{title:"Healthcare Administrator", base:42, skills:["medical","leadership","documentation","project","data"],coreSkills:["medical"], goals:["healthcare","management"], minEdu:2, clearance:0, remote:1, salary:"$65K–$115K", certs:["Healthcare administration education","Lean Six Sigma"], gap:"Many healthcare administration positions prefer a bachelor's degree and civilian healthcare management experience."},
-{title:"Diesel / Heavy Equipment Technician", base:46, skills:["maintenance","troubleshooting","mechanical","documentation"], coreSkills:["maintenance","mechanical"], goals:["operations"], minEdu:0, clearance:0, remote:0, salary:"$50K–$85K", certs:["ASE certifications","Manufacturer-specific training"], gap:"Civilian employers may prefer ASE credentials or experience with their specific vehicle and equipment platforms."},
+{title:"Healthcare Administrator", base:42, skills:["medical","leadership","documentation","project","data"],coreSkills:["medical"], goals:["healthcare","management"], minEdu:2, clearance:0, remote:1, certs:["Healthcare administration education","Lean Six Sigma"], gap:"Many healthcare administration positions prefer a bachelor's degree and civilian healthcare management experience."},
+{title:"Diesel / Heavy Equipment Technician", base:46, skills:["maintenance","troubleshooting","mechanical","documentation"], coreSkills:["maintenance","mechanical"], goals:["operations"], minEdu:0, clearance:0, remote:0, certs:["ASE certifications","Manufacturer-specific training"], gap:"Civilian employers may prefer ASE credentials or experience with their specific vehicle and equipment platforms."},
 
-{title:"Fleet Maintenance Supervisor", base:45, skills:["maintenance","troubleshooting","leadership","logistics","documentation"], coreSkills:["maintenance"], goals:["operations","management"], minEdu:0, clearance:0, remote:0, salary:"$65K–$105K", certs:["ASE certifications","Fleet management training"], gap:"Supervisory positions typically require demonstrated experience coordinating maintenance personnel, schedules, equipment readiness, and parts."},
-{title:"Maintenance Technician", base:44, skills:["maintenance","troubleshooting","mechanical","documentation"], coreSkills:["maintenance"], goals:["operations"], minEdu:0, clearance:0, remote:0, salary:"$45K–$80K", certs:["Industry-specific maintenance certifications","OSHA training"], gap:"Employers may require experience with their specific equipment, systems, or maintenance standards."},
-{title:"Human Resources Specialist", base:46, skills:["hr","documentation","data","personnel"], coreSkills:["hr","personnel"], goals:["management","operations"], minEdu:1, clearance:0, remote:2, salary:"$55K–$85K", certs:["aPHR or PHR","SHRM-CP as experience allows"], gap:"Civilian HR roles may require familiarity with employment law, HRIS platforms, benefits administration, and civilian HR practices."},
+{title:"Fleet Maintenance Supervisor", base:45, skills:["maintenance","troubleshooting","leadership","logistics","documentation"], coreSkills:["maintenance"], goals:["operations","management"], minEdu:0, clearance:0, remote:0, certs:["ASE certifications","Fleet management training"], gap:"Supervisory positions typically require demonstrated experience coordinating maintenance personnel, schedules, equipment readiness, and parts."},
+{title:"Maintenance Technician", base:44, skills:["maintenance","troubleshooting","mechanical","documentation"], coreSkills:["maintenance"], goals:["operations"], minEdu:0, clearance:0, remote:0, certs:["Industry-specific maintenance certifications","OSHA training"], gap:"Employers may require experience with their specific equipment, systems, or maintenance standards."},
+{title:"Human Resources Specialist", base:46, skills:["hr","documentation","data","personnel"], coreSkills:["hr","personnel"], goals:["management","operations"], minEdu:1, clearance:0, remote:2, certs:["aPHR or PHR","SHRM-CP as experience allows"], gap:"Civilian HR roles may require familiarity with employment law, HRIS platforms, benefits administration, and civilian HR practices."},
 
-{title:"Human Resources Coordinator", base:45, skills:["hr","documentation","data","personnel","project"], coreSkills:["hr","personnel"], goals:["management","operations","remote"], minEdu:1, clearance:0, remote:2, salary:"$45K–$75K", certs:["aPHR","SHRM-CP as experience allows"], gap:"Build familiarity with civilian HR processes, HRIS systems, recruiting, benefits, and employment regulations."},
+{title:"Human Resources Coordinator", base:45, skills:["hr","documentation","data","personnel","project"], coreSkills:["hr","personnel"], goals:["management","operations","remote"], minEdu:1, clearance:0, remote:2, certs:["aPHR","SHRM-CP as experience allows"], gap:"Build familiarity with civilian HR processes, HRIS systems, recruiting, benefits, and employment regulations."},
 
-{title:"Personnel / HR Operations Specialist", base:45, skills:["hr","personnel","documentation","data","project"], coreSkills:["hr","personnel"], goals:["management","operations"], minEdu:0, clearance:0, remote:1, salary:"$50K–$80K", certs:["aPHR","HRIS platform training"], gap:"Translate military personnel administration into civilian HR operations terminology and develop familiarity with civilian employment regulations."},{title:"Security Operations Supervisor", base:46, skills:["security","leadership","training","documentation"], coreSkills:["security"], goals:["management","operations"], minEdu:0, clearance:0, remote:0, salary:"$55K–$90K", certs:["ASIS APP","ASIS CPP later-career"], gap:"Civilian security employers may require knowledge of site-specific security procedures, regulations, and licensing requirements."},
+{title:"Personnel / HR Operations Specialist", base:45, skills:["hr","personnel","documentation","data","project"], coreSkills:["hr","personnel"], goals:["management","operations"], minEdu:0, clearance:0, remote:1, certs:["aPHR","HRIS platform training"], gap:"Translate military personnel administration into civilian HR operations terminology and develop familiarity with civilian employment regulations."},{title:"Security Operations Supervisor", base:46, skills:["security","leadership","training","documentation"], coreSkills:["security"], goals:["management","operations"], minEdu:0, clearance:0, remote:0, certs:["ASIS APP","ASIS CPP later-career"], gap:"Civilian security employers may require knowledge of site-specific security procedures, regulations, and licensing requirements."},
 
-{title:"Corporate Security Specialist", base:44, skills:["security","documentation","training","leadership","data"], coreSkills:["security"], goals:["management","operations","defense"], minEdu:1, clearance:0, remote:1, salary:"$60K–$100K", certs:["ASIS APP","ASIS PSP as experience allows"], gap:"Corporate security roles may require experience with civilian physical-security programs, investigations, access control, or risk-management practices."},
+{title:"Corporate Security Specialist", base:44, skills:["security","documentation","training","leadership","data"], coreSkills:["security"], goals:["management","operations","defense"], minEdu:1, clearance:0, remote:1, certs:["ASIS APP","ASIS PSP as experience allows"], gap:"Corporate security roles may require experience with civilian physical-security programs, investigations, access control, or risk-management practices."},
 
-{title:"Physical Security Specialist", base:45, skills:["security","documentation","training","leadership"], coreSkills:["security"], goals:["defense","operations","management"], minEdu:0, clearance:0, remote:0, salary:"$60K–$105K", certs:["ASIS PSP","Relevant physical-security training"], gap:"Some positions require employer-specific physical-security experience, credentials, or an active security clearance."},
-{title:"Aircraft Maintenance Technician", base:47, skills:["aviation","maintenance","troubleshooting","mechanical","documentation"], coreSkills:["aviation","maintenance"], goals:["operations"], minEdu:0, clearance:0, remote:0, salary:"$55K–$95K", certs:["FAA Airframe & Powerplant (A&P) where required","Manufacturer-specific training"], gap:"Many civilian aircraft-maintenance positions require FAA certification, employer-specific qualifications, or documented experience on applicable aircraft."},
+{title:"Physical Security Specialist", base:45, skills:["security","documentation","training","leadership"], coreSkills:["security"], goals:["defense","operations","management"], minEdu:0, clearance:0, remote:0, certs:["ASIS PSP","Relevant physical-security training"], gap:"Some positions require employer-specific physical-security experience, credentials, or an active security clearance."},
+{title:"Aircraft Maintenance Technician", base:47, skills:["aviation","maintenance","troubleshooting","mechanical","documentation"], coreSkills:["aviation","maintenance"], goals:["operations"], minEdu:0, clearance:0, remote:0, certs:["FAA Airframe & Powerplant (A&P) where required","Manufacturer-specific training"], gap:"Many civilian aircraft-maintenance positions require FAA certification, employer-specific qualifications, or documented experience on applicable aircraft."},
 
-{title:"Aviation Maintenance Supervisor", base:46, skills:["aviation","maintenance","troubleshooting","leadership","documentation"], coreSkills:["aviation","maintenance"], goals:["operations","management"], minEdu:0, clearance:0, remote:0, salary:"$70K–$115K", certs:["FAA A&P where applicable","Aviation maintenance management training"], gap:"Supervisory aviation positions may require FAA credentials and demonstrated civilian or military experience coordinating aircraft maintenance personnel and operations."},
+{title:"Aviation Maintenance Supervisor", base:46, skills:["aviation","maintenance","troubleshooting","leadership","documentation"], coreSkills:["aviation","maintenance"], goals:["operations","management"], minEdu:0, clearance:0, remote:0, certs:["FAA A&P where applicable","Aviation maintenance management training"], gap:"Supervisory aviation positions may require FAA credentials and demonstrated civilian or military experience coordinating aircraft maintenance personnel and operations."},
 
-{title:"Aircraft Maintenance Planner", base:44, skills:["aviation","maintenance","documentation","data","project"], coreSkills:["aviation","maintenance"], goals:["operations","management"], minEdu:1, clearance:0, remote:1, salary:"$60K–$100K", certs:["FAA A&P where applicable","Maintenance planning or aviation systems training"], gap:"Civilian planning roles may require familiarity with FAA requirements, maintenance tracking systems, and commercial maintenance programs."},
-  {title:"Intelligence Analyst", base:47, skills:["intelligence","data","documentation","analysis","cyber"], coreSkills:["intelligence","analysis"], goals:["defense","cyber","operations"], minEdu:1, clearance:1, remote:1, salary:"$70K–$120K", certs:["Security+ for some environments","Intelligence analysis training"], gap:"Many intelligence roles require an active security clearance and demonstrated experience producing assessments from multiple information sources."},
+{title:"Aircraft Maintenance Planner", base:44, skills:["aviation","maintenance","documentation","data","project"], coreSkills:["aviation","maintenance"], goals:["operations","management"], minEdu:1, clearance:0, remote:1, certs:["FAA A&P where applicable","Maintenance planning or aviation systems training"], gap:"Civilian planning roles may require familiarity with FAA requirements, maintenance tracking systems, and commercial maintenance programs."},
+  {title:"Intelligence Analyst", base:47, skills:["intelligence","data","documentation","analysis","cyber"], coreSkills:["intelligence","analysis"], goals:["defense","cyber","operations"], minEdu:1, clearance:1, remote:1, certs:["Security+ for some environments","Intelligence analysis training"], gap:"Many intelligence roles require an active security clearance and demonstrated experience producing assessments from multiple information sources."},
 
-{title:"All-Source Intelligence Analyst", base:46, skills:["intelligence","analysis","data","documentation","briefing"], coreSkills:["intelligence","analysis"], goals:["defense","operations"], minEdu:1, clearance:2, remote:0, salary:"$75K–$125K", certs:["Intelligence community or DoD analytical training","Relevant geospatial or OSINT training where applicable"], gap:"Civilian and contractor all-source roles commonly require an active clearance and experience synthesizing multiple intelligence disciplines into written or oral assessments."},
+{title:"All-Source Intelligence Analyst", base:46, skills:["intelligence","analysis","data","documentation","briefing"], coreSkills:["intelligence","analysis"], goals:["defense","operations"], minEdu:1, clearance:2, remote:0, certs:["Intelligence community or DoD analytical training","Relevant geospatial or OSINT training where applicable"], gap:"Civilian and contractor all-source roles commonly require an active clearance and experience synthesizing multiple intelligence disciplines into written or oral assessments."},
 
-{title:"Threat Intelligence Analyst", base:44, skills:["intelligence","analysis","cyber","data","documentation"], coreSkills:["intelligence","analysis"], goals:["cyber","defense","remote"], minEdu:1, clearance:0, remote:2, salary:"$80K–$135K", certs:["Security+","Threat intelligence or OSINT training"], gap:"Commercial threat-intelligence roles often expect cybersecurity knowledge, OSINT methods, and familiarity with threat frameworks or security platforms."}];
+{title:"Threat Intelligence Analyst", base:44, skills:["intelligence","analysis","cyber","data","documentation"], coreSkills:["intelligence","analysis"], goals:["cyber","defense","remote"], minEdu:1, clearance:0, remote:2, certs:["Security+","Threat intelligence or OSINT training"], gap:"Commercial threat-intelligence roles often expect cybersecurity knowledge, OSINT methods, and familiarity with threat frameworks or security platforms."}];
+
+// BLS May 2025 annual U.S. occupational medians, reviewed November 14, 2026.
+// Related occupations provide context; they are not exact-title or entry-level offers.
+const M2C_PAY_BENCHMARKS={
+  "electronicsEngineers": {
+    "occupation": "Electronics engineers, except computer",
+    "median": 130220,
+    "source": "https://www.bls.gov/ooh/architecture-and-engineering/electrical-and-electronics-engineers.htm"
+  },
+  "electronicsTechnicians": {
+    "occupation": "Electrical and electronic engineering technologists and technicians",
+    "median": 78190,
+    "source": "https://www.bls.gov/ooh/architecture-and-engineering/electrical-and-electronics-engineering-technicians.htm"
+  },
+  "projectManagement": {
+    "occupation": "Project management specialists",
+    "median": 102320,
+    "source": "https://www.bls.gov/ooh/business-and-financial/project-management-specialists.htm"
+  },
+  "informationSecurity": {
+    "occupation": "Information security analysts",
+    "median": 129180,
+    "source": "https://www.bls.gov/ooh/computer-and-information-technology/information-security-analysts.htm"
+  },
+  "systemsAdministration": {
+    "occupation": "Network and computer systems administrators",
+    "median": 99130,
+    "source": "https://www.bls.gov/ooh/computer-and-information-technology/network-and-computer-systems-administrators.htm"
+  },
+  "operationsManagement": {
+    "occupation": "General and operations managers",
+    "median": 105770,
+    "source": "https://www.bls.gov/ooh/management/top-executives.htm"
+  },
+  "logisticsManagement": {
+    "occupation": "Transportation, storage, and distribution managers",
+    "median": 107230,
+    "source": "https://www.bls.gov/ooh/management/transportation-storage-and-distribution-managers.htm"
+  },
+  "trainingManagement": {
+    "occupation": "Training and development managers",
+    "median": 133000,
+    "source": "https://www.bls.gov/ooh/management/training-and-development-managers.htm"
+  },
+  "technicalWriting": {
+    "occupation": "Technical writers",
+    "median": 90390,
+    "source": "https://www.bls.gov/ooh/media-and-communication/technical-writers.htm"
+  },
+  "training": {
+    "occupation": "Training and development specialists",
+    "median": 69280,
+    "source": "https://www.bls.gov/ooh/business-and-financial/training-and-development-specialists.htm"
+  },
+  "safety": {
+    "occupation": "Occupational health and safety specialists",
+    "median": 90150,
+    "source": "https://www.bls.gov/ooh/healthcare/occupational-health-and-safety-specialists-and-technicians.htm"
+  },
+  "healthcareManagement": {
+    "occupation": "Medical and health services managers",
+    "median": 123860,
+    "source": "https://www.bls.gov/ooh/management/medical-and-health-services-managers.htm"
+  },
+  "maintenance": {
+    "occupation": "General maintenance and repair workers",
+    "median": 49590,
+    "source": "https://www.bls.gov/ooh/installation-maintenance-and-repair/general-maintenance-and-repair-workers.htm"
+  },
+  "humanResources": {
+    "occupation": "Human resources specialists",
+    "median": 75940,
+    "source": "https://www.bls.gov/ooh/business-and-financial/human-resources-specialists.htm"
+  },
+  "aircraftMaintenance": {
+    "occupation": "Aircraft mechanics and service technicians",
+    "median": 79870,
+    "source": "https://www.bls.gov/ooh/installation-maintenance-and-repair/aircraft-and-avionics-equipment-mechanics-and-technicians.htm"
+  }
+};
+const M2C_ROLE_PAY={
+  "Systems Test Engineer": "electronicsEngineers",
+  "Systems Integration Engineer": "electronicsEngineers",
+  "Field Service Engineer": "electronicsTechnicians",
+  "Defense Systems Technician": "electronicsTechnicians",
+  "Engineering Technician": "electronicsTechnicians",
+  "Technical Program Manager": "projectManagement",
+  "Project Manager": "projectManagement",
+  "Project Coordinator": "projectManagement",
+  "Cybersecurity Analyst": "informationSecurity",
+  "SOC Analyst": "informationSecurity",
+  "Threat Intelligence Analyst": "informationSecurity",
+  "Network Administrator": "systemsAdministration",
+  "IT Systems Administrator": "systemsAdministration",
+  "Technical Operations Manager": "operationsManagement",
+  "Operations Manager": "operationsManagement",
+  "Logistics Manager": "logisticsManagement",
+  "Training & Development Manager": "trainingManagement",
+  "Technical Writer": "technicalWriting",
+  "Training Specialist": "training",
+  "Medical Training Specialist": "training",
+  "Safety Specialist": "safety",
+  "Occupational Health & Safety Specialist": "safety",
+  "Healthcare Administrator": "healthcareManagement",
+  "Maintenance Technician": "maintenance",
+  "Human Resources Specialist": "humanResources",
+  "Personnel / HR Operations Specialist": "humanResources",
+  "Aircraft Maintenance Technician": "aircraftMaintenance"
+};
+function m2cPayBenchmark(title){
+  return Object.hasOwn(M2C_ROLE_PAY,title) ? M2C_PAY_BENCHMARKS[M2C_ROLE_PAY[title]] : null;
+}
+function m2cPayText(title){
+  const pay=m2cPayBenchmark(title);
+  if(!pay) return 'No direct occupational benchmark assigned. Compare current local postings and research occupations at https://www.bls.gov/ooh/';
+  return 'Related U.S. occupation median: $'+pay.median.toLocaleString('en-US')+'/year — '+pay.occupation+' (BLS, May 2025). Across experience levels; not starting pay or an individual offer. Source: '+pay.source;
+}
+function m2cPayMarkup(title){
+  const pay=m2cPayBenchmark(title);
+  if(!pay) return 'Pay research needed: compare current local postings and the <a href="https://www.bls.gov/ooh/">BLS occupation finder</a>. No direct occupational benchmark is assigned to this title.';
+  return 'Related U.S. occupation median: <strong>$'+pay.median.toLocaleString('en-US')+'/year</strong><br><a href="'+pay.source+'">'+pay.occupation+'</a> · BLS, May 2025. Across experience levels; not starting pay. <a href="#salary-sources">About these figures</a>.';
+}
+
   const keywordMap = {
  testing:["test","testing","validation","verify","verification","qa","quality"],
  troubleshooting:["troubleshoot","fault","repair","diagnostic","isolation"],
@@ -908,9 +1062,10 @@ const gaps=gapList(r,p);
     const div=document.createElement("div"); div.className="result";
     div.innerHTML=`
       <div class="rhead">
-        <div><div class="rtitle">${i+1}. ${r.title}</div><div class="small">Estimated market range: ${r.salary}</div></div>
+        <div class="rtitle">${i+1}. ${r.title}</div>
         <div class="score">${r.score}% match</div>
       </div>
+      <div class="small m2c-pay-benchmark">${m2cPayMarkup(r.title)}</div>
       <div class="bar"><div class="fill" style="width:${r.score}%"></div></div>
       <div class="meta">${strengths.map(s=>`<span class="tag">${titleize(s)}</span>`).join("")}</div>
       <div class="cols">
@@ -942,12 +1097,12 @@ function downloadReport(){
   lines.push("");
   r.results.forEach((x,i)=>{
     lines.push(`${i+1}. ${x.title} — ${x.score}% match`);
-    lines.push(`Estimated market range: ${x.salary}`);
+    lines.push(m2cPayText(x.title));
     lines.push(`Helpful credentials: ${x.certs.join(", ")}`);
     lines.push(`General gap note: ${x.gap}`);
     lines.push("");
   });
-  lines.push("Prototype guidance only. Verify current employer requirements, salary ranges, licensing, education, and clearance requirements before making career decisions.");
+  lines.push("Pay sources reviewed November 14, 2026. U.S. May 2025 occupational medians cover varied locations, industries, and experience levels; they are not starting salaries or individual offers. Related occupations may differ from the suggested job title. Verify local postings, benefits, licensing, education, and clearance requirements.");
   const blob=new Blob([lines.join("\n")],{type:"text/plain"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="MOS2Career_Career_Translator_Report.txt";a.click();URL.revokeObjectURL(a.href);
 }

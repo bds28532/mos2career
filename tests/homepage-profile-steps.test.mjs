@@ -202,7 +202,7 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
   context.window = context;
   vm.createContext(context);
   for (const [, attrs, source] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
-    if (!executeScripts || /\bsrc=|type="module"/.test(attrs)) continue;
+    if (!executeScripts || /\bsrc=|type="module"|type="application\/ld\+json"/.test(attrs)) continue;
     vm.runInContext(source, context, { timeout: 3000 });
   }
   document.dispatchEvent({ type: 'DOMContentLoaded' });
