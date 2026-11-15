@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Share Your MOS2Career Feedback</title>
+  <meta name="description" content="Tell MOS2Career what helped and what could be clearer. Sharing your feedback publicly is optional.">
+  <meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://mos2career.com/feedback/">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/career-guides.css">
+  <style>.feedback-form{max-width:780px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px}.feedback-field{margin-bottom:24px}.feedback-field label{display:block;font-weight:750;margin-bottom:8px}.feedback-field input,.feedback-field select,.feedback-field textarea{display:block;width:100%;min-height:48px;background:#101010;color:#fff;border:1px solid #8a7957;border-radius:9px;padding:12px;font:inherit}.feedback-field textarea{min-height:180px;resize:vertical}.feedback-field input:focus-visible,.feedback-field select:focus-visible,.feedback-field textarea:focus-visible,.feedback-permission input:focus-visible,.feedback-form button:focus-visible{outline:3px solid #fff;outline-offset:3px}.feedback-field .note{margin-top:8px}.feedback-permission{display:flex;align-items:flex-start;gap:12px;margin:24px 0}.feedback-permission input{width:22px;height:22px;flex-shrink:0;margin-top:3px;accent-color:var(--gold)}.feedback-permission label{font-weight:650}.feedback-form button{border:0;font:inherit;cursor:pointer}.feedback-form .note{margin-top:14px}@media(max-width:600px){.feedback-form{padding:20px}}</style>
+  <script src="/career-guides.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header><div class="topbar"><div class="wrap topbar-inner"><a class="brand" href="/">MOS<strong>2CAREER</strong></a><nav class="navigation" aria-label="Main navigation"><a class="button" href="/">Back to MOS2Career</a></nav></div></div><div class="wrap hero"><div class="eyebrow">Help improve MOS2Career</div><h1>Tell Us About Your Experience</h1><p class="lead">What helped you, and what could be clearer? We welcome honest feedback about the free tools, guides, worksheet, and Career Blueprint.</p></div></header>
+  <main class="wrap" id="main-content" tabindex="-1">
+    <section aria-labelledby="feedback-heading"><h2 id="feedback-heading">Share your feedback</h2><p>You can send feedback privately. Permission to publish a quote is a separate, optional choice below. Email addresses are never included in public quotes.</p>
+      <form class="feedback-form" name="mos2career-feedback" method="POST" action="/feedback/thanks/" data-netlify="true" netlify-honeypot="bot-field">
+        <input type="hidden" name="form-name" value="mos2career-feedback">
+        <p hidden aria-hidden="true"><label>Leave this field empty<input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <div class="feedback-field"><label for="feedback-tool">Which resource did you use? <span>(required)</span></label><select id="feedback-tool" name="resource" required><option value="">Select a resource</option><option>Free Career Translator</option><option>Free Job Match Analyzer</option><option>Career guides or resume worksheet</option><option>Career Blueprint</option><option>Other</option></select></div>
+        <div class="feedback-field"><label for="feedback-message">What helped, and what could be clearer? <span>(required)</span></label><textarea id="feedback-message" name="feedback" required minlength="15" maxlength="1800" aria-describedby="feedback-message-hint"></textarea><p class="note" id="feedback-message-hint">Describe your experience with the resource. Please do not paste a resume, report, patient details, or sensitive military information. Maximum 1,800 characters.</p></div>
+        <div class="feedback-field"><label for="feedback-name">Preferred public name or initials <span>(optional)</span></label><input id="feedback-name" name="display-name" maxlength="80" autocomplete="nickname" aria-describedby="feedback-name-hint"><p class="note" id="feedback-name-hint">Used only if you grant permission below. If you grant permission and leave this blank, your quote may be used anonymously.</p></div>
+        <div class="feedback-field"><label for="feedback-email">Email for follow-up <span>(optional)</span></label><input id="feedback-email" name="email" type="email" maxlength="254" autocomplete="email" aria-describedby="feedback-email-hint"><p class="note" id="feedback-email-hint">Only for questions about your feedback. Your email is not displayed publicly or added to a marketing list by this form.</p></div>
+        <div class="feedback-permission"><input id="feedback-permission" name="publication-permission" type="checkbox" value="Yes, MOS2Career may publish my feedback with my preferred public name" aria-describedby="feedback-permission-hint"><div><label for="feedback-permission">MOS2Career may publish my feedback as a quote with my preferred public name.</label><p class="note" id="feedback-permission-hint">Optional. Leave this unchecked to keep your feedback private. We review submissions before publishing quotes. You can contact support to request removal of a published quote.</p></div></div>
+        <button class="button" type="submit">Send My Feedback</button>
+        <p class="note">Your feedback is sent to MOS2Career. <a href="/privacy.html">Read our privacy policy.</a> For billing or delivery help, <a href="/support.html">contact support</a>.</p>
+      </form>
+    </section>
+  </main>
+  <footer><div class="wrap"><a class="brand" href="/">MOS<strong>2CAREER</strong></a><nav class="footlinks" aria-label="Policies and support"><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a><a href="/support.html">Support</a></nav><p>© 2026 MOS2Career LLC.</p></div></footer>
+</body>
+</html>
