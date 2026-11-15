@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="msvalidate.01" content="2628B5218CF6B3A93ADBCAF1ED3706E5" />
   <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-2251989Z9F"></script>
 <script>
@@ -303,11 +304,33 @@ header .lead{max-width:860px;margin-bottom:18px}
 .m2c-pay-guide summary:focus-visible{outline:2px solid #f2c552;outline-offset:4px}
 .m2c-pay-guide p{font-size:.83rem;line-height:1.6;color:#d4d0c7}
 .rhead>.rtitle{min-width:0;overflow-wrap:anywhere}
+
+/* Resource navigation and feedback invitation */
+.navin{justify-content:space-between;gap:18px}
+.m2c-primary-links{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.m2c-primary-links a,.m2c-menu-links a{display:block;color:#f2c552;font-size:.9rem;font-weight:800;text-decoration:none;min-height:44px;padding:12px 10px;border-radius:8px}
+.m2c-primary-links a:hover,.m2c-menu-links a:hover{background:#30240e;text-decoration:underline}
+.m2c-primary-links a:focus-visible,.m2c-menu-links a:focus-visible,.m2c-mobile-menu summary:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.m2c-mobile-menu{display:none;position:relative;flex-shrink:0}
+.m2c-mobile-menu summary{cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;padding:10px 13px;border:1px solid #8a7135;border-radius:9px;background:#19150c;color:#f2c552;font-weight:850}
+.m2c-mobile-menu summary::-webkit-details-marker{display:none}
+.m2c-menu-links{position:absolute;right:0;top:calc(100% + 10px);width:min(260px,calc(100vw - 40px));padding:8px;background:#12100c;border:1px solid #8a7135;border-radius:12px;box-shadow:0 12px 30px #0009}
+#free-tools{scroll-margin-top:140px}
+.m2c-feedback-callout{margin-top:24px;margin-bottom:28px;padding:24px;border:1px solid #65522c;border-radius:16px;background:#151515}
+.m2c-feedback-callout h2{font-size:1.55rem;margin:0 0 12px}
+.m2c-feedback-callout p{max-width:820px;color:#d4d0c7;line-height:1.6}
+.m2c-feedback-callout a{color:#f2c552;font-weight:800}
+@media(max-width:1000px){.m2c-primary-links{display:none}.m2c-mobile-menu{display:block}}
+@media(max-width:400px){.navin .brand{gap:8px}.navin .brand-emblem{width:44px;height:44px}.navin .brand-name{font-size:1.35rem;letter-spacing:.015em}.m2c-mobile-menu summary{padding:10px 11px}}
+@media(max-width:360px){.navin{gap:8px}.navin .brand{gap:6px}.navin .brand-emblem{width:40px;height:40px}.navin .brand-name{font-size:1.2rem}}
 </style>
+<script src="/navigation.js" defer></script>
 </head>
 <body>
-<nav><div class="wrap navin">
+<nav aria-label="Main navigation"><div class="wrap navin">
   <div class="brand" aria-label="MOS2Career"><svg class="brand-emblem" viewBox="0 0 100 100" role="img" aria-label="MOS2Career star and wings"><path fill="#d9a520" d="M2 36h28l7 8H7zm5 16h31l5 8H14zm91-16H70l-7 8h30zm-5 16H62l-5 8h29z"/><path fill="#e5e5e5" d="M50 6l11 29 31 1-25 19 9 30-26-18-26 18 9-30L8 36l31-1z"/><path fill="#888" d="M50 6v61L24 85l9-30L8 36l31-1z"/></svg><span class="brand-name">MOS<strong>2CAREER</strong></span></div>  
+<div class="m2c-primary-links"><a href="#free-tools">Free tools</a><a href="#career-guides">Career guides</a><a href="/military-to-civilian-resume-examples/">Resume examples</a><a href="#about-mos2career">About</a></div>
+  <details class="m2c-mobile-menu" data-primary-menu><summary>Menu</summary><div class="m2c-menu-links"><a href="#free-tools">Free tools</a><a href="#career-guides">Career guides</a><a href="/military-to-civilian-resume-examples/">Resume examples</a><a href="#about-mos2career">About</a></div></details>
 </div></nav>
 
 <header><div class="wrap">
@@ -315,7 +338,7 @@ header .lead{max-width:860px;margin-bottom:18px}
   <h1>Turn Your Military Experience Into Civilian Career Opportunities</h1>
   <p class="mission-tagline">Your Mission Doesn’t End. <span>It Evolves.</span></p>
   <p class="lead">Explore civilian jobs using your Army MOS, Navy rating, or Air Force AFSC and the duties you actually performed. Start with free career matches or compare your experience with a job posting.</p>
-  <div class="m2c-tool-choices" aria-label="Choose a free career tool">
+  <div class="m2c-tool-choices" id="free-tools" aria-label="Choose a free career tool">
     <a class="m2c-tool-choice" href="#profileForm" aria-labelledby="explore-careers-title">
       <span class="eyebrow">Free Career Translator</span>
       <h2 id="explore-careers-title">Explore civilian careers</h2>
@@ -596,6 +619,11 @@ header .lead{max-width:860px;margin-bottom:18px}
         <h4 id="navy-fc-guide-title">Navy Fire Controlman civilian jobs</h4>
         <p id="navy-fc-guide-description">Explore electronics, testing, troubleshooting, and technical support careers based on the work you performed.</p>
         <span class="m2c-guide-action">Read the Fire Controlman guide <span aria-hidden="true">→</span></span>
+      </a>
+      <a class="m2c-guide-card" href="/navy-hm-civilian-jobs/" aria-labelledby="navy-hm-guide-title" aria-describedby="navy-hm-guide-description">
+        <h4 id="navy-hm-guide-title">Navy HM civilian jobs</h4>
+        <p id="navy-hm-guide-description">Compare Hospital Corpsman experience with healthcare roles, credential requirements, sourced pay, and resume examples.</p>
+        <span class="m2c-guide-action">Read the Navy HM guide <span aria-hidden="true">→</span></span>
       </a>
     </div>
   </nav>
@@ -1386,6 +1414,12 @@ btn.addEventListener("click",(e)=>{
 
 </script>
 <script type="module" src="/career-translator-handoff.js"></script>
+<section class="wrap m2c-feedback-callout" aria-labelledby="feedback-invite-title">
+  <h2 id="feedback-invite-title">Used MOS2Career? Tell us what helped.</h2>
+  <p>Share what worked and what could be clearer about the free tools, guides, or Career Blueprint. Your feedback stays private unless you separately give permission to publish a quote.</p>
+  <a href="/feedback/">Share your MOS2Career feedback <span aria-hidden="true">→</span></a>
+</section>
+
 <footer style="
   margin-top:60px;
   padding:38px 20px;
