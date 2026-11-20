@@ -1,20 +1,5 @@
 # Consolidate alternate public URLs into their existing canonical addresses.
 /index.html / 301!
-/navy-fire-controlman-civilian-careers /navy-fire-controlman-civilian-careers.html 301!
-/navy-fire-controlman-civilian-careers/ /navy-fire-controlman-civilian-careers.html 301!
-/navy-fire-controlman-civilian-careers.html/ /navy-fire-controlman-civilian-careers.html 301!
-/privacy /privacy.html 301!
-/privacy/ /privacy.html 301!
-/privacy.html/ /privacy.html 301!
-/terms /terms.html 301!
-/terms/ /terms.html 301!
-/terms.html/ /terms.html 301!
-/refund-policy /refund-policy.html 301!
-/refund-policy/ /refund-policy.html 301!
-/refund-policy.html/ /refund-policy.html 301!
-/support /support.html 301!
-/support/ /support.html 301!
-/support.html/ /support.html 301!
 /army-25b-civilian-jobs/index.html /army-25b-civilian-jobs/ 301!
 /army-92y-civilian-jobs/index.html /army-92y-civilian-jobs/ 301!
 /army-68w-civilian-jobs/index.html /army-68w-civilian-jobs/ 301!
