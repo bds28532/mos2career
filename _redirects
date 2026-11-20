@@ -1,0 +1,27 @@
+# Consolidate alternate public URLs into their existing canonical addresses.
+/index.html / 301!
+/navy-fire-controlman-civilian-careers /navy-fire-controlman-civilian-careers.html 301!
+/navy-fire-controlman-civilian-careers/ /navy-fire-controlman-civilian-careers.html 301!
+/navy-fire-controlman-civilian-careers.html/ /navy-fire-controlman-civilian-careers.html 301!
+/privacy /privacy.html 301!
+/privacy/ /privacy.html 301!
+/privacy.html/ /privacy.html 301!
+/terms /terms.html 301!
+/terms/ /terms.html 301!
+/terms.html/ /terms.html 301!
+/refund-policy /refund-policy.html 301!
+/refund-policy/ /refund-policy.html 301!
+/refund-policy.html/ /refund-policy.html 301!
+/support /support.html 301!
+/support/ /support.html 301!
+/support.html/ /support.html 301!
+/army-25b-civilian-jobs/index.html /army-25b-civilian-jobs/ 301!
+/army-92y-civilian-jobs/index.html /army-92y-civilian-jobs/ 301!
+/army-68w-civilian-jobs/index.html /army-68w-civilian-jobs/ 301!
+/navy-it-civilian-jobs/index.html /navy-it-civilian-jobs/ 301!
+/navy-ls-civilian-jobs/index.html /navy-ls-civilian-jobs/ 301!
+/navy-et-civilian-jobs/index.html /navy-et-civilian-jobs/ 301!
+/navy-hm-civilian-jobs/index.html /navy-hm-civilian-jobs/ 301!
+/career-guides/index.html /career-guides/ 301!
+/military-job-match-analyzer/index.html /military-job-match-analyzer/ 301!
+/military-to-civilian-resume-examples/index.html /military-to-civilian-resume-examples/ 301!

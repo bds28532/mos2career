@@ -73,3 +73,10 @@ footer p{max-width:900px;margin-top:14px}
 @media(max-width:700px){.hero{padding-block:35px 20px}.cards,.related-guides{grid-template-columns:1fr}.navigation{gap:10px}.navigation .nav-detail{display:none}.card{padding:20px}.cta{padding:23px}.hero .button{width:100%}main section{padding-block:28px}th,td{padding:12px 10px;font-size:.88rem}}
 @media(max-width:420px){.wrap{width:calc(100% - 32px)}.brand{font-size:1.05rem}.navigation .button{font-size:.79rem;padding:10px 11px;min-height:44px}.topbar-inner{gap:8px}h1{font-size:2.25rem}.contents ul{gap:4px 15px}.button{font-size:.94rem}.lead{font-size:1.04rem}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+.breadcrumbs{margin:0 0 20px;font-size:.9rem;color:var(--muted)}
+.breadcrumbs ol{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;list-style:none;padding:0;margin:0}
+.breadcrumbs li{display:flex;align-items:center;gap:10px;margin:0;padding:0;min-width:0}
+.breadcrumbs li+li::before{content:"/";color:var(--muted)}
+.breadcrumbs a{display:inline-block;padding-block:8px;min-height:40px}
+.breadcrumbs [aria-current="page"]{overflow-wrap:anywhere}
