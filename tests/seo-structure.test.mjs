@@ -101,15 +101,16 @@ test('canonical redirects resolve to real static pages without chains, loops, or
   const rules = readFileSync(path.join(root, '_redirects'), 'utf8').split(/\r?\n/).filter(line => line.trim() && !line.trim().startsWith('#')).map(line => line.trim().split(/\s+/));
   const sources = new Set(rules.map(rule => rule[0]));
   assert.equal(sources.size, rules.length);
+  // Netlify normalizes standalone .html and trailing-slash aliases for matching.
+  // Redirecting between equivalent aliases can redirect the destination to itself.
+  const normalized = route => route.replace(/\/+$/, '').replace(/\.html$/, '') || '/';
   for (const [from, to, status] of rules) {
     assert.equal(status, '301!');
     assert.notEqual(from, to);
+    assert.notEqual(normalized(from), normalized(to), from + ' must not redirect to its Netlify alias');
     assert.ok(!sources.has(to), from + ' must not create a redirect chain');
     assert.ok(publicPages.some(page => page.route === to), to + ' must be a public canonical page');
     assert.ok(!from.startsWith('/.netlify/'));
-  }
-  for (const from of ['/navy-fire-controlman-civilian-careers', '/navy-fire-controlman-civilian-careers.html/']) {
-    assert.equal(rules.find(rule => rule[0] === from)?.[1], '/navy-fire-controlman-civilian-careers.html');
   }
   assert.equal(rules.find(rule => rule[0] === '/index.html')?.[1], '/');
 });
