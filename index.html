@@ -411,6 +411,10 @@ header .lead{max-width:860px;margin-bottom:18px}
             <p id="jobMatchHandoffNotice" role="status"></p>
             <button id="jobMatchApplyAnswers" class="btn secondary" type="button" hidden>Use my analyzer answers</button>
           </div>
+          <div id="specialtyGuideHandoff" class="notice full" hidden>
+            <p id="specialtyGuideNotice" role="status"></p>
+            <button id="specialtyGuideApply" class="btn secondary" type="button" hidden>Use this guide’s specialty</button>
+          </div>
 
 
       <p id="stepProgress" class="m2c-step-progress full" role="status">Step 1 of 2 · Explore your experience</p>
@@ -1055,7 +1059,10 @@ const missing=role.skills.filter(s=>
 }
 // GA4 funnel events never include personal information or profile answers.
 function m2cTrackEvent(name,params={}){
-  if(typeof gtag==="function") gtag("event",name,params);
+  const sourceGuide=document.getElementById("profileForm")?.getAttribute("data-source-guide");
+  const guides=['army-25b','army-68w','army-92y','navy-fc','navy-it','navy-ls','navy-et','navy-hm'];
+  const safeParams=guides.includes(sourceGuide)?{...params,source_guide:sourceGuide}:params;
+  if(typeof gtag==="function") gtag("event",name,safeParams);
 }
 function render(){
   m2cSetCheckoutReady(false);
@@ -1337,6 +1344,8 @@ btn.addEventListener("click",(e)=>{
   const save=document.getElementById("profileSaveBtn");
   const status=document.getElementById("saveStatus");
   if(!form || !experience || !contact) return;
+  // Preserve deliberate interactions even if the guide module finishes loading later.
+  for(const name of ['pointerdown','keydown']) form.addEventListener(name,()=>form.setAttribute('data-profile-interacted','true'));
   form.noValidate=true;
   window.m2cProfileRevision=0;
   let saving=false;
@@ -1430,6 +1439,7 @@ btn.addEventListener("click",(e)=>{
 
 </script>
 <script type="module" src="/career-translator-handoff.js"></script>
+<script type="module" src="/specialty-guide-handoff.js"></script>
 <section class="wrap m2c-feedback-callout" aria-labelledby="feedback-invite-title">
   <h2 id="feedback-invite-title">Used MOS2Career? Tell us what helped.</h2>
   <p>Share what worked and what could be clearer about the free tools, guides, or Career Blueprint. Your feedback stays private unless you separately give permission to publish a quote.</p>
