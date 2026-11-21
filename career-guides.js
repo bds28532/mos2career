@@ -8,7 +8,17 @@
   window.dataLayer = window.dataLayer || [];
   window.gtag = window.gtag || function gtag() { window.dataLayer.push(arguments); };
   window.gtag('js', new Date());
-  window.gtag('config', 'G-2251989Z9F');
+  window.gtag('config', 'G-2251989Z9F', (() => {
+    // Preserve acquisition attribution when returning from Stripe checkout.
+    try {
+      const referrer = new URL(document.referrer);
+      if (referrer.protocol === 'https:' && ['checkout.stripe.com', 'buy.stripe.com'].includes(referrer.hostname)) {
+        return { ignore_referrer: true };
+      }
+    } catch {}
+    // Omit this key for other sources: even false would ignore their referrals.
+    return {};
+  })());
   const script = document.createElement('script');
   script.async = true;
   script.src = 'https://www.googletagmanager.com/gtag/js?id=G-2251989Z9F';

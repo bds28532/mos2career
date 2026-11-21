@@ -38,7 +38,8 @@ export const handler = async event => {
   if (!session || session.object !== "checkout.session" || session.mode !== "payment" ||
       session.payment_status !== "paid" || session.livemode !== true ||
       session.payment_link !== STRIPE_PAYMENT_LINK_ID ||
-      session.currency?.toLowerCase() !== "usd" || session.amount_total !== 3900 ||
+      session.currency?.toLowerCase() !== "usd" ||
+      (session.amount_subtotal ?? session.amount_total) !== 3900 ||
       !session.id || !session.client_reference_id) return respond(200, "not_matching_paid_blueprint");
   let profile;
   // Retry this measurement if Forms is delayed, rather than first recording a
@@ -56,6 +57,8 @@ export const handler = async event => {
     transactionId: session.id,
     submissionId: session.client_reference_id,
     amountTotal: session.amount_total,
+    amountTax: session.total_details?.amount_tax ?? 0,
+    amountShipping: session.total_details?.amount_shipping ?? 0,
     currency: session.currency,
     profile,
   });

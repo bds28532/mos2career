@@ -529,6 +529,8 @@ export default async (request) => {
         transactionId: session.id,
         submissionId,
         amountTotal: session.amount_total,
+        amountTax: session.total_details?.amount_tax ?? 0,
+        amountShipping: session.total_details?.amount_shipping ?? 0,
         currency: session.currency,
         profile,
       });
