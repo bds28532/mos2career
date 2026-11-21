@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import test from 'node:test';
 import { normalizeBlueprintProfile } from '../netlify/functions/lib/blueprint-profile.mjs';
+import { SPECIALTY_GUIDES, initGuideTranslator } from '../specialty-guide-handoff.js';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const decode = text => text.replace(/&(?:amp|quot|apos|lt|gt);|&#(?:x[0-9a-f]+|\d+);/gi, value => {
@@ -192,6 +193,7 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
   }
   const context = {
     document, URL, URLSearchParams, Blob, FormData: LocalFormData,
+    Event: class { constructor(type, options = {}) { this.type = type; Object.assign(this, options); } },
     alert: message => alerts.push(message),
     console: { error: (...args) => errors.push(args), log() {} },
     location: { href: 'https://mos2career.com/', search: '' },
@@ -267,6 +269,153 @@ test('a visitor can preview real career matches without contact details or a pro
   assert.equal(p.document.activeElement, p.element('matchesTitle'));
   assert.equal(p.element('profileSavePrompt').hidden, false);
   locked(p);
+});
+
+const guideEvents = p => JSON.parse(JSON.stringify(Array.from(p.context.dataLayer).filter(entry => entry[0] === 'event').map(entry => Array.from(entry))));
+const answers = p => p.element('profileForm').elements.filter(control => ['INPUT', 'SELECT', 'TEXTAREA'].includes(control.tagName)).map(control => [control.id || control.name, control.value, control.checked]);
+function openGuide(p, id = 'army-25b') {
+  p.context.location.search = '?guide=' + id;
+  initGuideTranslator(p.context, p.document);
+}
+
+for (const [id, guide] of Object.entries(SPECIALTY_GUIDES)) {
+  test('fresh ' + id + ' visits fill only branch and specialty without saving or generating matches', () => {
+    const p = page({ specialty: '' });
+    const before = answers(p).filter(row => !['branch', 'specialty'].includes(row[0]));
+    openGuide(p, id);
+    assert.equal(p.element('branch').value, guide.branch);
+    assert.equal(p.element('specialty').value, guide.specialty);
+    assert.deepEqual(answers(p).filter(row => !['branch', 'specialty'].includes(row[0])), before);
+    assert.equal(p.element('specialtyGuideHandoff').hidden, false);
+    assert.equal(p.element('specialtyGuideApply').hidden, true);
+    assert.equal(p.context.m2cProfileRevision, 0);
+    assert.equal(p.context.currentReport == null, true);
+    assert.equal(p.requests.length, 0);
+    assert.equal(p.nativeSubmissions.length, 0);
+    assert.deepEqual(guideEvents(p), [['event', 'guide_translator_prefilled', { source_guide: id }]]);
+    locked(p);
+  });
+}
+
+test('a guide-prefilled visitor gets real free results with anonymous guide attribution and no profile POST', () => {
+  const p = page({ specialty: '' });
+  openGuide(p);
+  p.preview();
+  assert.equal(p.context.currentReport.profile.branch, 'Army');
+  assert.equal(p.context.currentReport.profile.specialty, '25B');
+  assert.equal(p.context.currentReport.profile.duties, '');
+  assert.equal(p.context.currentReport.profile.education, null);
+  assert.equal(p.context.currentReport.results.length, 7);
+  assert.equal(p.requests.length, 0);
+  assert.equal(p.nativeSubmissions.length, 0);
+  assert.equal(p.element('submissionId').value, '');
+  assert.equal(p.element('contactStep').hidden, false);
+  assert.equal(p.element('specialtyGuideHandoff').hidden, true);
+  assert.deepEqual(guideEvents(p).find(event => event[1] === 'career_translator_completed'), ['event', 'career_translator_completed', { source_guide: 'army-25b' }]);
+  locked(p);
+});
+
+for (const [label, prepare] of [
+  ['an existing specialty', p => p.change('specialty', 'IT')],
+  ['duties without a specialty', p => { p.element('duties').value = 'My existing duties.'; }],
+  ['a changed branch', p => { p.element('branch').value = 'Air Force'; }],
+  ['a deliberate choice of the default branch', p => p.element('branch').dispatchEvent({ type: 'pointerdown', bubbles: true })],
+  ['keyboard interaction with the form', p => p.element('branch').dispatchEvent({ type: 'keydown', bubbles: true })],
+  ['a focused form field', p => p.element('branch').focus()],
+  ['an education answer of zero', p => { p.element('education').value = '0'; }],
+  ['a checked skill', p => { p.document.querySelector('input[name="skills"]').checked = true; }],
+  ['browser-restored contact information', p => { p.element('email').value = 'existing@example.invalid'; }]
+]) {
+  test('a guide arrival preserves ' + label + ' until the visitor chooses replacement', () => {
+    const p = page({ specialty: '' });
+    prepare(p);
+    const before = answers(p);
+    openGuide(p);
+    assert.deepEqual(answers(p), before);
+    assert.equal(p.element('specialtyGuideApply').hidden, false);
+    assert.equal(guideEvents(p).some(event => event[1] === 'guide_translator_prefilled'), false);
+    p.element('specialtyGuideApply').click();
+    assert.equal(p.element('branch').value, 'Army');
+    assert.equal(p.element('specialty').value, '25B');
+    assert.deepEqual(answers(p).filter(row => !['branch', 'specialty'].includes(row[0])), before.filter(row => !['branch', 'specialty'].includes(row[0])));
+    assert.equal(p.requests.length, 0);
+    assert.ok(p.context.m2cProfileRevision > 0);
+    locked(p);
+  });
+}
+
+test('a late guide script preserves an existing report and cannot replace a saved profile', () => {
+  const p = page();
+  p.preview();
+  const report = p.context.currentReport, before = answers(p);
+  openGuide(p);
+  assert.deepEqual(answers(p), before);
+  assert.equal(p.context.currentReport, report);
+  assert.equal(p.element('specialtyGuideApply').hidden, true);
+  p.element('specialtyGuideApply').click();
+  assert.equal(p.context.currentReport, report);
+  const saved = page({ specialty: '' });
+  saved.element('submissionId').value = 'existing-saved-profile';
+  const original = answers(saved);
+  openGuide(saved);
+  assert.deepEqual(answers(saved), original);
+  assert.equal(saved.element('specialtyGuideApply').hidden, true);
+});
+
+test('a pending guide offer closes after the visitor previews their current profile', () => {
+  const p = page();
+  openGuide(p);
+  p.preview();
+  assert.equal(p.context.currentReport.profile.specialty, 'IT');
+  assert.equal(p.element('specialtyGuideApply').hidden, true);
+  assert.equal(p.element('specialtyGuideHandoff').hidden, true);
+  p.element('specialtyGuideApply').click();
+  assert.equal(p.context.currentReport.profile.specialty, 'IT');
+});
+
+test('repeat initialization and history restoration keep subsequent edits intact', () => {
+  const p = page({ specialty: '' });
+  openGuide(p, 'navy-it');
+  p.change('branch', 'Army', 'change');
+  p.change('specialty', '92Y');
+  const before = answers(p), events = guideEvents(p);
+  openGuide(p, 'navy-it');
+  assert.deepEqual(answers(p), before);
+  assert.deepEqual(guideEvents(p), events);
+});
+
+test('ordinary visits and analyzer arrivals do not apply guide context or consume analyzer answers', () => {
+  for (const search of ['', '?guide=unknown', '?guide=__proto__', '?guide=navy-it&guide=army-25b', '?from=job-match&guide=army-25b']) {
+    const p = page({ specialty: '' });
+    p.context.location.search = search;
+    const before = answers(p);
+    initGuideTranslator(p.context, p.document);
+    assert.deepEqual(answers(p), before);
+    assert.equal(p.element('specialtyGuideHandoff').hidden, true);
+    assert.equal(p.element('profileForm').getAttribute('data-source-guide'), null);
+    assert.deepEqual(guideEvents(p), []);
+  }
+});
+
+test('blocked analytics never prevents guide prefilling or free results', () => {
+  const p = page({ specialty: '', analytics: 'absent' });
+  openGuide(p);
+  p.preview();
+  assert.equal(p.context.currentReport.profile.specialty, '25B');
+  assert.equal(p.requests.length, 0);
+  const throwing = page({ specialty: '' });
+  throwing.context.gtag = () => { throw new Error('Blocked'); };
+  assert.doesNotThrow(() => openGuide(throwing));
+  assert.equal(throwing.element('specialty').value, '25B');
+});
+
+test('an unapproved DOM guide value can never leak into translator analytics', () => {
+  const p = page();
+  p.element('profileForm').setAttribute('data-source-guide', 'private@example.invalid');
+  p.preview();
+  const completed = guideEvents(p).find(event => event[1] === 'career_translator_completed');
+  assert.deepEqual(completed, ['event', 'career_translator_completed', {}]);
+  assert.equal(JSON.stringify(guideEvents(p)).includes('private@example.invalid'), false);
 });
 
 test('invalid service input stays in step one without generating or saving matches', () => {
