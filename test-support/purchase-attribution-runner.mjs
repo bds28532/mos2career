@@ -263,6 +263,8 @@ await check("Legacy webhook still rejects nonmatching, unpaid, sandbox, and unsi
   for (const request of [
     legacyRequest(event({ payment_status: "unpaid" })), legacyRequest(event({ livemode: false })),
     legacyRequest(event({ amount_total: 1 })), legacyRequest(event({ payment_link: "plink_other" })),
+    legacyRequest(event({ amount_subtotal: 7800, amount_total: 8316,
+      total_details: { amount_tax: 516, amount_shipping: 0 } })),
     legacyRequest(event(), false),
   ]) {
     const h = await harness("netlify/functions/stripe-purchase-webhook.js");
@@ -275,6 +277,71 @@ await check("Legacy analytics transport failure stays retryable without exposing
   const h = await harness("netlify/functions/stripe-purchase-webhook.js", { gaFailure: "throw" });
   assert.equal((await h.handler(legacyRequest())).statusCode, 502);
   assert.equal(JSON.stringify(h.logs).includes(env.GA4_API_SECRET), false);
+});
+
+await check("Taxed Stripe totals report item revenue separately from tax and shipping", () => {
+  // The observed test checkouts charged 4158 cents: 3900 merchandise + 258 tax.
+  const params = buildGA4Purchase(order({ amountTotal: 4158, amountTax: 258, amountShipping: 0 })).events[0].params;
+  assert.equal(params.value, 39);
+  assert.equal(params.tax, 2.58);
+  assert.equal(params.shipping, 0);
+  assert.equal(params.items[0].price, 39);
+  const discounted = buildGA4Purchase(order({ amountTotal: 3325, amountTax: 195, amountShipping: 130 })).events[0].params;
+  assert.equal(discounted.value, 30);
+  assert.equal(discounted.tax, 1.95);
+  assert.equal(discounted.shipping, 1.3);
+  assert.equal(discounted.items[0].price, discounted.value);
+});
+await check("Invalid Stripe money values cannot emit fabricated revenue", async () => {
+  for (const amounts of [
+    { amountTotal: undefined }, { amountTotal: null }, { amountTotal: -1 },
+    { amountTotal: 3900.5 }, { amountTotal: "3900" }, { amountTotal: Infinity },
+    { amountTax: -1 }, { amountShipping: "0" }, { amountTax: 3901 },
+    { amountTax: 3800, amountShipping: 101 },
+  ]) {
+    const purchase = order(amounts);
+    assert.equal(buildGA4Purchase(purchase), null);
+    const result = await sendGA4Purchase(purchase, { env, now: NOW, fetchImpl: () => assert.fail("Must not send invalid amounts") });
+    assert.equal(result.reason, "invalid_amounts");
+  }
+});
+await check("Both webhook paths accept a taxed $39 Blueprint and report the same money breakdown", async () => {
+  for (const filename of ["netlify/functions/stripe-webhook.mjs", "netlify/functions/stripe-purchase-webhook.js"]) {
+    for (const type of ["checkout.session.completed", "checkout.session.async_payment_succeeded"]) {
+      const h = await harness(filename);
+      const body = { ...event({ amount_subtotal: 3900, amount_total: 4158,
+        total_details: { amount_discount: 0, amount_tax: 258, amount_shipping: 0 } }), type };
+      await h.handler(filename.endsWith("stripe-webhook.mjs") ? primaryRequest(body) : legacyRequest(body));
+      assert.equal(h.analytics.length, 1, filename + " " + type);
+      const params = h.analytics[0].events[0].params;
+      assert.equal(params.value, 39);
+      assert.equal(params.tax, 2.58);
+      assert.equal(params.shipping, 0);
+      assert.equal(params.items[0].price, 39);
+    }
+  }
+});
+await check("A discounted Blueprint reports its actual net price and leaves fulfillment independent", async () => {
+  for (const filename of ["netlify/functions/stripe-webhook.mjs", "netlify/functions/stripe-purchase-webhook.js"]) {
+    const h = await harness(filename);
+    const body = event({ amount_subtotal: 3900, amount_total: 3120,
+      total_details: { amount_discount: 900, amount_tax: 120, amount_shipping: 0 } });
+    await h.handler(filename.endsWith("stripe-webhook.mjs") ? primaryRequest(body) : legacyRequest(body));
+    assert.equal(h.analytics.length, 1, filename);
+    assert.equal(h.analytics[0].events[0].params.value, 30);
+    assert.equal(h.analytics[0].events[0].params.tax, 1.2);
+    assert.equal(h.queued.length, filename.endsWith("stripe-webhook.mjs") ? 1 : 0);
+  }
+});
+await check("Observed Stripe sandbox money never enters production Analytics through either handler", async () => {
+  const body = { ...event({ livemode: false, amount_subtotal: 3900, amount_total: 4158,
+    total_details: { amount_discount: 0, amount_tax: 258, amount_shipping: 0 } }), livemode: false };
+  const primary = await harness("netlify/functions/stripe-webhook.mjs");
+  assert.equal((await primary.handler(primaryRequest(body, "fixture-test-signature"))).status, 200);
+  assert.equal(primary.analytics.length, 0);
+  const legacy = await harness("netlify/functions/stripe-purchase-webhook.js");
+  assert.equal((await legacy.handler(legacyRequest(body))).statusCode, 200);
+  assert.equal(legacy.analytics.length, 0);
 });
 
 process.stdout.write(JSON.stringify(results));
