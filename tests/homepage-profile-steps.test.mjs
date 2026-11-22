@@ -22,6 +22,8 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
   const errors = [];
   const analyticsCalls = [];
   const analyticsCallbacks = [];
+  const navigations = [];
+  let pageHref = 'https://mos2career.com/';
   const timers = new Map();
   let nextTimerId = 0;
   let document;
@@ -101,9 +103,10 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
         part = part.replace(/:checked|:disabled|:not\(\[(?:disabled|hidden)\]\)/g, '');
         const tag = part.match(/^[a-z][\w-]*/i)?.[0];
         if (tag && this.tagName.toLowerCase() !== tag.toLowerCase()) return false;
-        const id = part.match(/#([\w-]+)/)?.[1];
+        const structural = part.replace(/\[[^\]]*\]/g, '');
+        const id = structural.match(/#([\w-]+)/)?.[1];
         if (id && this.id !== id) return false;
-        for (const [, name] of part.matchAll(/\.([\w-]+)/g)) if (!this.classList.contains(name)) return false;
+        for (const [, name] of structural.matchAll(/\.([\w-]+)/g)) if (!this.classList.contains(name)) return false;
         for (const [, name, value] of part.matchAll(/\[([\w-]+)(?:=["']?([^\]"']+)["']?)?\]/g)) {
           if (!this.hasAttribute(name) || (value !== undefined && this.getAttribute(name) !== value)) return false;
         }
@@ -196,7 +199,7 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
     Event: class { constructor(type, options = {}) { this.type = type; Object.assign(this, options); } },
     alert: message => alerts.push(message),
     console: { error: (...args) => errors.push(args), log() {} },
-    location: { href: 'https://mos2career.com/', search: '' },
+    location: { get href() { return pageHref; }, set href(value) { pageHref = String(value); navigations.push(pageHref); }, search: '' },
     setTimeout: (handler, delay) => { const id = ++nextTimerId; timers.set(id, { handler, delay }); return id; },
     clearTimeout: id => timers.delete(id),
     fetch: (url, options) => { requests.push({ url, options }); return typeof response === 'function' ? response() : Promise.resolve(response); }
@@ -239,13 +242,169 @@ function page({ response = { ok: true }, specialty = 'IT', executeScripts = true
   };
   const preview = () => element('profilePreviewBtn').click();
   const save = () => element('profileSaveBtn').click();
+  const saveCheckout = () => element('profileSaveCheckoutBtn').click();
+  const finishCheckoutAnalytics = () => {
+    for (const args of context.dataLayer) if (args[0] === 'event' && args[1] === 'blueprint_checkout_click') args[2].event_callback();
+  };
+  const expireCheckout = () => {
+    for (const [id, timer] of [...timers]) if (timer.delay === 1200) { timers.delete(id); timer.handler(); }
+  };
   const contact = () => { change('firstName', 'Sam'); change('lastName', 'Veteran'); change('email', 'sam@example.invalid'); };
-  return { context, document, element, change, preview, save, contact, requests, nativeSubmissions, alerts, errors, analyticsCalls, resolveAnalytics, expireAnalytics };
+  return { context, document, element, change, preview, save, saveCheckout, contact, requests, nativeSubmissions, alerts, errors, analyticsCalls, resolveAnalytics, expireAnalytics, navigations, finishCheckoutAnalytics, expireCheckout };
 }
 
 const settle = async () => { await new Promise(resolve => setImmediate(resolve)); };
-const locked = p => assert.equal(p.element('blueprintCheckoutBtn').getAttribute('aria-disabled'), 'true');
+const locked = p => {
+  assert.equal(p.element('blueprintCheckoutBtn').getAttribute('data-checkout-ready'), 'false');
+  assert.equal(p.element('blueprintCheckoutBtn').href, '#contactStep');
+  assert.notEqual(p.element('blueprintCheckoutBtn').getAttribute('aria-disabled'), 'true', 'The profile step must remain reachable');
+};
+const quickOffer = p => p.element('results').children.find(child => child.classList.contains('m2c-blueprint-next'));
+const quickButton = p => quickOffer(p).querySelector('[data-blueprint-entry="quick_offer"]');
 const defer = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
+
+test('an upgrade before preview guides the visitor to experience without saving or opening Stripe', () => {
+  const p = page({ specialty: '' });
+  p.element('blueprintCheckoutBtn').click();
+  assert.equal(p.element('experienceStep').hidden, false);
+  assert.equal(p.document.activeElement, p.element('specialty'));
+  assert.equal(p.requests.length, 0);
+  assert.deepEqual(p.navigations, []);
+  locked(p);
+});
+test('a contextual offer follows the top match and preserves all seven free matches', () => {
+  const p = page(); p.preview();
+  const children = p.element('results').children;
+  assert.ok(children[0].classList.contains('result'));
+  assert.equal(children[1], quickOffer(p));
+  assert.ok(quickOffer(p).textContent.includes(p.context.currentReport.results[0].title));
+  assert.equal(children.filter(child => child.classList.contains('result')).length, 7);
+  assert.equal(quickButton(p).type, 'button');
+  assert.equal(p.requests.length, 0);
+});
+for (const entry of ['full', 'quick']) test(entry + ' upgrade focuses missing contact details without sending them', () => {
+  const p = page(); p.preview();
+  (entry === 'full' ? p.element('blueprintCheckoutBtn') : quickButton(p)).click();
+  assert.equal(p.element('contactStep').hidden, false);
+  assert.equal(p.document.activeElement, p.element('firstName'));
+  assert.equal(p.requests.length, 0);
+  assert.deepEqual(p.navigations, []);
+  assert.match(p.element('saveStatus').textContent, /Save & Continue to Checkout/);
+  p.change('firstName', 'Sam'); p.change('lastName', 'Veteran');
+  p.element('blueprintCheckoutBtn').click();
+  assert.equal(p.document.activeElement, p.element('email'));
+});
+test('an upgrade with complete unsaved contact details focuses the explicit save-and-checkout action', () => {
+  const p = page(); p.preview(); p.contact(); quickButton(p).click();
+  assert.equal(p.document.activeElement, p.element('profileSaveCheckoutBtn'));
+  assert.equal(p.requests.length, 0);
+});
+test('Save & Continue validates contact details before any profile POST or checkout', async () => {
+  const p = page(); p.preview(); p.saveCheckout(); await settle();
+  assert.equal(p.requests.length, 0);
+  assert.equal(p.document.activeElement, p.element('firstName'));
+  p.contact(); p.change('email', 'invalid'); p.saveCheckout(); await settle();
+  assert.equal(p.requests.length, 0);
+  assert.equal(p.document.activeElement, p.element('email'));
+  assert.deepEqual(p.navigations, []);
+});
+test('Save & Continue waits for profile success and opens the referenced Stripe checkout once', async () => {
+  const pending = defer();
+  const p = page({ response: () => pending.promise }); p.preview(); p.contact();
+  p.saveCheckout(); p.saveCheckout(); p.save(); await settle();
+  assert.equal(p.requests.length, 1);
+  assert.equal(p.element('profileSaveBtn').disabled, true);
+  assert.equal(p.element('profileSaveCheckoutBtn').disabled, true);
+  assert.deepEqual(p.navigations, []);
+  locked(p);
+  pending.resolve({ ok: true }); await settle();
+  assert.deepEqual(p.navigations, [], 'Wait only for the bounded Analytics callback/timeout after a confirmed save');
+  p.finishCheckoutAnalytics(); p.finishCheckoutAnalytics(); p.expireCheckout();
+  assert.equal(p.navigations.length, 1);
+  const checkout = new URL(p.navigations[0]);
+  const body = new URLSearchParams(p.requests[0].options.body);
+  assert.equal(checkout.origin, 'https://buy.stripe.com');
+  assert.equal(checkout.pathname, '/9B64gygJxaT9cGB4Vq5J601');
+  assert.equal(checkout.searchParams.get('client_reference_id'), body.get('submission_id'));
+  assert.equal(checkout.searchParams.get('prefilled_email'), body.get('email'));
+  assert.equal(p.element('profileSaveCheckoutBtn').disabled, false);
+});
+test('a failed Save & Continue stays on the page and supports an explicit retry', async () => {
+  let success = false;
+  const p = page({ response: () => Promise.resolve({ ok: success }) });
+  p.preview(); p.contact(); p.saveCheckout(); await settle();
+  assert.equal(p.requests.length, 1);
+  p.finishCheckoutAnalytics(); p.expireCheckout();
+  assert.deepEqual(p.navigations, []);
+  assert.match(p.element('saveStatus').textContent, /couldn't save|try again/i);
+  locked(p);
+  success = true; p.saveCheckout(); await settle(); p.expireCheckout();
+  assert.equal(p.requests.length, 2);
+  assert.equal(p.navigations.length, 1);
+});
+test('contact edits during Save & Continue cancel outdated checkout navigation', async () => {
+  const pending = defer(); const p = page({ response: () => pending.promise });
+  p.preview(); p.contact(); p.saveCheckout(); await settle();
+  p.change('email', 'updated@example.invalid'); pending.resolve({ ok: true }); await settle();
+  p.finishCheckoutAnalytics(); p.expireCheckout();
+  assert.deepEqual(p.navigations, []);
+  locked(p);
+});
+test('edits after saving but before an Analytics callback cancel the old checkout link', async () => {
+  const p = page(); p.preview(); p.contact(); p.saveCheckout(); await settle();
+  p.change('email', 'updated@example.invalid');
+  p.finishCheckoutAnalytics(); p.expireCheckout();
+  assert.deepEqual(p.navigations, []);
+  assert.equal(p.element('submissionId').value, '');
+  locked(p);
+});
+test('saved-profile upgrade buttons open checkout without another profile POST', async () => {
+  const p = page(); p.preview(); p.contact(); p.save(); await settle();
+  assert.deepEqual(p.navigations, [], 'Saving alone never opens checkout');
+  quickButton(p).click(); p.element('blueprintCheckoutBtn').click();
+  p.finishCheckoutAnalytics(); p.expireCheckout();
+  assert.equal(p.requests.length, 1);
+  assert.equal(p.navigations.length, 1);
+  assert.equal([...p.context.dataLayer].filter(args => args[1] === 'blueprint_checkout_click').length, 1);
+});
+test('missing, throwing, or unanswered Analytics cannot block confirmed checkout navigation', async () => {
+  for (const mode of ['absent', 'throwing', 'unanswered']) {
+    const p = page({ analytics: mode === 'absent' ? 'absent' : 'available' });
+    p.preview(); p.contact(); p.save(); await settle();
+    if (mode === 'throwing') p.context.gtag = () => { throw new Error('Blocked'); };
+    p.element('blueprintCheckoutBtn').click(); p.expireCheckout();
+    assert.equal(p.navigations.length, 1, mode);
+    assert.equal(p.requests.length, 1, mode);
+  }
+});
+test('static and contextual sample links reveal the sample without sending a profile', () => {
+  const p = page();
+  p.document.querySelector('a[href="#blueprint-sample"]').click();
+  assert.equal(p.element('blueprintSampleDetails').open, true);
+  p.element('blueprintSampleDetails').open = false;
+  p.preview(); quickOffer(p).querySelector('a').click();
+  assert.equal(p.element('blueprintSampleDetails').open, true);
+  assert.equal(p.requests.length, 0);
+  assert.deepEqual(p.navigations, []);
+});
+
+test('Save & Continue reuses the current saved profile and does not duplicate a pending checkout', async () => {
+  const p = page(); p.preview(); p.contact(); p.save(); await settle();
+  p.saveCheckout(); p.saveCheckout(); await settle();
+  p.finishCheckoutAnalytics(); p.expireCheckout();
+  assert.equal(p.requests.length, 1);
+  assert.equal(p.navigations.length, 1);
+});
+test('new Blueprint intent events never include contact details, career answers, or submission references', async () => {
+  const p = page(); p.change('duties', 'PRIVATE-DUTIES'); p.preview();
+  p.change('firstName', 'PrivateFirstName'); p.change('lastName', 'PrivateLastName'); p.change('email', 'private@example.invalid');
+  quickButton(p).click(); p.saveCheckout(); await settle();
+  const analytics = JSON.stringify(p.context.dataLayer);
+  for (const value of ['PrivateFirstName', 'PrivateLastName', 'private@example.invalid', 'PRIVATE-DUTIES', p.element('submissionId').value]) {
+    assert.ok(value);
+    assert.equal(analytics.includes(value), false, value);
+  }
+});
 
 test('a visitor can preview real career matches without contact details or a profile POST', () => {
   const p = page();
@@ -262,7 +421,7 @@ test('a visitor can preview real career matches without contact details or a pro
   assert.equal(p.context.currentReport.profile.specialty, '25B');
   assert.equal(p.context.currentReport.results.length, 7);
   assert.ok(p.context.currentReport.results.every(r => typeof r.title === 'string' && Number.isFinite(r.score)));
-  assert.equal(p.element('results').children.length, 7);
+  assert.equal(p.element('results').children.filter(child => child.classList.contains('result')).length, 7);
   assert.equal(p.element('contactStep').hidden, false);
   assert.equal(p.element('contactStep').disabled, false);
   assert.equal(p.element('experienceStep').hidden, true);
@@ -536,7 +695,7 @@ test('editing saved contact details invalidates the old checkout reference', asy
   locked(p);
   assert.equal(p.element('submissionId').value, '');
   assert.ok(p.context.currentReport);
-  assert.equal(p.element('blueprintCheckoutBtn').href, '#');
+  assert.equal(p.element('blueprintCheckoutBtn').href, '#contactStep');
 });
 
 test('back navigation retains answers and locks checkout; changed experience requires a fresh preview', async () => {
