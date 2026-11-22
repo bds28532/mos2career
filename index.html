@@ -133,17 +133,11 @@ ul{margin:0;padding-left:18px}.small{font-size:.84rem;color:var(--muted)}
 .save-status{margin-top:10px;font-size:.8rem;color:var(--muted)}
 .save-status.ok{color:var(--accent2)}
 .save-status.err{color:#ffb4b4}
-#profileForm{scroll-margin-top:130px}
+#profileForm,#contactStep,#experienceStep{scroll-margin-top:130px}
 #jobMatchHandoff{margin:0 0 8px}
 #jobMatchHandoffNotice{margin:0 0 12px}
 
 
-#blueprintCheckoutBtn.is-disabled{
-  opacity:.5;
-  pointer-events:none;
-  cursor:not-allowed;
-  filter:grayscale(.2);
-}
 #blueprintCheckoutBtn.is-ready{
   opacity:1;
   pointer-events:auto;
@@ -256,6 +250,27 @@ header .lead{max-width:860px;margin-bottom:18px}
 .m2c-support{padding-bottom:36px}
 .m2c-support .m2c-career-guides{position:static;top:auto;z-index:auto;background:none;border:0;box-shadow:none;backdrop-filter:none;margin-bottom:0}
 #sample-results,#blueprint-sample{scroll-margin-top:130px}
+.m2c-sample-full{grid-column:1/-1;padding:22px;border:1px solid #80682e;border-radius:14px;background:#15130f;scroll-margin-top:110px}
+.m2c-sample-full summary{font-size:1.12rem;font-weight:800;color:#f2c552;cursor:pointer}
+.m2c-sample-full summary:focus-visible,#blueprintCheckoutBtn:focus-visible,.m2c-blueprint-next .purchase-btn:focus-visible{outline:3px solid #fff;outline-offset:4px}
+.m2c-sample-profile{padding:16px;background:#201d16;border-left:3px solid #e4b13b;border-radius:6px;margin:18px 0}
+.m2c-sample-excerpts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0}
+.m2c-sample-excerpts article{padding:18px;background:#1e1c17;border:1px solid #4e4127;border-radius:10px}
+.m2c-sample-excerpts h4{margin:0 0 10px;color:#f2c552}
+.m2c-sample-excerpts p,.m2c-sample-excerpts li{font-size:.93rem;line-height:1.65}
+.m2c-sample-pages{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin:20px 0}
+.m2c-sample-pages figure{margin:0;min-width:0}
+.m2c-sample-pages img{display:block;width:100%;height:auto;border-radius:6px;background:#fff;border:1px solid #80682e}
+.m2c-sample-pages figcaption{margin-top:8px;color:var(--muted);font-size:.88rem;line-height:1.5}
+.m2c-sample-download{display:inline-block;margin:8px 0 12px;color:#f2c552;font-weight:800;text-decoration:underline;text-underline-offset:4px}
+.m2c-blueprint-next{padding:22px;border:1px solid #b18b32;border-radius:12px;background:linear-gradient(130deg,#2a2415,#181611);margin:6px 0}
+.m2c-blueprint-next h3{margin:4px 0 10px;font-size:1.25rem;line-height:1.4}
+.m2c-blueprint-next p{line-height:1.6;color:var(--muted)}
+.m2c-blueprint-next .m2c-preview-link{display:block;margin-top:14px}
+.m2c-blueprint-next .purchase-btn{border:0;cursor:pointer;font:inherit;font-weight:800}
+.m2c-step-actions .btn{white-space:normal}
+@media(max-width:800px){.m2c-sample-excerpts{grid-template-columns:1fr}.m2c-sample-pages{gap:12px}}
+@media(max-width:600px){.m2c-sample-pages{grid-template-columns:1fr}.m2c-sample-full{padding:18px}.m2c-step-actions .btn{width:100%}}
 @media(max-width:700px){.m2c-tool-choices,.m2c-preview-grid{grid-template-columns:1fr}.m2c-tool-choice{padding:18px;gap:8px}.m2c-tool-choice h2{font-size:1.22rem}.m2c-choice-action{align-self:stretch}.m2c-preview-card{padding:19px}.m2c-previews{padding-top:24px;padding-bottom:24px}.m2c-start-note{font-size:.82rem}header{padding:25px 0 22px}}
 
 /* Short profile steps and transparent product information. */
@@ -385,22 +400,31 @@ header .lead{max-width:860px;margin-bottom:18px}
       <div class="eyebrow">Optional Career Blueprint · $39</div>
       <h3 id="blueprint-example-title">Turn your direction into a plan</h3>
       <p>See skills and credential gaps, resume strategy, and a 90-day action plan tailored to your background.</p>
-      <p><strong>Sample first step:</strong> Choose target roles and translate military achievements into resume bullets.</p>
-      <details class="m2c-sample">
-        <summary id="blueprint-sample">Preview a sample Career Blueprint</summary>
-        <p class="m2c-sample-note">Illustrative excerpt using a fictional veteran profile. This is not an actual customer report or a guarantee of employment.</p>
-        <h4>Example profile: Navy electronics technician</h4>
-        <p><strong>Career direction:</strong> Electronics Test Technician, Field Service Engineer, or Technical Project Coordinator.</p>
-        <h4>Transferable strengths</h4>
-        <ul><li>Equipment troubleshooting and preventive maintenance</li><li>Technical documentation and quality checks</li><li>Team coordination and safety procedures</li></ul>
-        <h4>Potential qualification gaps</h4>
-        <p>Review civilian job postings for industry-specific tools, credentials, and employer experience requirements.</p>
-        <h4>Illustrative 90-day action plan</h4>
-        <ul><li><strong>Days 1–30:</strong> Choose target roles and translate military achievements into resume bullets.</li><li><strong>Days 31–60:</strong> Identify credential gaps and tailor applications to relevant employers.</li><li><strong>Days 61–90:</strong> Practice interviews, network with hiring teams, and refine applications.</li></ul>
-        <p class="m2c-sample-note">Your purchased Blueprint is intended to be tailored to your submitted experience and goals; the sample above is abbreviated.</p>
-      </details>
+      <p><strong>Delivered by email:</strong> A personalized PDF with career options, qualification checks, resume strategy, and concrete next steps.</p>
+      <p><a class="m2c-preview-link" href="#blueprint-sample">See sample pages and the full example PDF ↓</a></p>
       <p class="small">Start with free matches. The $39 Career Blueprint is optional.</p>
     </article>
+    <details class="m2c-sample-full" id="blueprintSampleDetails">
+      <summary id="blueprint-sample">Preview a sample Career Blueprint</summary>
+      <div class="m2c-sample-profile">
+        <p><strong>Illustrative sample · Fictional Navy Electronics Technician profile</strong></p>
+        <p>Troubleshooting, preventive maintenance, test equipment, and technical documentation. Education, civilian credentials, and location are unspecified. This is not a customer report, a testimonial, or a prediction of your results.</p>
+      </div>
+      <p>The PDF uses the same report template as purchased Blueprints. Your report is tailored to the experience and goals you submit; recommendations and length will vary.</p>
+      <a class="m2c-sample-download" href="/assets/blueprint-sample.pdf" target="_blank" rel="noopener">Open the complete sample Blueprint (PDF)</a>
+      <div class="m2c-sample-excerpts">
+        <article><h4>1. Check the gap before paying for training</h4><p><strong>Target: Electronics Test Technician.</strong> Compare five local postings and record required test equipment, documentation tools, and education. Mark each requirement as demonstrated, needs evidence, or needs training.</p><p>Military electronics work can be relevant; a specific employer may require an associate degree or additional technical experience.</p></article>
+        <article><h4>2. Turn a duty into resume evidence</h4><p><strong>Illustrative wording:</strong> “Troubleshot [unclassified equipment type] using [test method], documented [verified finding], and supported [verified repair or maintenance outcome].”</p><p>Replace every bracket with something you can substantiate. Omit any unsupported detail, metric, or accomplishment.</p></article>
+        <article><h4>3. Leave with a practical first month</h4><p><strong>Days 1–30:</strong> Choose two target roles, compare five postings, create a requirement-to-evidence worksheet, draft three truthful resume bullets, and arrange two informational conversations.</p><p>Days 31–60 focus on verified gaps and tailored applications; days 61–90 add interview practice and review of employer feedback.</p></article>
+      </div>
+      <p class="small">The sample also includes ten career paths to research, skill translations, training priorities, compensation research, employer research, LinkedIn guidance, interview preparation, and a weekly scorecard.</p>
+      <div class="m2c-sample-pages">
+        <figure><a href="/assets/blueprint-sample.pdf#page=8" target="_blank" rel="noopener"><img src="/assets/blueprint-sample-gaps.png" width="612" height="792" loading="lazy" alt="Actual sample PDF page showing qualification gaps and recommended actions for a fictional Navy Electronics Technician."></a><figcaption>Qualification gaps and actions. Open the PDF to zoom.</figcaption></figure>
+        <figure><a href="/assets/blueprint-sample.pdf#page=11" target="_blank" rel="noopener"><img src="/assets/blueprint-sample-resume.png" width="612" height="792" loading="lazy" alt="Actual sample PDF resume strategy page with a target headline, truthful bullet guidance, and placeholders."></a><figcaption>Resume strategy and evidence. Open the PDF to zoom.</figcaption></figure>
+        <figure><a href="/assets/blueprint-sample.pdf#page=13" target="_blank" rel="noopener"><img src="/assets/blueprint-sample-plan.png" width="612" height="792" loading="lazy" alt="Actual sample PDF page showing the first part of a 90-day transition action plan."></a><figcaption>A 90-day action plan. Open the PDF to zoom.</figcaption></figure>
+      </div>
+      <p class="m2c-sample-note">Career-planning guidance only. Military duties do not automatically establish civilian qualifications. Employers set hiring requirements; verify any education, certification, licensing, or compensation information before acting.</p>
+    </details>
   </div>
 </section>
 
@@ -540,7 +564,8 @@ header .lead{max-width:860px;margin-bottom:18px}
         <input id="email" name="email" type="email" autocomplete="email" required placeholder="you@example.com" aria-describedby="profilePrivacy">
       </div>
         <p id="profilePrivacy" class="helper full">We use saved contact and career details to support your profile and deliver a purchased Blueprint. <a class="m2c-preview-link" href="/privacy.html">Read the Privacy Policy.</a></p>
-        <div class="m2c-step-actions full"><button id="profileBackBtn" class="btn secondary" type="button">Back to my experience</button><button id="profileSaveBtn" class="btn" type="submit">Save My Profile</button></div>
+        <p class="helper full" id="checkoutHelp">Choose “Save &amp; Continue to Checkout” to save these details and review payment securely on Stripe. Your Blueprint is emailed after payment. You can also save your profile without buying.</p>
+        <div class="m2c-step-actions full"><button id="profileBackBtn" class="btn secondary" type="button">Back to my experience</button><button id="profileSaveBtn" class="btn secondary" type="submit">Save My Profile</button><button id="profileSaveCheckoutBtn" class="btn" type="submit" aria-describedby="checkoutHelp">Save &amp; Continue to Checkout</button></div>
       </fieldset>
       <div id="saveStatus" class="save-status full" role="status" aria-live="polite">Free previews do not save your contact or career profile.</div>
     </form>
@@ -583,9 +608,9 @@ header .lead{max-width:860px;margin-bottom:18px}
         <li>90-day transition action plan</li>
         <li>Personalized recommendations</li>
       </ul>
-      <a class="purchase-btn" href="#" target="_blank" rel="noopener noreferrer" id="blueprintCheckoutBtn">Get My Career Blueprint — $39</a>
+      <a class="purchase-btn" href="#contactStep" id="blueprintCheckoutBtn" data-blueprint-entry="full_offer">Continue to My Blueprint — $39</a>
       <p style="margin-top:14px;color:var(--muted);line-height:1.6;">
-  Checkout unlocks after your profile saves successfully. •
+  Save your profile, then review payment on Stripe. Your personalized PDF is emailed after payment. •
   <a href="/privacy.html" style="color:inherit;">Privacy Policy</a> •
   <a href="/terms.html" style="color:inherit;">Terms of Service</a> •
   <a href="/refund-policy.html" style="color:inherit;">Refund &amp; Delivery</a> •
@@ -1140,6 +1165,7 @@ const gaps=gapList(r,p);
       <div class="box" style="margin-top:12px"><h4>Helpful credentials</h4><div class="small">${r.certs.join(" • ")}</div></div>
     `;
     out.appendChild(div);
+    if(i===0) out.appendChild(m2cBlueprintNextStep(r.title));
   });
   if(!window.m2cTranslatorEventSent){
     window.m2cTranslatorEventSent=true;
@@ -1273,6 +1299,40 @@ if(careerForm){
 
 
 const M2C_STRIPE_PAYMENT_LINK = "https://buy.stripe.com/9B64gygJxaT9cGB4Vq5J601";
+let m2cCheckoutAttempt=null;
+
+function m2cOpenBlueprintSample(){
+  const sample=document.getElementById('blueprintSampleDetails');
+  if(sample) sample.open=true;
+}
+function m2cBlueprintNextStep(roleTitle){
+  const offer=document.createElement('aside');
+  offer.className='m2c-blueprint-next';
+  offer.setAttribute('aria-label','Optional Career Blueprint');
+  const eyebrow=document.createElement('div');
+  eyebrow.className='eyebrow';
+  eyebrow.textContent='Your next step · Optional $39 Blueprint';
+  const title=document.createElement('h3');
+  title.textContent='Build a plan around '+roleTitle;
+  const description=document.createElement('p');
+  description.textContent='Turn this career direction into qualifications to verify, resume strategy, and a 90-day action plan tailored to your submitted experience.';
+  const button=document.createElement('button');
+  button.setAttribute('type','button');
+  button.className='purchase-btn';
+  button.setAttribute('data-blueprint-entry','quick_offer');
+  button.textContent='Continue to My Blueprint — $39';
+  button.addEventListener('click',m2cHandleBlueprintClick);
+  const sample=document.createElement('a');
+  sample.href='#blueprint-sample';
+  sample.className='m2c-preview-link';
+  sample.textContent='See the sample pages before deciding';
+  sample.addEventListener('click',m2cOpenBlueprintSample);
+  const note=document.createElement('p');
+  note.className='small';
+  note.textContent='Personalized PDF delivered by email after payment. Your free matches remain available below.';
+  for(const element of [eyebrow,title,description,button,sample,note]) offer.appendChild(element);
+  return offer;
+}
 
 function m2cBuildStripeUrl(){
   const sid=document.getElementById("submissionId")?.value?.trim() || "";
@@ -1296,52 +1356,56 @@ function m2cSetCheckoutReady(ready){
       btn.classList.remove("is-disabled");
       btn.classList.add("is-ready");
       btn.setAttribute("aria-disabled","false");
+      btn.setAttribute('data-checkout-ready','true');
+      btn.textContent='Continue to Secure Checkout — $39';
       return;
     }
   }
-  btn.href="#";
-  btn.classList.add("is-disabled");
+  m2cCheckoutAttempt=null;
+  btn.href="#contactStep";
+  btn.classList.remove("is-disabled");
   btn.classList.remove("is-ready");
-  btn.setAttribute("aria-disabled","true");
+  btn.removeAttribute("aria-disabled");
+  btn.setAttribute('data-checkout-ready','false');
+  btn.textContent='Continue to My Blueprint — $39';
 }
 
-document.addEventListener("DOMContentLoaded",()=>{
+// A saved, current profile is required even if Analytics is blocked or delayed.
+function m2cOpenCheckout(){
+  const btn=document.getElementById('blueprintCheckoutBtn');
+  const checkoutUrl=m2cBuildStripeUrl();
+  if(btn?.getAttribute('data-checkout-ready')!=='true' || !window.currentReport || !checkoutUrl || btn.href!==checkoutUrl || m2cCheckoutAttempt) return false;
+  const attempt={revision:window.m2cProfileRevision,url:checkoutUrl,navigated:false};
+  m2cCheckoutAttempt=attempt;
+  const goToCheckout=()=>{
+    if(m2cCheckoutAttempt!==attempt || attempt.navigated || attempt.revision!==window.m2cProfileRevision ||
+       btn.getAttribute('data-checkout-ready')!=='true' || m2cBuildStripeUrl()!==attempt.url) return;
+    attempt.navigated=true;
+    window.location.href=attempt.url;
+  };
+  if(typeof gtag==='function'){
+    try{
+      m2cTrackEvent('blueprint_checkout_click',{event_callback:goToCheckout,event_timeout:1000});
+      setTimeout(goToCheckout,1200);
+    }catch{goToCheckout();}
+  }else{goToCheckout();}
+  return true;
+}
+function m2cHandleBlueprintClick(event){
+  event.preventDefault();
+  const entry=event.currentTarget?.getAttribute('data-blueprint-entry')==='quick_offer'?'quick_offer':'full_offer';
+  try{m2cTrackEvent('blueprint_upgrade_clicked',{entry_point:entry});}catch{}
+  if(document.getElementById('blueprintCheckoutBtn')?.getAttribute('data-checkout-ready')==='true'){
+    m2cOpenCheckout();
+  }else{
+    window.m2cBeginBlueprintPurchase?.();
+  }
+}
+document.addEventListener('DOMContentLoaded',()=>{
   m2cSetCheckoutReady(false);
-  const btn=document.getElementById("blueprintCheckoutBtn");
-  if(btn){
-btn.addEventListener("click",(e)=>{
-  if(btn.classList.contains("is-disabled")){
-    e.preventDefault();
-    const status=document.getElementById("saveStatus");
-    if(status){
-      status.textContent="Save your profile successfully before opening checkout.";
-      status.className="save-status err";
-    }
-    return;
-  }
-
-  if(typeof gtag==="function"){
-    e.preventDefault();
-
-    const checkoutUrl=btn.href;
-    let redirected=false;
-
-    const goToCheckout=()=>{
-      if(redirected) return;
-      redirected=true;
-      window.location.href=checkoutUrl;
-    };
-
-    gtag("event","blueprint_checkout_click",{
-      event_callback:goToCheckout,
-      event_timeout:1000
-    });
-
-  setTimeout(goToCheckout,1200);
-  }
-  });
-  }
-  });
+  document.getElementById('blueprintCheckoutBtn')?.addEventListener('click',m2cHandleBlueprintClick);
+  for(const link of document.querySelectorAll('a[href="#blueprint-sample"]')) link.addEventListener('click',m2cOpenBlueprintSample);
+});
 
 
 // Progressive profile flow: preview locally, then explicitly save a complete profile.
@@ -1352,6 +1416,7 @@ btn.addEventListener("click",(e)=>{
   const progress=document.getElementById("stepProgress");
   const back=document.getElementById("profileBackBtn");
   const save=document.getElementById("profileSaveBtn");
+  const saveCheckout=document.getElementById('profileSaveCheckoutBtn');
   const status=document.getElementById("saveStatus");
   if(!form || !experience || !contact) return;
   // Preserve deliberate interactions even if the guide module finishes loading later.
@@ -1359,6 +1424,23 @@ btn.addEventListener("click",(e)=>{
   form.noValidate=true;
   window.m2cProfileRevision=0;
   let saving=false;
+  window.m2cBeginBlueprintPurchase=()=>{
+    if(saving) return;
+    if(!window.currentReport || !window.m2cTopMatchesText){
+      showStep(1);
+      status.textContent='Preview your free career matches first, then choose your optional Blueprint.';
+      experience.scrollIntoView?.({block:'start',behavior:'smooth'});
+      document.getElementById('specialty').focus();
+      return;
+    }
+    showStep(2);
+    status.className='save-status';
+    status.textContent='Add your contact details, then choose Save & Continue to Checkout. You will review payment on Stripe.';
+    contact.scrollIntoView?.({block:'start',behavior:'smooth'});
+    const firstMissing=[document.getElementById('firstName'),document.getElementById('lastName'),document.getElementById('email')]
+      .find(control=>!control.value.trim() || !control.checkValidity());
+    (firstMissing || saveCheckout).focus();
+  };
   function showStep(step){
     const savingStep=step===2;
     experience.hidden=savingStep;
@@ -1415,14 +1497,26 @@ btn.addEventListener("click",(e)=>{
     if(!window.currentReport || !window.m2cTopMatchesText){showStep(1);status.textContent='Preview your experience before saving.';return;}
     if(!validate(experience)){showStep(1);return;}
     if(!validate(contact)) return;
+    const checkoutRequested=event.submitter===saveCheckout;
+    if(checkoutRequested && document.getElementById('blueprintCheckoutBtn').getAttribute('data-checkout-ready')==='true'){
+      m2cOpenCheckout();
+      return;
+    }
     const revision=window.m2cProfileRevision;
     saving=true;
     save.disabled=true;
+    saveCheckout.disabled=true;
     save.textContent='Saving your profile…';
+    saveCheckout.textContent='Saving your profile…';
     try{
       const saved=await m2cSaveProfile(window.m2cTopMatchesText);
       if(saved===false || revision!==window.m2cProfileRevision) return;
-      status.textContent+=' You can now choose the optional Career Blueprint.';
+      if(checkoutRequested){
+        status.textContent='Profile saved. Opening secure Stripe checkout…';
+        m2cOpenCheckout();
+      }else{
+        status.textContent+=' You can now choose the optional Career Blueprint.';
+      }
     }catch(error){
       if(revision===window.m2cProfileRevision){
         m2cSetCheckoutReady(false);
@@ -1433,7 +1527,9 @@ btn.addEventListener("click",(e)=>{
     }finally{
       saving=false;
       save.disabled=false;
+      saveCheckout.disabled=false;
       save.textContent='Save My Profile';
+      saveCheckout.textContent='Save & Continue to Checkout';
     }
   });
   back.addEventListener('click',()=>{invalidate();showStep(1);experience.focus();});

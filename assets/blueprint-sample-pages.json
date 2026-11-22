@@ -1,0 +1,20 @@
+{
+  "fictional": true,
+  "pageCount": 14,
+  "pdf": "/assets/blueprint-sample.pdf",
+  "pdfSha256": "178c004e73dd5dd556e1228e29a814fe0fe242f764f5c49ac629abfd30a4488a",
+  "previews": {
+    "gaps": {
+      "page": 8,
+      "image": "/assets/blueprint-sample-gaps.png"
+    },
+    "resume": {
+      "page": 11,
+      "image": "/assets/blueprint-sample-resume.png"
+    },
+    "plan": {
+      "page": 13,
+      "image": "/assets/blueprint-sample-plan.png"
+    }
+  }
+}
